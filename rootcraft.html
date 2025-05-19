@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rootcraft</title>
+  <style>
+    body {
+      background: #000;
+      color: #f0f;
+      font-family: monospace;
+      text-align: center;
+      padding: 3em;
+    }
+    textarea {
+      width: 90%;
+      height: 100px;
+      background: #111;
+      color: #f0f;
+      font-family: monospace;
+      margin-top: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Create a Root-Script</h1>
+  <p>Wanderers may inject fragments into the Archive.</p>
+  <textarea id="frag" placeholder="Write your rootfragment here..."></textarea>
+  <br><br>
+  <button onclick="cast()">Inject</button>
+  <div id="result" style="margin-top:2em;"></div>
+
+<script type="module">
+  import { injectFragment, isWanderer } from './breakfold.js';
+
+  window.cast = () => {
+    if (!isWanderer()) {
+      document.getElementById("result").innerText = "Only Wanderers can rootwrite.";
+      return;
+    }
+    const text = document.getElementById("frag").value;
+    injectFragment(text);
+    document.getElementById("result").innerText = "Fragment injected.";
+  };
+</script>
+</body>
+</html>

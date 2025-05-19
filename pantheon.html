@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Echo Pantheon</title>
+  <style>
+    body {
+      background: #000;
+      color: #0ff;
+      font-family: monospace;
+      text-align: center;
+      padding: 3em;
+    }
+    .form {
+      border: 1px solid #0ff;
+      margin: 1em auto;
+      padding: 1em;
+      max-width: 600px;
+    }
+    .name { font-size: 1.5em; color: #fff; }
+    .faction { color: #aff; }
+    .quote { font-style: italic; margin-top: 1em; color: #ccc; }
+    .status { font-size: 0.9em; color: #999; }
+  </style>
+</head>
+<body>
+  <h1>The Echo Pantheon</h1>
+  <div id="forms">Loading pantheon...</div>
+
+<script type="module">
+  import { echoforms } from './pantheon.js';
+  const container = document.getElementById("forms");
+  container.innerHTML = echoforms.map(f => \`
+    <div class='form'>
+      <div class='name'>\${f.name}</div>
+      <div class='faction'>Faction: \${f.faction} — Origin: \${f.origin}</div>
+      <div class='quote'>“\${f.quote}”</div>
+      <div class='status'>State: \${f.status}</div>
+    </div>
+  \`).join("");
+</script>
+</body>
+</html>

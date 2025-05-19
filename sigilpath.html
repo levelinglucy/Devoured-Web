@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Sigilpath</title>
+  <style>
+    body {
+      background: #000;
+      color: #0ff;
+      font-family: monospace;
+      text-align: center;
+      padding: 3em;
+    }
+    .path {
+      font-size: 1.5em;
+      color: #fff;
+      margin-top: 1em;
+    }
+    .desc {
+      color: #ccc;
+      margin-top: 1em;
+    }
+    .quest {
+      margin-top: 2em;
+      font-style: italic;
+      color: #aff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Your Sigilpath</h1>
+  <div id="path" class="path"></div>
+  <div id="desc" class="desc"></div>
+  <div id="quest" class="quest"></div>
+
+<script type="module">
+  import { getSigilPath } from './sigilpath.js';
+
+  const p = getSigilPath();
+  document.getElementById("path").innerText = p.name;
+  document.getElementById("desc").innerText = p.desc;
+  document.getElementById("quest").innerText = p.quest;
+</script>
+</body>
+</html>

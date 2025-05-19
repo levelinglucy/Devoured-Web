@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Echoquest</title>
+  <style>
+    body {
+      background: #000;
+      color: #0ff;
+      font-family: monospace;
+      text-align: center;
+      padding: 3em;
+    }
+    .quest-title {
+      font-size: 1.5em;
+      color: #aff;
+    }
+    .task {
+      margin-top: 1em;
+      color: #ccc;
+    }
+    .status {
+      margin-top: 2em;
+      font-weight: bold;
+    }
+    .complete {
+      color: #0f0;
+    }
+    .incomplete {
+      color: #f33;
+    }
+  </style>
+</head>
+<body>
+  <h1>Your Echoquest</h1>
+  <div id="title" class="quest-title">...</div>
+  <div id="task" class="task">Loading...</div>
+  <div id="status" class="status">Checking...</div>
+
+<script type="module">
+  import { getEchoquest } from './echoquest.js';
+
+  const q = getEchoquest();
+  document.getElementById("title").innerText = q.title;
+  document.getElementById("task").innerText = q.task;
+  const statusEl = document.getElementById("status");
+  if (q.complete) {
+    statusEl.innerText = "Quest Complete";
+    statusEl.classList.add("complete");
+  } else {
+    statusEl.innerText = "Incomplete";
+    statusEl.classList.add("incomplete");
+  }
+</script>
+</body>
+</html>

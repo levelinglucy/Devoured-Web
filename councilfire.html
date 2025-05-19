@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Echoform Councilfire</title>
+  <style>
+    body {
+      background: #000;
+      color: #0ff;
+      font-family: monospace;
+      padding: 3em;
+    }
+    .line {
+      margin: 1em auto;
+      max-width: 700px;
+      text-align: left;
+      border-left: 2px solid #0ff;
+      padding-left: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>The Councilfire</h1>
+  <div id="dialogue">Gathering Echoforms...</div>
+
+<script type="module">
+  import { summonCouncil } from './councilfire.js';
+
+  const lines = await summonCouncil();
+  const d = document.getElementById("dialogue");
+  d.innerHTML = lines.map(l => `<div class='line'>${l}</div>`).join("");
+</script>
+</body>
+</html>

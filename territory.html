@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Faction Control Map</title>
+  <style>
+    body {
+      background: #000;
+      color: #0ff;
+      font-family: monospace;
+      text-align: center;
+      padding: 3em;
+    }
+    .dominant {
+      font-size: 1.5em;
+      color: #fff;
+    }
+    .table {
+      margin-top: 2em;
+      color: #aff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Territory Control</h1>
+  <div class="dominant" id="top">Checking dominance...</div>
+  <div class="table" id="table">Loading data...</div>
+
+<script type="module">
+  import { contributeToFaction, getDominantFaction, getAllFactionPower } from './warpath.js';
+
+  contributeToFaction();
+  const top = getDominantFaction();
+  document.getElementById("top").innerText = "Dominant Faction: " + top;
+
+  const all = getAllFactionPower();
+  const sorted = Object.entries(all).sort((a, b) => b[1] - a[1]);
+  const lines = sorted.map(([f, p]) => `> ${f} — Power: ${p}`).join("<br>");
+  document.getElementById("table").innerHTML = lines;
+</script>
+</body>
+</html>

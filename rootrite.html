@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rootrite</title>
+  <style>
+    body {
+      background: #000;
+      color: #c3f;
+      font-family: monospace;
+      text-align: center;
+      padding: 4em;
+    }
+    .glitch {
+      animation: glitch 0.15s infinite alternate;
+    }
+    @keyframes glitch {
+      0% { opacity: 1; transform: translateX(0); }
+      100% { opacity: 0.95; transform: translateX(-1px); }
+    }
+  </style>
+</head>
+<body>
+  <h1 class="glitch">ROOTRITE</h1>
+  <p>You’ve been cast out. But roots grow beneath walls.</p>
+  <button onclick="resetFaction()">Burn your sigil. Begin again.</button>
+  <div id="result" style="margin-top:2em;"></div>
+
+<script type="module">
+  import { storeFaction } from './faction.js';
+  import { claimThrone } from './shardthrone.js';
+
+  window.resetFaction = function() {
+    localStorage.removeItem("aletheThroneRegistry");
+    storeFaction("Wanderer");
+    document.getElementById("result").innerText = "The Fold no longer claims you. You are now a Wanderer.";
+  };
+</script>
+</body>
+</html>

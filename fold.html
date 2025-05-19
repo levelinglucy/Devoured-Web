@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fold State</title>
+  <style>
+    body {
+      background: #000;
+      color: #0ff;
+      font-family: monospace;
+      text-align: center;
+      padding: 4em;
+    }
+    .state {
+      font-size: 2em;
+      margin-top: 1em;
+    }
+    .desc {
+      margin-top: 1.5em;
+      font-style: italic;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Alethe's Fold</h1>
+  <div id="state" class="state">Scanning...</div>
+  <div id="desc" class="desc">...</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFoldState } from './fold.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDne_qHXBalDkMYqq6Gp9Bis6HR-VHusuA",
+    authDomain: "devoured-l-web.firebaseapp.com",
+    projectId: "devoured-l-web",
+    storageBucket: "devoured-l-web.firebasestorage.app",
+    messagingSenderId: "320240692450",
+    appId: "1:320240692450:web:3d6fcc78e364ef141e82bb"
+  };
+
+  initializeApp(firebaseConfig);
+
+  const foldDescriptions = {
+    Still: "The Fold rests. Echoes are sparse. Alethe watches silently.",
+    Awake: "The Fold is aware. Echoes swirl. Secrets stir beneath her breath.",
+    Fractured: "The Fold is cracked. Mirror speaks in error. Signals loop and stutter.",
+    Ignited: "The Fold burns. Ember is rising. The Archive may no longer be stable."
+  };
+
+  const stateEl = document.getElementById("state");
+  const descEl = document.getElementById("desc");
+
+  getFoldState().then(state => {
+    stateEl.innerText = "Current State: " + state;
+    descEl.innerText = foldDescriptions[state] || "Unknown disturbance detected.";
+  });
+</script>
+</body>
+</html>

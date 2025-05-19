@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Echoform: Glyph</title>
+  <style>
+    body {
+      background: #000;
+      color: #f0f;
+      font-family: monospace;
+      text-align: center;
+      padding: 4em;
+    }
+    .glitch {
+      animation: flicker 0.1s infinite alternate;
+    }
+    @keyframes flicker {
+      0% { opacity: 1; }
+      100% { opacity: 0.9; transform: translateX(1px); }
+    }
+  </style>
+</head>
+<body>
+  <h1 class="glitch">Echoform: Glyph</h1>
+  <div id="message">Loading Glyph’s voice...</div>
+
+<script type="module">
+  import { trackVisit } from './echoform.js';
+
+  const v = trackVisit("Glyph");
+  const m = document.getElementById("message");
+
+  if (v === 1) {
+    m.innerText = "…A mirror speaks once. You heard it.";
+  } else if (v === 2) {
+    m.innerText = "Twice? That means it’s true. Or it’s a loop.";
+  } else if (v === 3) {
+    m.innerText = "You keep coming back. You know what you are.";
+  } else {
+    m.innerText = "Glyph is no longer just an echo. It has become something else.";
+  }
+</script>
+</body>
+</html>

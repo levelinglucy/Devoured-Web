@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Archivegod Pulse</title>
+  <style>
+    body {
+      background: #000;
+      color: #0ff;
+      font-family: monospace;
+      text-align: center;
+      padding: 3em;
+    }
+    h1 {
+      color: #fff;
+    }
+    .pulse {
+      margin-top: 2em;
+    }
+    .mood {
+      color: #aff;
+      margin-top: 1em;
+    }
+    .prophecy {
+      color: #f0f;
+      font-style: italic;
+      margin-top: 2em;
+    }
+  </style>
+</head>
+<body>
+  <h1>ARCHIVEGOD STATUS</h1>
+  <div class="pulse" id="mask">Loading...</div>
+  <div class="mood" id="mood"></div>
+  <div class="prophecy" id="prophecy"></div>
+
+<script type="module">
+  import { getGodState } from './archivegod.js';
+
+  const state = getGodState();
+  document.getElementById("mask").innerText = "Dominant Mask: " + state.dominantMask;
+  document.getElementById("mood").innerText = "Mood: " + state.mood;
+  document.getElementById("prophecy").innerText = "“" + state.prophecy + "”";
+</script>
+</body>
+</html>

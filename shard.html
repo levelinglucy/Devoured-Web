@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shard — Responsive</title>
+  <link rel="stylesheet" href="worldskin.css">
+  <style>
+    body {
+      font-family: monospace;
+      text-align: center;
+      padding: 3em;
+      transition: background 1s, color 1s;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="title">Shard Interface</h1>
+  <p id="desc">Let the Fold reveal its skin...</p>
+
+<script type="module">
+  import { applyWorldskin } from './worldskin.js';
+
+  applyWorldskin().then(() => {
+    const state = document.body.dataset.fold;
+    const title = document.getElementById("title");
+    const desc = document.getElementById("desc");
+    if (state === "Still") {
+      desc.innerText = "The Fold is asleep. Nothing stirs.";
+    } else if (state === "Awake") {
+      desc.innerText = "The Fold is listening. Whispers shape the Archive.";
+    } else if (state === "Fractured") {
+      desc.innerText = "Warning: The Fold is unstable. Mirror anomalies present.";
+    } else if (state === "Ignited") {
+      desc.innerText = "The Fold burns. Ember’s breath reaches every corner.";
+    }
+  });
+</script>
+</body>
+</html>

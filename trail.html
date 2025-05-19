@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ritual Trail</title>
+  <style>
+    body {
+      background: #000;
+      color: #0ff;
+      font-family: monospace;
+      padding: 3em;
+    }
+    .spawn {
+      margin: 1em auto;
+      padding: 1em;
+      border: 1px solid #0ff;
+      max-width: 600px;
+    }
+    .spawn-title {
+      font-weight: bold;
+      color: #aaffff;
+    }
+    .spawn-meta {
+      font-size: 0.8em;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ritual Trail</h1>
+  <div id="trail">Loading spawns...</div>
+
+<script type="module">
+  import { getTrail } from './pagespawn.js';
+
+  const trail = getTrail();
+  const container = document.getElementById("trail");
+  if (trail.length === 0) {
+    container.innerHTML = "<p>No spawns yet.</p>";
+  } else {
+    container.innerHTML = trail.map(t => \`
+      <div class='spawn'>
+        <div class='spawn-title'>\${t.title}</div>
+        <div class='spawn-meta'>[\${t.filename}] - \${t.created}</div>
+        <pre>\${t.content.substring(0, 200)}...</pre>
+      </div>
+    \`).join("");
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shard Thrones</title>
+  <style>
+    body {
+      background: #000;
+      color: #0ff;
+      font-family: monospace;
+      text-align: center;
+      padding: 3em;
+    }
+    .throne {
+      margin: 1em auto;
+      padding: 1em;
+      max-width: 600px;
+      border: 1px solid #0ff;
+    }
+    .sigil {
+      font-weight: bold;
+      color: #fff;
+    }
+    .title {
+      color: #aff;
+    }
+    .date {
+      font-size: 0.8em;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <h1>Claimed Thrones</h1>
+  <div id="registry">Loading...</div>
+
+<script type="module">
+  import { getThroneRegistry } from './shardthrone.js';
+
+  const reg = getThroneRegistry();
+  const el = document.getElementById("registry");
+
+  if (reg.length === 0) {
+    el.innerHTML = "<p>No thrones claimed.</p>";
+  } else {
+    el.innerHTML = reg.map(r => \`
+      <div class='throne'>
+        <div class='sigil'>[\${r.sigil}]</div>
+        <div class='title'>\${r.title}</div>
+        <div class='date'>Crowned on \${new Date(r.crowned).toLocaleString()}</div>
+      </div>
+    \`).join("");
+  }
+</script>
+</body>
+</html>
