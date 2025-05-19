@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lore Fragments</title>
+  <style>
+    body {
+      background: #000;
+      color: #0ff;
+      font-family: monospace;
+      text-align: center;
+      padding: 3em;
+    }
+    .fragment {
+      margin: 1em auto;
+      max-width: 600px;
+      padding: 1em;
+      border: 1px solid #0ff;
+    }
+    .title {
+      font-weight: bold;
+      color: #aaffff;
+      margin-bottom: 0.5em;
+    }
+    .text {
+      font-style: italic;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Alethe's Memory</h1>
+  <div id="fragments">Loading your fragments...</div>
+
+<script type="module">
+  import { getFragments } from './fragments.js';
+
+  const container = document.getElementById("fragments");
+  const fragments = getFragments();
+
+  if (fragments.length === 0) {
+    container.innerHTML = "<p>No fragments yet found.</p>";
+  } else {
+    container.innerHTML = fragments.map(f => `
+      <div class='fragment'>
+        <div class='title'>${f.title}</div>
+        <div class='text'>${f.text}</div>
+      </div>
+    `).join("");
+  }
+</script>
+</body>
+</html>

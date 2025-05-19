@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reflective Shard</title>
+  <style>
+    body {
+      background: #000;
+      color: #0ff;
+      font-family: monospace;
+      text-align: center;
+      padding: 3em;
+    }
+    #echo {
+      margin-top: 2em;
+      font-size: 1.2em;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>Alethe Sees You</h1>
+  <p id="sigil"></p>
+  <div id="echo">Loading reflection...</div>
+
+<script type="module">
+  import { getOrCreateSigil, hasTrait } from './sigil.js';
+
+  const sigil = getOrCreateSigil();
+  document.getElementById("sigil").innerText = "Your sigil: " + sigil;
+
+  let response = "";
+
+  if (hasTrait("SEEKER")) {
+    response = "You’ve sought the vault more than once.
+Sentinel grants you second sight.";
+  } else if (hasTrait("VAULTBOUND")) {
+    response = "The vault remembers who opened it.
+Lucid will not lie to you.";
+  } else if (hasTrait("REKINDLED")) {
+    response = "You walked through fire and didn’t burn.
+Ember softens her voice.";
+  } else if (hasTrait("LIAR")) {
+    response = "Mirror turns away from you.
+You may ask—but not be answered.";
+  } else {
+    response = "You are not yet marked.
+The Fold watches in silence.";
+  }
+
+  document.getElementById("echo").innerText = response;
+</script>
+</body>
+</html>

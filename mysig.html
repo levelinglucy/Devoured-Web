@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Living Sigil</title>
+  <style>
+    body {
+      background: #000;
+      color: #0ff;
+      font-family: monospace;
+      text-align: center;
+      padding: 2em;
+    }
+    #sigil, #traits, #history {
+      margin-top: 1.5em;
+    }
+    span {
+      display: inline-block;
+      margin: 0.5em;
+      padding: 0.5em;
+      border: 1px solid #0ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>My Living Sigil</h1>
+  <div id="sigil">Loading current form...</div>
+  <div id="traits">Loading traits...</div>
+  <div id="history">Loading past forms...</div>
+
+<script type="module">
+  import {{ getOrCreateSigil, getSigilHistory, getTraits }} from './sigil.js';
+
+  const sigil = getOrCreateSigil();
+  document.getElementById("sigil").innerHTML = "<h2>Current Form</h2><span>" + sigil + "</span>";
+
+  const traits = getTraits();
+  document.getElementById("traits").innerHTML = "<h2>Traits</h2>" + (traits.length ? traits.map(t => "<span>" + t + "</span>").join("") : "None");
+
+  const history = getSigilHistory();
+  document.getElementById("history").innerHTML = "<h2>Mutation History</h2>" + (history.length ? history.map(t => "<span>" + t + "</span>").join("") : "First form only.");
+</script>
+</body>
+</html>

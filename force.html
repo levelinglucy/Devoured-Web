@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Force</title>
+  <style>
+    body {
+      background: #000;
+      color: #0ff;
+      font-family: monospace;
+      text-align: center;
+      padding: 3em;
+    }
+    #force {
+      font-size: 2em;
+      margin-top: 1em;
+      color: #aaffff;
+    }
+    #lore {
+      margin-top: 2em;
+      font-style: italic;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>The Archive Considers You</h1>
+  <div id="force">Calculating...</div>
+  <div id="lore"></div>
+
+<script type="module">
+  import { getForceFromTraits, getForceLore } from './mythos.js';
+
+  const force = getForceFromTraits();
+  document.getElementById("force").innerText = force;
+  document.getElementById("lore").innerText = getForceLore(force);
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vault</title>
+  <style>
+    body {
+      background: #1a0000;
+      color: #ffcccc;
+      font-family: monospace;
+      text-align: center;
+      padding: 5em;
+    }
+    button {
+      padding: 1em;
+      font-size: 1em;
+      background: #330000;
+      color: #fff;
+      border: 1px solid #f55;
+    }
+  </style>
+</head>
+<body>
+  <h1>You buried the truth.</h1>
+  <p>The vault remains sealed. Do you wish to unseal it?</p>
+  <button onclick="reveal()">Unseal</button>
+  <div id="echo" style="margin-top:2em;"></div>
+
+<script>
+function reveal() {
+  document.getElementById("echo").innerText = "It was always you. You were the one who wrote it.";
+}
+</script>
+</body>
+</html>

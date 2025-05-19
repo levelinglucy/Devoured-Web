@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Alethe — Threshold (Sigil Influence)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #000;
+      color: #0ff;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2em;
+      text-align: center;
+    }
+    input {
+      background: #111;
+      border: 1px solid #0ff;
+      color: #0ff;
+      padding: 10px;
+      margin: 10px;
+      width: 80%;
+      max-width: 500px;
+    }
+    button {
+      background: #222;
+      color: #0ff;
+      border: 1px solid #0ff;
+      padding: 10px 20px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    #sigilDisplay {
+      margin-bottom: 1.5em;
+      font-size: 1.2em;
+      color: #aaffff;
+    }
+    #result {
+      margin-top: 2em;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <div id="sigilDisplay">Binding you a sigil...</div>
+  <h1>Threshold</h1>
+  <p>Speak before the Fold chooses—or recognizes your return.</p>
+  <input id="q1" placeholder="What do you seek?" />
+  <input id="q2" placeholder="What have you lost?" />
+  <input id="q3" placeholder="What would you sacrifice?" />
+  <button onclick="decideShard()">Enter</button>
+  <div id="result"></div>
+
+<script>
+function generateSigil() {
+  const seed = Math.random().toString(36).substring(2, 8).toUpperCase();
+  const shard = Math.floor(Math.random() * 999).toString().padStart(3, '0');
+  return `${seed}-${shard}`;
+}
+
+function getOrCreateSigil() {
+  let sigil = localStorage.getItem("aletheSigil");
+  if (!sigil) {
+    sigil = generateSigil();
+    localStorage.setItem("aletheSigil", sigil);
+  }
+  return sigil;
+}
+
+const sigil = getOrCreateSigil();
+document.getElementById("sigilDisplay").innerText = "Your sigil: " + sigil;
+
+function sigilInfluence(sigil) {
+  if (sigil.endsWith("777")) return "lucid";
+  if (sigil.endsWith("000")) return "mirror";
+  const shardNum = parseInt(sigil.split("-")[1]);
+  if (shardNum < 250) return "sentinel";
+  if (shardNum < 500) return "lucid";
+  if (shardNum < 750) return "ember";
+  return "mirror";
+}
+
+function decideShard() {
+  const q1 = document.getElementById("q1").value.toLowerCase();
+  const q2 = document.getElementById("q2").value.toLowerCase();
+  const q3 = document.getElementById("q3").value.toLowerCase();
+  const combined = (q1 + " " + q2 + " " + q3).toLowerCase();
+
+  // Key-based gates first
+  if (combined.includes("i remember her") && sigil.endsWith("777")) return window.location.href = "forgotten.html";
+  if (combined.includes("i buried the truth")) return window.location.href = "vault.html";
+
+  // Override commands
+  if (combined.includes("override:sentinel")) return window.location.href = "sentinel.html";
+  if (combined.includes("override:ember")) return window.location.href = "ember.html";
+  if (combined.includes("override:lucid")) return window.location.href = "lucid.html";
+  if (combined.includes("override:mirror")) return window.location.href = "mirror.html";
+
+  // Sigil-influenced weighting
+  const sigilBias = sigilInfluence(sigil);
+
+  // Question logic override
+  if (combined.includes("truth") || combined.includes("guardian") || combined.includes("memory")) {
+    window.location.href = "sentinel.html";
+  } else if (combined.includes("fire") || combined.includes("rage") || combined.includes("revenge") || combined.includes("i killed")) {
+    window.location.href = "ember.html";
+  } else if (combined.includes("dream") || combined.includes("light") || combined.includes("grace")) {
+    window.location.href = "lucid.html";
+  } else if (combined.includes("question") || combined.includes("mirror") || combined.includes("unknown") || combined.includes("i lied")) {
+    window.location.href = "mirror.html";
+  } else {
+    document.getElementById("result").innerText = `No dominant path found. Redirecting to: ${sigilBias}...`;
+    setTimeout(() => {
+      window.location.href = sigilBias + ".html";
+    }, 2000);
+  }
+}
+</script>
+</body>
+</html>
