@@ -23,7 +23,8 @@
 </head>
 <body>
   <h1>Create a Root-Script</h1>
-  <p>Wanderers may inject fragments into the Archive.</p>
+  <p>Wanderers may write fragments into this browser’s local Archive.</p>
+  <p>Root-scripts stay on this device; they are not sent to Firebase or other visitors.</p>
   <textarea id="frag" placeholder="Write your rootfragment here..."></textarea>
   <br><br>
   <button onclick="cast()">Inject</button>
@@ -38,8 +39,13 @@
       return;
     }
     const text = document.getElementById("frag").value;
-    injectFragment(text);
-    document.getElementById("result").innerText = "Fragment injected.";
+    try {
+      const title = injectFragment(text);
+      document.getElementById("result").innerText = title + " saved in this browser.";
+    } catch (error) {
+      document.getElementById("result").innerText =
+        (error && typeof error.message === "string") ? error.message : "Could not save root-script.";
+    }
   };
 </script>
 </body>
