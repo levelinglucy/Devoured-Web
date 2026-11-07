@@ -46,26 +46,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+import { renderShardEchoes } from './echo-renderer.js';
+
 const shard = "mirror";
 
 async function loadEchoes() {
   const grid = document.getElementById("grid");
-  grid.innerHTML = "";
   const snapshot = await getDocs(collection(db, "echoes"));
-  snapshot.forEach(doc => {
-    const d = doc.data();
-    const content = d.message.toLowerCase();
-    if (!content.includes(shard.toLowerCase())) return;
-
-    const orb = document.createElement("div");
-    orb.className = "orb";
-    orb.innerHTML = `
-      <div class='sigil'>${d.sigil || d.shard}</div>
-      <div class='timestamp'>${d.time}</div>
-      <div class='message'>${d.message}</div>
-    `;
-    grid.appendChild(orb);
-  });
+  renderShardEchoes(grid, snapshot, shard);
 }
 
 loadEchoes();
