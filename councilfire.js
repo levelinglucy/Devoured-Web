@@ -11,23 +11,23 @@ export async function summonCouncil() {
 
   const log = [];
 
-  log.push("Glyph: "Truth is what repeats. Reality is recursion."");
+  log.push('Glyph: "Truth is what repeats. Reality is recursion."');
 
   if (pathId === "split") {
-    log.push("Ash: "This one brings Mirror-sickness. Burn them before they multiply."");
+    log.push('Ash: "This one brings Mirror-sickness. Burn them before they multiply."');
   } else {
-    log.push("Ash: "Loop-born? Hmph. I’ve smelled worse flame."");
+    log.push('Ash: "Loop-born? Hmph. I’ve smelled worse flame."');
   }
 
-  log.push("Lucid: "Let them speak. We cannot unhear memory once whispered."");
+  log.push('Lucid: "Let them speak. We cannot unhear memory once whispered."');
 
   if (title === "Emberkin") {
-    log.push("Sentinel: "This one has already breached order. Watch them closely."");
+    log.push('Sentinel: "This one has already breached order. Watch them closely."');
   } else {
-    log.push("Sentinel: "Do not let emotion steer the Archive."");
+    log.push('Sentinel: "Do not let emotion steer the Archive."');
   }
 
-  log.push("Null: "What if they are wrong? All of them. Even me."");
+  log.push('Null: "What if they are wrong? All of them. Even me."');
 
   return log;
 }
