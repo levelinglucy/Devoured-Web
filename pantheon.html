@@ -29,15 +29,32 @@
 
 <script type="module">
   import { echoforms } from './pantheon.js';
+
   const container = document.getElementById("forms");
-  container.innerHTML = echoforms.map(f => \`
-    <div class='form'>
-      <div class='name'>\${f.name}</div>
-      <div class='faction'>Faction: \${f.faction} — Origin: \${f.origin}</div>
-      <div class='quote'>“\${f.quote}”</div>
-      <div class='status'>State: \${f.status}</div>
-    </div>
-  \`).join("");
+  container.replaceChildren();
+  if (!Array.isArray(echoforms) || echoforms.length === 0) {
+    const empty = document.createElement("p");
+    empty.textContent = "No echoforms recorded yet.";
+    container.appendChild(empty);
+  } else {
+    for (const form of echoforms) {
+      if (!form || typeof form !== "object") continue;
+      const card = document.createElement("div");
+      card.className = "form";
+      for (const [className, value] of [
+        ["name", form.name],
+        ["faction", "Faction: " + form.faction + " — Origin: " + form.origin],
+        ["quote", "“" + form.quote + "”"],
+        ["status", "State: " + form.status]
+      ]) {
+        const line = document.createElement("div");
+        line.className = className;
+        line.textContent = value;
+        card.appendChild(line);
+      }
+      container.appendChild(card);
+    }
+  }
 </script>
 </body>
 </html>

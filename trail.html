@@ -33,18 +33,40 @@
 <script type="module">
   import { getTrail } from './pagespawn.js';
 
-  const trail = getTrail();
   const container = document.getElementById("trail");
-  if (trail.length === 0) {
-    container.innerHTML = "<p>No spawns yet.</p>";
-  } else {
-    container.innerHTML = trail.map(t => \`
-      <div class='spawn'>
-        <div class='spawn-title'>\${t.title}</div>
-        <div class='spawn-meta'>[\${t.filename}] - \${t.created}</div>
-        <pre>\${t.content.substring(0, 200)}...</pre>
-      </div>
-    \`).join("");
+  try {
+    const trail = getTrail();
+    if (!Array.isArray(trail)) throw new Error("Not a ritual trail");
+    container.replaceChildren();
+    if (trail.length === 0) {
+      const empty = document.createElement("p");
+      empty.textContent = "No spawns yet.";
+      container.appendChild(empty);
+    } else {
+      for (const item of trail) {
+        const entry = item && typeof item === "object" ? item : {};
+        const card = document.createElement("div");
+        card.className = "spawn";
+        const title = document.createElement("div");
+        title.className = "spawn-title";
+        title.textContent = typeof entry.title === "string" ? entry.title : "Untitled";
+        const meta = document.createElement("div");
+        meta.className = "spawn-meta";
+        const filename = typeof entry.filename === "string" ? entry.filename : "Unknown file";
+        const created = typeof entry.created === "string" ? entry.created : "Unknown time";
+        meta.textContent = "[" + filename + "] - " + created;
+        const preview = document.createElement("pre");
+        const content = typeof entry.content === "string" ? entry.content : "";
+        preview.textContent = content.substring(0, 200) + "...";
+        card.appendChild(title);
+        card.appendChild(meta);
+        card.appendChild(preview);
+        container.appendChild(card);
+      }
+    }
+  } catch (error) {
+    // Do not erase, repair or replace damaged browser-local records on display.
+    container.textContent = "Could not read the local ritual trail. Existing records remain untouched.";
   }
 </script>
 </body>
