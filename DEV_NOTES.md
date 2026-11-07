@@ -4,13 +4,13 @@
 
 **Goal:** Keep the interactive shard mythology usable, preserve its original voice, and prevent stored or generated dialogue from being treated as HTML. Work is divided into small, independently tested repairs rather than a wholesale rewrite.
 
-**Integration:** Shard feed, Councilfire, Reflective Shard and Rootcraft repairs were merged in [PRs #1–4](https://github.com/levelinglucy/Devoured-Web/pulls?q=is%3Apr+is%3Amerged). The Living Sigil's invalid import and unsafe local-value display are tracked in [PR #5](https://github.com/levelinglucy/Devoured-Web/pull/5); see that PR for its current integration status.
+**Integration:** Shard feed, Councilfire, Reflective Shard, Rootcraft and Living Sigil fixes were merged in [PRs #1–5](https://github.com/levelinglucy/Devoured-Web/pulls?q=is%3Apr+is%3Amerged). Pantheon, Ritual Trail and Shard Thrones archive-view repairs are proposed in [PR #6](https://github.com/levelinglucy/Devoured-Web/pull/6); see that PR for current merge state.
 
-**Validation:** `npm test` runs dependency-free Node 20/22 checks. Rootcraft passed 20/20 per version on [merged main](https://github.com/levelinglucy/Devoured-Web/actions/runs/42368004422). Living Sigil regressions reproduced the syntax failure in [test-first CI](https://github.com/levelinglucy/Devoured-Web/actions/runs/42371829007). For exact subsequent revisions, results and integration, consult [PR #5](https://github.com/levelinglucy/Devoured-Web/pull/5). Mock DOM/Node checks do not substitute for real browser and deployed Firebase tests.
+**Validation:** `npm test` runs dependency-free Node 20/22 checks. Living Sigil passed [23/23 per version on merged main](https://github.com/levelinglucy/Devoured-Web/actions/runs/42372134631). Three archive-view modules were unparseable and their new tests first failed on both Node versions at [PR #6 test-first CI](https://github.com/levelinglucy/Devoured-Web/actions/runs/42376422714). See PR #6 for exact candidate CI. Node syntax/mock DOM checks do not establish real browser or deployed Firebase behaviour.
 
 **Publication:** Changes described in this document and the changelog are development source, **not a tagged or published stable release**. A successful PR or CI check is not a release.
 
-**Next useful steps:** If [Living Sigil PR #5](https://github.com/levelinglucy/Devoured-Web/pull/5) remains open, finish its exact-revision checks and integration; otherwise choose a separate bounded defect or worthwhile original feature. Investigate remaining HTML sinks or live Firebase permissions only with concrete evidence, not as an endless audit.
+**Next useful steps:** Validate [PR #6](https://github.com/levelinglucy/Devoured-Web/pull/6) on its exact candidate revision and integrate only if checks and branch currency permit; then select another bounded milestone. Consider additional browser-local data issues only with confirmed evidence rather than a sweeping audit.
 
 ### Current scope and limitations
 
@@ -37,3 +37,9 @@ Node's tests use a tiny mock DOM and a disposable localStorage stub. They prove 
 ## Project continuity
 
 The historical static pages and ZIP uploads are retained. Explain verified earlier behaviour and new behaviour, preserve the original fictional setting, and prefer focused defects over speculative or administrative sweeps. The README remains the usage entry point, this file the development home, and the changelog the history of meaningful changes.
+
+### Archive-view repair (PR #6)
+
+Pantheon, Ritual Trail and Shard Thrones previously contained literal escape characters before JavaScript template-literal delimiters and interpolation expressions; the inline modules therefore could not parse. Ritual Trail and Shard Thrones additionally interpolated locally editable registry records into HTML. PR #6 replaces the three page renderers with explicit DOM elements and textContent, preserving the original labels, field ordering, 200-character preview length, CSS class names and localStorage formats.
+
+Empty lists show plain-text messages; unreadable or wrong-shaped local registries show an error without clearing the underlying storage. The tests check native parsing, hostile-looking saved text, field rendering and malformed registries. No claim is made about archived ZIP content, real-browser deployment, or cross-origin storage attackers.

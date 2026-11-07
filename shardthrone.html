@@ -37,19 +37,39 @@
 <script type="module">
   import { getThroneRegistry } from './shardthrone.js';
 
-  const reg = getThroneRegistry();
-  const el = document.getElementById("registry");
-
-  if (reg.length === 0) {
-    el.innerHTML = "<p>No thrones claimed.</p>";
-  } else {
-    el.innerHTML = reg.map(r => \`
-      <div class='throne'>
-        <div class='sigil'>[\${r.sigil}]</div>
-        <div class='title'>\${r.title}</div>
-        <div class='date'>Crowned on \${new Date(r.crowned).toLocaleString()}</div>
-      </div>
-    \`).join("");
+  const container = document.getElementById("registry");
+  try {
+    const registry = getThroneRegistry();
+    if (!Array.isArray(registry)) throw new Error("Not a throne registry");
+    container.replaceChildren();
+    if (registry.length === 0) {
+      const empty = document.createElement("p");
+      empty.textContent = "No thrones claimed.";
+      container.appendChild(empty);
+    } else {
+      for (const item of registry) {
+        const entry = item && typeof item === "object" ? item : {};
+        const card = document.createElement("div");
+        card.className = "throne";
+        const sigil = document.createElement("div");
+        sigil.className = "sigil";
+        sigil.textContent = "[" + (typeof entry.sigil === "string" ? entry.sigil : "Unknown") + "]";
+        const title = document.createElement("div");
+        title.className = "title";
+        title.textContent = typeof entry.title === "string" ? entry.title : "Wanderer";
+        const date = document.createElement("div");
+        date.className = "date";
+        const crowned = typeof entry.crowned === "string" ? new Date(entry.crowned).toLocaleString() : "Unknown time";
+        date.textContent = "Crowned on " + crowned;
+        card.appendChild(sigil);
+        card.appendChild(title);
+        card.appendChild(date);
+        container.appendChild(card);
+      }
+    }
+  } catch (error) {
+    // Preserve damaged local history for owner inspection rather than resetting it.
+    container.textContent = "Could not read the local throne registry. Existing records remain untouched.";
   }
 </script>
 </body>
