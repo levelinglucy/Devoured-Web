@@ -29,16 +29,26 @@
   <div id="history">Loading past forms...</div>
 
 <script type="module">
-  import {{ getOrCreateSigil, getSigilHistory, getTraits }} from './sigil.js';
+  import { getOrCreateSigil, getSigilHistory, getTraits } from './sigil.js';
 
-  const sigil = getOrCreateSigil();
-  document.getElementById("sigil").innerHTML = "<h2>Current Form</h2><span>" + sigil + "</span>";
+  // Stored sigils and traits can be edited in localStorage. Never parse them as HTML.
+  function renderList(id, headingText, values, fallback) {
+    const container = document.getElementById(id);
+    const heading = document.createElement("h2");
+    heading.textContent = headingText;
 
-  const traits = getTraits();
-  document.getElementById("traits").innerHTML = "<h2>Traits</h2>" + (traits.length ? traits.map(t => "<span>" + t + "</span>").join("") : "None");
+    const entries = values.length ? values.map(value => {
+      const span = document.createElement("span");
+      span.textContent = String(value);
+      return span;
+    }) : [document.createTextNode(fallback)];
 
-  const history = getSigilHistory();
-  document.getElementById("history").innerHTML = "<h2>Mutation History</h2>" + (history.length ? history.map(t => "<span>" + t + "</span>").join("") : "First form only.");
+    container.replaceChildren(heading, ...entries);
+  }
+
+  renderList("sigil", "Current Form", [getOrCreateSigil()], "");
+  renderList("traits", "Traits", getTraits(), "None");
+  renderList("history", "Mutation History", getSigilHistory(), "First form only.");
 </script>
 </body>
 </html>
