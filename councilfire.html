@@ -28,7 +28,13 @@
 
   const lines = await summonCouncil();
   const d = document.getElementById("dialogue");
-  d.innerHTML = lines.map(l => `<div class='line'>${l}</div>`).join("");
+  d.replaceChildren();
+  for (const dialogue of lines) {
+    const line = document.createElement("div");
+    line.className = "line";
+    line.textContent = dialogue;
+    d.appendChild(line);
+  }
 </script>
 </body>
 </html>
