@@ -4,13 +4,13 @@
 
 **Goal:** Keep the interactive shard mythology usable, preserve its original voice, and prevent stored or generated dialogue from being treated as HTML. Work is divided into small, independently tested repairs rather than a wholesale rewrite.
 
-**Integration:** The four main shard feeds use the merged inert-text renderer from [PR #1](https://github.com/levelinglucy/Devoured-Web/pull/1); the Councilfire dialogue repair is merged from [PR #2](https://github.com/levelinglucy/Devoured-Web/pull/2). The separate Reflective Shard multiline-response repair is proposed in [PR #3](https://github.com/levelinglucy/Devoured-Web/pull/3) until verified and merged.
+**Integration:** The four main shard feeds use the merged inert-text renderer from [PR #1](https://github.com/levelinglucy/Devoured-Web/pull/1); the Councilfire dialogue repair is merged from [PR #2](https://github.com/levelinglucy/Devoured-Web/pull/2). Reflective Shard multiline-response work and its integration state are tracked in [PR #3](https://github.com/levelinglucy/Devoured-Web/pull/3).
 
 **Validation:** The dependency-free `npm test` suite runs under Node 20 and 22 CI. Councilfire's original string quoting failed in the test-first [run 42359642007](https://github.com/levelinglucy/Devoured-Web/actions/runs/42359642007) on both versions. Reflective Shard adds a native Node module-syntax check and mock-DOM assertions of all five original two-line responses and trait precedence. See [PR #3](https://github.com/levelinglucy/Devoured-Web/pull/3) for exact tested revision and CI evidence; the shared shard renderer and Councilfire regression suites remain. A real browser, deployed Firebase and iPhone have not been tested.
 
 **Publication:** Changes described in this document and the changelog are development source, **not a tagged or published stable release**. A successful PR or CI check is not a release.
 
-**Next useful steps:** Complete Reflective Shard PR #3 validation and merge if its existing gates pass. Then investigate Rootcraft's missing `breakfold.js` import and intended semantics before writing a replacement. Revisit other localStorage/Firestore-to-HTML flows only with specific evidence; inspect live Firestore rules if legitimate deployment access becomes available.
+**Next useful steps:** Investigate Rootcraft's missing `breakfold.js` import and intended semantics before writing a replacement. Revisit other localStorage/Firestore-to-HTML flows only with specific evidence; inspect live Firestore rules if legitimate deployment access becomes available.
 
 ### Current scope and limitations
 
