@@ -6,4 +6,6 @@ Open `index.html` for the original shard navigation or `threshold.html` for the 
 
 Stored echo text is displayed as **text**, not trusted HTML, in the Sentinel, Ember, Lucid and Mirror domain feeds. Other historical screens have not received a complete security review. Do not treat embedded Firebase client configuration as authorization or evidence of safe Firestore rules. Avoid entering sensitive information unless you trust the site's deployment and data policies.
 
+**Rootcraft (local-only):** Use `rootrite.html` to adopt the Wanderer story faction, then `rootcraft.html` to save up to 2,000 characters per root-script into the existing `aletheFragments` collection in *this browser only*. View them in `fragments.html`. These scripts are not published to Firebase or visible to other visitors. Browser storage can be cleared or manually edited; the Wanderer check is a narrative gate, **not real authentication**. Back up anything you want to keep. Invalid existing archive data is not automatically overwritten. The original `breakfold.js` implementation was absent; this is a limited reconstruction, not a recovered original.
+
 For offline checks, use Node 20 or 22: `npm test` (no dependencies to install). See [developer notes](./DEV_NOTES.md) and [changes](./CHANGELOG.md).
