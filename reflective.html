@@ -32,20 +32,15 @@
   let response = "";
 
   if (hasTrait("SEEKER")) {
-    response = "You’ve sought the vault more than once.
-Sentinel grants you second sight.";
+    response = "You’ve sought the vault more than once.\nSentinel grants you second sight.";
   } else if (hasTrait("VAULTBOUND")) {
-    response = "The vault remembers who opened it.
-Lucid will not lie to you.";
+    response = "The vault remembers who opened it.\nLucid will not lie to you.";
   } else if (hasTrait("REKINDLED")) {
-    response = "You walked through fire and didn’t burn.
-Ember softens her voice.";
+    response = "You walked through fire and didn’t burn.\nEmber softens her voice.";
   } else if (hasTrait("LIAR")) {
-    response = "Mirror turns away from you.
-You may ask—but not be answered.";
+    response = "Mirror turns away from you.\nYou may ask—but not be answered.";
   } else {
-    response = "You are not yet marked.
-The Fold watches in silence.";
+    response = "You are not yet marked.\nThe Fold watches in silence.";
   }
 
   document.getElementById("echo").innerText = response;
