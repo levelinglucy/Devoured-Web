@@ -2,20 +2,28 @@
 
 ## Development
 
-**Purpose:** Preserve the interactive shard mythology while making Firestore-sourced echo displays inert and resilient to missing/non-string message fields.
+**Goal:** Keep the interactive shard mythology usable, preserve its original voice, and prevent stored or generated dialogue from being treated as HTML. Work is divided into small, independently tested repairs rather than a wholesale rewrite.
 
-**Integration / validation:** Source changes are proposed and reviewed through GitHub pull requests; refer to the associated PR checks for the exact tested revision, environment and integration status. The repository does not acquire a published stable release from documentation or successful tests alone. The security change is listed under Unreleased in the changelog.
+**Integration:** The four main shard feeds use the merged inert-text renderer from [PR #1](https://github.com/levelinglucy/Devoured-Web/pull/1). The Councilfire dialogue parsing/display repair is tracked in [PR #2](https://github.com/levelinglucy/Devoured-Web/pull/2); consult that PR for its current proposed/merged state.
 
-**Next useful checks:** (1) inspect other localStorage/Firestore-to-HTML rendering surfaces before enabling untrusted contributions; (2) review Firestore access rules in the actual deployment, if access becomes available; (3) add browser-level testing if this work becomes a published interactive product.
+**Validation:** The dependency-free `npm test` suite runs under Node 20 and 22 CI. Councilfire's original string quoting failed in the test-first [run 42359642007](https://github.com/levelinglucy/Devoured-Web/actions/runs/42359642007) on both versions. The new tests cover default dialogue, Split and completed Firebound branches, and a source contract requiring inert DOM rendering. The original shard-renderer tests continue to exercise Firestore field rendering and malformed messages. Consult the final PR checks for the exact validated revision. A real browser, deployed Firebase and iPhone have not been tested.
 
-**Current scope:** Four existing domain pages (Sentinel, Ember, Lucid, Mirror) share `echo-renderer.js`. Fields from Firestore are assigned through `textContent`, never interpolated into `innerHTML`; missing or non-string messages are skipped. Only the same records that mention the current shard are displayed. No Firestore schema, rules, stored records or historical zip archives were modified.
+**Publication:** Changes described in this document and the changelog are development source, **not a tagged or published stable release**. A successful PR or CI check is not a release.
 
-**Validation / limits:** `npm test` uses Node's built-in test runner and a minimal DOM double, exercising inert markup, shard filtering, malformed message resilience and the four page imports. It is not a real browser/Firebase test; other pages (including local saved fragment/trail displays) may still interpret unsanitized HTML. Networked authorization, browser compatibility and security of deployed Firestore rules are unverified. No formal security audit.
+**Next useful steps:** Reproduce and repair the separate Reflective Shard multiline-string syntax failure; then investigate Rootcraft's missing `breakfold.js` import with its intended semantics before writing a replacement. Review other localStorage/Firestore-to-HTML data flows only when specific evidence warrants it; inspect live Firestore rules if legitimate deployment access becomes available.
 
-## Decision: inert DOM construction
+### Current scope and limitations
 
-Alternative: HTML-escape each interpolated field before using templates. Chosen: a small shared renderer that creates DOM elements and assigns `textContent`, avoiding repeated escaping rules and keeping domain page changes small. Cost: one extra module import and some element creation. Revisit if actual browser performance with very large collections demands pagination or batching; preserve inert text semantics.
+Sentinel, Ember, Lucid and Mirror use `echo-renderer.js`. Firestore-sourced values are assigned with `textContent`; missing/non-string messages are skipped and shard filtering is retained. Councilfire preserves its original five speakers and condition-specific lines; quotations in `councilfire.js` are valid JavaScript strings, and `councilfire.html` creates `.line` elements with `textContent`. No Firebase rules, stored records or historical ZIPs were changed.
+
+Node's tests use a tiny mock DOM and a disposable localStorage stub. They prove the tested code paths and page-source contract, not comprehensive browser compatibility, actual deployment authorization, power-loss durability or site-wide XSS resistance. Other pages may still use unsafe HTML sinks; no full security audit has been performed.
+
+## Engineering decisions
+
+**Councilfire — preserve dialogue, change representation:** The original embedded quotation marks were literal text but were written unescaped inside double-quoted JavaScript literals, preventing the entire module from parsing. Correcting them with single-quoted JavaScript strings retains the exact story wording and branch behaviour with a small diff. Instead of interpolating dialogue into `innerHTML`, the page creates one styled `div` per line and sets `textContent`, following the existing shard-feed safety pattern. An alternative was to escape every HTML interpolation; direct text assignment is simpler and has fewer failure paths. Revisit only if a future requirement actually needs trusted rich markup.
+
+**Shard feed — inert DOM construction:** An alternative was to HTML-escape each interpolated field before template insertion. The shared renderer assigns `textContent` to explicit nodes, avoiding duplicated escaping rules. The cost is an extra module import and some DOM creation. If real browser performance with large collections becomes material, consider pagination/batching without weakening inert-text semantics.
 
 ## Project continuity
 
-The historical static pages and ZIP uploads are retained. Improve one independently demonstrated defect at a time; do not rewrite the fictional setting or imply a live service based only on static code. Keep the README focused on usage and this file as the detailed development home.
+The historical static pages and ZIP uploads are retained. Explain verified earlier behaviour and new behaviour, preserve the original fictional setting, and prefer focused defects over speculative or administrative sweeps. The README remains the usage entry point, this file the development home, and the changelog the history of meaningful changes.
