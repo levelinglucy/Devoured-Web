@@ -4,13 +4,13 @@
 
 **Goal:** Keep the interactive shard mythology usable and preserve its original voice while rendering browser-saved and fetched narrative data as inert text. Address proven functional/security regressions in small, testable changes.
 
-**Integration:** Shard feed, Councilfire, Reflective Shard, Rootcraft, Living Sigil, archive views and the inert Territory rendering fix are integrated through [PRs #1–7](https://github.com/levelinglucy/Devoured-Web/pulls?q=is%3Apr+is%3Amerged). [PR #8](https://github.com/levelinglucy/Devoured-Web/pull/8) proposes preserving corrupt tally records with visible errors; its PR owns actual integration status.
+**Integration:** Faction tally recovery is integrated through [PR #8](https://github.com/levelinglucy/Devoured-Web/pull/8) alongside earlier shard/feed and narrative-view repairs. [PR #9](https://github.com/levelinglucy/Devoured-Web/pull/9) proposes independent Living Sigil damaged-list handling and mutation preflight; its PR owns current review and integration status.
 
-**Validation:** Dependency-free `npm test` exercises Node 20/22. [PR #6](https://github.com/levelinglucy/Devoured-Web/pull/6) preserves archive-view evidence; [PR #7](https://github.com/levelinglucy/Devoured-Web/pull/7) preserves inert Territory rendering evidence; [PR #8](https://github.com/levelinglucy/Devoured-Web/pull/8) owns corrupt tally handling tests. Syntax and mock-DOM tests do not prove real browser, deployed Firebase or complete site security.
+**Validation:** Dependency-free `npm test` exercises Node 20/22. [PR #9](https://github.com/levelinglucy/Devoured-Web/pull/9) owns the Living Sigil storage-regression checks. [PR #6](https://github.com/levelinglucy/Devoured-Web/pull/6) preserves archive-view evidence; [PR #7](https://github.com/levelinglucy/Devoured-Web/pull/7) preserves inert Territory rendering evidence; [PR #8](https://github.com/levelinglucy/Devoured-Web/pull/8) owns corrupt tally handling tests. Syntax and mock-DOM tests do not prove real browser, deployed Firebase or complete site security.
 
 **Publication:** These changes are development source, **not a verified tagged or published stable release**.
 
-**Next useful steps:** Finish exact-head validation for [PR #8](https://github.com/levelinglucy/Devoured-Web/pull/8), then choose another confirmed functional/security defect or a worthwhile new project. No broad cosmetic sweep is planned.
+**Next useful steps:** Validate the Living Sigil storage-recovery candidate on the exact branch revision, review the error-state behaviour, then return to a different useful project milestone. No broad cosmetic sweep is planned.
 
 ## Decision 2026-11-11: territory faction labels are text, not markup
 
@@ -37,6 +37,14 @@ Node's tests use a tiny mock DOM and a disposable localStorage stub. They prove 
 **Choice:** Load a missing key as an empty tally, but reject unreadable, non-object, negative, non-integer, non-finite or unsafe-integer counts before any write. Copy valid keys to a null-prototype map and refuse an increment that would exceed the safe-integer range. On failure, show a plain-text error and keep the original localStorage record for manual recovery. This is intentionally not auto-repair, auto-reset, or a migration of existing values.
 
 **Trade-offs and revisit:** Existing locally edited fractional or enormous counts are now rejected rather than coerced, prioritising evidence preservation over permissive display. No automatic recovery is possible without deciding how to interpret damaged counts. Real-browser behaviour, storage corruption outside this route and power-loss durability remain untested. [PR #8](https://github.com/levelinglucy/Devoured-Web/pull/8) holds the revision-specific evidence.
+
+## Decision 2026-11-11: damaged Living Sigil lists remain recoverable
+
+**Verified predecessor:** The page read `sigilHistory` and `sigilTraits` with unchecked `JSON.parse`. A malformed history interrupted display; `mutateSigil()` wrote the new current form before reading that history, so a damaged list left the form changed with no corresponding history entry. Wrong-shaped lists could also throw non-actionable method errors.
+
+**Choice:** Require stored history/traits to be arrays of text entries; missing keys still mean empty lists. Reject malformed or wrongly typed values without rewriting them, preflight mutation history before updating the current form, and report a damaged section as inert text while other healthy page sections remain visible. Existing valid lists and visible labels keep their format and order.
+
+**Boundaries:** This prevents the *known invalid-history preflight* partial update, not every two-key transaction failure: a browser quota error, crash or power loss between writes can still split current form and history. Browser storage remains user-editable. No silent repair or reset occurs; bad lists require manual recovery. [PR #9](https://github.com/levelinglucy/Devoured-Web/pull/9) owns exact-revision validation.
 
 ## Engineering decisions
 

@@ -46,9 +46,18 @@
     container.replaceChildren(heading, ...entries);
   }
 
-  renderList("sigil", "Current Form", [getOrCreateSigil()], "");
-  renderList("traits", "Traits", getTraits(), "None");
-  renderList("history", "Mutation History", getSigilHistory(), "First form only.");
+  // Each saved section can fail independently. Never clear damaged records.
+  function renderSafely(id, heading, load, fallback) {
+    try {
+      renderList(id, heading, load(), fallback);
+    } catch {
+      document.getElementById(id).textContent = heading + " unavailable; saved data was not cleared.";
+    }
+  }
+
+  renderSafely("sigil", "Current Form", () => [getOrCreateSigil()], "");
+  renderSafely("traits", "Traits", getTraits, "None");
+  renderSafely("history", "Mutation History", getSigilHistory, "First form only.");
 </script>
 </body>
 </html>
