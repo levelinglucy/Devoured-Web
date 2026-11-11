@@ -1,6 +1,7 @@
 # Change history
 
 ## Unreleased
+- Preserve each awarded Shard Throne's stored title/date on repeat visits, and refuse damaged throne registries rather than silently inventing or replacing historical claims.
 - Make Rootrite's faction switch nondestructive: preserve all earned throne records and the sigil, label the action accurately, and show storage failure instead of falsely reporting success.
 - Restore Councilfire, Reflective Shard, Living Sigil, Pantheon, Ritual Trail and Shard Thrones; render saved text inertly, preserve malformed sigil lists, and preflight history before mutation.
 - Restore Rootcraft’s missing local fragment bridge and explicit failure reporting; render browser-saved fragments as inert text instead of interpreting authored markup as HTML.
