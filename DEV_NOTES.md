@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Keep the interactive shard mythology usable, preserve its original voice, and prevent stored or generated dialogue from being treated as HTML. Work is divided into small, independently tested repairs rather than a wholesale rewrite.
+**Goal:** Keep the interactive shard mythology usable and preserve its original voice while rendering browser-saved and fetched narrative data as inert text. Address proven functional/security regressions in small, testable changes.
 
-**Integration:** Shard feed, Councilfire, Reflective Shard, Rootcraft and Living Sigil fixes were merged in [PRs #1–5](https://github.com/levelinglucy/Devoured-Web/pulls?q=is%3Apr+is%3Amerged). Pantheon, Ritual Trail and Shard Thrones archive-view repairs are proposed in [PR #6](https://github.com/levelinglucy/Devoured-Web/pull/6); see that PR for current merge state.
+**Integration:** Shard feed, Councilfire, Reflective Shard, Rootcraft, Living Sigil and archive-view repairs are integrated through [PRs #1–6](https://github.com/levelinglucy/Devoured-Web/pulls?q=is%3Apr+is%3Amerged). The territory tally's stored-faction rendering correction is tracked in [PR #7](https://github.com/levelinglucy/Devoured-Web/pull/7); the PR owns its exact integration status and validation evidence.
 
-**Validation:** `npm test` runs dependency-free Node 20/22 checks. Living Sigil passed [23/23 per version on merged main](https://github.com/levelinglucy/Devoured-Web/actions/runs/42372134631). Three archive-view modules were unparseable and their new tests first failed on both Node versions at [PR #6 test-first CI](https://github.com/levelinglucy/Devoured-Web/actions/runs/42376422714). See PR #6 for exact candidate CI. Node syntax/mock DOM checks do not establish real browser or deployed Firebase behaviour.
+**Validation:** Dependency-free `npm test` exercises Node 20/22. [PR #6](https://github.com/levelinglucy/Devoured-Web/pull/6) preserves the archive-view test history; [PR #7](https://github.com/levelinglucy/Devoured-Web/pull/7) preserves the territory test-first failure and its candidate validation. Syntax and fake-DOM tests do not prove real browser, deployed Firebase or complete site security.
 
-**Publication:** Changes described in this document and the changelog are development source, **not a tagged or published stable release**. A successful PR or CI check is not a release.
+**Publication:** These changes are development source, **not a verified tagged or published stable release**.
 
-**Next useful steps:** Validate [PR #6](https://github.com/levelinglucy/Devoured-Web/pull/6) on its exact candidate revision and integrate only if checks and branch currency permit; then select another bounded milestone. Consider additional browser-local data issues only with confirmed evidence rather than a sweeping audit.
+**Next useful steps:** Validate and integrate the territory change only after exact-head checks; follow confirmed regressions elsewhere if found, or choose another worthwhile portfolio project. No site-wide cosmetic or speculative security audit is planned.
+
+## Decision 2026-11-11: territory faction labels are text, not markup
+
+**Predecessor:** `warpath.js` records the browser-local `visitorFaction` as a key in `warpathTally`. The territory page interpolated those stored keys directly into `innerHTML`. Because browser-local faction values are editable, HTML-looking names became interpreted markup. A test-first fake DOM rejects HTML parsing on that route, while retaining actual tally/contribution logic.
+
+**Choice:** Replace the single HTML string with one plain `div` per sorted faction, populated with `textContent`, and replace the loading placeholder with `replaceChildren`. Keep descending power order, the dominant-faction label, existing visit contribution, and stored record format unchanged.
+
+**Limits:** This is one display-path repair, not proof of site-wide XSS resistance, authentication or deployment security. Deliberately malformed `warpathTally` JSON can still interrupt the page, and local browser storage is neither trustworthy nor durable. [PR #7](https://github.com/levelinglucy/Devoured-Web/pull/7) is the canonical revision-specific test and integration record.
 
 ### Current scope and limitations
 
