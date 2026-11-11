@@ -4,13 +4,13 @@
 
 **Goal:** Keep the interactive shard mythology usable and preserve its original voice while rendering browser-saved and fetched narrative data as inert text. Address proven functional/security regressions in small, testable changes.
 
-**Integration:** Living Sigil damaged-list preflight is merged through [PR #9](https://github.com/levelinglucy/Devoured-Web/pull/9) alongside earlier shard/feed and territory repairs. [PR #10](https://github.com/levelinglucy/Devoured-Web/pull/10) proposes preserving malformed Echoform visit history; its PR owns its pending integration state.
+**Integration:** Living Sigil preflight is integrated through [PR #9](https://github.com/levelinglucy/Devoured-Web/pull/9), alongside earlier shard/feed and territory repairs. [PR #10](https://github.com/levelinglucy/Devoured-Web/pull/10) contains the Echoform visit-history correction; consult its GitHub status for integration.
 
 **Validation:** Dependency-free `npm test` exercises Node 20/22. [PR #10](https://github.com/levelinglucy/Devoured-Web/pull/10) owns the new Echoform visit tests; [PR #9](https://github.com/levelinglucy/Devoured-Web/pull/9) owns Living Sigil recovery, and [PRs #7–8](https://github.com/levelinglucy/Devoured-Web/pull/8) own Territory safety. Syntax and mock-DOM tests do not prove real browser, deployed Firebase or complete site security.
 
 **Publication:** These changes are development source, **not a verified tagged or published stable release**.
 
-**Next useful steps:** Validate the Echoform visit-history candidate on its exact branch revision and ensure the Glyph page still shows all four original responses; then choose another substantive project. No broad cosmetic sweep is planned.
+**Next useful steps:** After the Echoform visit-history PR is decided, select another substantive portfolio milestone from current evidence. No broad cosmetic sweep is planned.
 
 ## Decision 2026-11-11: territory faction labels are text, not markup
 
