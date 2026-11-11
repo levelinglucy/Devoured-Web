@@ -17,12 +17,16 @@ const warpathImport = /^\s*import\s+\{\s*getFaction\s*\}\s+from\s+['"]\.\/factio
 class Node {
   constructor(tag) {
     this.tagName = tag.toUpperCase();
-    this.textContent = "";
-    this.innerText = "";
     this.children = [];
+    this._text = "";
+    this.innerText = "";
   }
+  get textContent() {
+    return this.children.length ? this.children.map(n => n.textContent).join("") : this._text;
+  }
+  set textContent(value) { this._text = value; this.children = []; }
   appendChild(child) { this.children.push(child); return child; }
-  replaceChildren(...children) { this.children = children; }
+  replaceChildren(...children) { this.children = children; this._text = ""; }
   set innerHTML(_) { throw new Error("Stored faction names must not be parsed as HTML"); }
 }
 
@@ -80,5 +84,5 @@ test("Territory replaces the loading placeholder and preserves ordinary tally la
   assert.deepEqual(elements.table.children.map(n => n.textContent), [
     "> The Flamebound — Power: 1"
   ]);
-  assert.equal(elements.table.textContent, "");
+  assert.doesNotMatch(elements.table.textContent, /Loading data/);
 });
