@@ -35,8 +35,12 @@
 
   const all = getAllFactionPower();
   const sorted = Object.entries(all).sort((a, b) => b[1] - a[1]);
-  const lines = sorted.map(([f, p]) => `> ${f} — Power: ${p}`).join("<br>");
-  document.getElementById("table").innerHTML = lines;
+  const rows = sorted.map(([f, p]) => {
+    const row = document.createElement("div");
+    row.textContent = `> ${f} — Power: ${p}`;
+    return row;
+  });
+  document.getElementById("table").replaceChildren(...rows);
 </script>
 </body>
 </html>
