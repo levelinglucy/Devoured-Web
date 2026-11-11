@@ -23,17 +23,22 @@
 <body>
   <h1 class="glitch">ROOTRITE</h1>
   <p>You’ve been cast out. But roots grow beneath walls.</p>
-  <button onclick="resetFaction()">Burn your sigil. Begin again.</button>
+  <p>This changes your story faction only. Your sigil and previously claimed thrones stay saved in this browser.</p>
+  <button onclick="resetFaction()">Become a Wanderer (keep your history)</button>
   <div id="result" style="margin-top:2em;"></div>
 
 <script type="module">
   import { storeFaction } from './faction.js';
-  import { claimThrone } from './shardthrone.js';
 
   window.resetFaction = function() {
-    localStorage.removeItem("aletheThroneRegistry");
-    storeFaction("Wanderer");
-    document.getElementById("result").innerText = "The Fold no longer claims you. You are now a Wanderer.";
+    const result = document.getElementById("result");
+    try {
+      // A faction change must not delete thrones earned by this or other sigils.
+      storeFaction("Wanderer");
+      result.innerText = "The Fold no longer claims you. You are now a Wanderer; your sigil and throne history remain.";
+    } catch {
+      result.innerText = "Could not change faction. Your local archive was not cleared.";
+    }
   };
 </script>
 </body>

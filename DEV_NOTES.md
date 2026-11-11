@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Keep the interactive shard mythology usable and preserve its original voice while rendering browser-saved and fetched narrative data as inert text. Address proven functional/security regressions in small, testable changes.
+**Goal:** Keep the interactive shard mythology usable and protect user-editable browser-local history while preserving its original voice. Fix confirmed security, data-integrity and entry-point failures in bounded changes.
 
-**Integration:** Living Sigil preflight is integrated through [PR #9](https://github.com/levelinglucy/Devoured-Web/pull/9), alongside earlier shard/feed and territory repairs. [PR #10](https://github.com/levelinglucy/Devoured-Web/pull/10) contains the Echoform visit-history correction; consult its GitHub status for integration.
+**Integration:** Previous [Echoform PR #10](https://github.com/levelinglucy/Devoured-Web/pull/10) is merged. [Rootrite PR #11](https://github.com/levelinglucy/Devoured-Web/pull/11) proposes the nondestructive faction-change behaviour described below; integration must be verified independently.
 
-**Validation:** Dependency-free `npm test` exercises Node 20/22. [PR #10](https://github.com/levelinglucy/Devoured-Web/pull/10) owns the new Echoform visit tests; [PR #9](https://github.com/levelinglucy/Devoured-Web/pull/9) owns Living Sigil recovery, and [PRs #7–8](https://github.com/levelinglucy/Devoured-Web/pull/8) own Territory safety. Syntax and mock-DOM tests do not prove real browser, deployed Firebase or complete site security.
+**Validation:** Dependency-free `npm test` covers Node 20/22 in GitHub Actions. Rootrite's new tests exercise the actual inline module with disposable storage and a simulated failed write; consult [PR #11](https://github.com/levelinglucy/Devoured-Web/pull/11) for revision-specific results. Mock DOM and Node tests do not establish live-browser or iPhone behaviour.
 
-**Publication:** These changes are development source, **not a verified tagged or published stable release**.
+**Publication:** No new tagged or published stable release is verified.
 
-**Next useful steps:** After the Echoform visit-history PR is decided, select another substantive portfolio milestone from current evidence. No broad cosmetic sweep is planned.
+**Selected next steps:** Validate Rootrite on the exact branch head; merge only if required checks and repository protections allow, then select another evidence-backed milestone. Worldheart and Beacon compatibility candidates remain separately parked.
+
+## Decision 2026-11-11: Rootrite faction change must not erase earned thrones
+
+**Predecessor:** The Rootrite button said "Burn your sigil" but did not change `aletheSigil`. It instead removed the entire `aletheThroneRegistry` (including potentially unrelated sigils) before writing `visitorFaction = Wanderer`. If the subsequent faction storage write failed, the history had already been erased. This is confirmed from the tracked inline module and covered by regression cases.
+
+**Choice:** Rename the button to describe becoming a Wanderer while keeping history. Remove the registry deletion; change only `visitorFaction`. Show a success message after the store succeeds, and a clear failure message on a rejected write. The story role remains browser-editable and is not authentication. We do not silently regenerate sigils or erase old claims.
+
+**Trade-offs:** A user who expected Rootrite to wipe all throne records will now retain them. A destructive reset, if intentionally wanted later, should have separate, explicit scope, export guidance and confirmation. Existing archive corruption, browser-storage loss and power-loss durability are outside this patch. [PR #11](https://github.com/levelinglucy/Devoured-Web/pull/11) owns the exact-revision evidence.
 
 ## Decision 2026-11-11: territory faction labels are text, not markup
 
