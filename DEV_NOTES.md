@@ -4,13 +4,13 @@
 
 **Goal:** Keep the interactive shard mythology usable and preserve its original voice while rendering browser-saved and fetched narrative data as inert text. Address proven functional/security regressions in small, testable changes.
 
-**Integration:** Faction tally recovery is integrated through [PR #8](https://github.com/levelinglucy/Devoured-Web/pull/8) alongside earlier shard/feed and narrative-view repairs. [PR #9](https://github.com/levelinglucy/Devoured-Web/pull/9) proposes independent Living Sigil damaged-list handling and mutation preflight; its PR owns current review and integration status.
+**Integration:** Living Sigil preflight is integrated through [PR #9](https://github.com/levelinglucy/Devoured-Web/pull/9), alongside earlier shard/feed and territory repairs. [PR #10](https://github.com/levelinglucy/Devoured-Web/pull/10) contains the Echoform visit-history correction; consult its GitHub status for integration.
 
-**Validation:** Dependency-free `npm test` exercises Node 20/22. [PR #9](https://github.com/levelinglucy/Devoured-Web/pull/9) owns the Living Sigil storage-regression checks. [PR #6](https://github.com/levelinglucy/Devoured-Web/pull/6) preserves archive-view evidence; [PR #7](https://github.com/levelinglucy/Devoured-Web/pull/7) preserves inert Territory rendering evidence; [PR #8](https://github.com/levelinglucy/Devoured-Web/pull/8) owns corrupt tally handling tests. Syntax and mock-DOM tests do not prove real browser, deployed Firebase or complete site security.
+**Validation:** Dependency-free `npm test` exercises Node 20/22. [PR #10](https://github.com/levelinglucy/Devoured-Web/pull/10) owns the new Echoform visit tests; [PR #9](https://github.com/levelinglucy/Devoured-Web/pull/9) owns Living Sigil recovery, and [PRs #7–8](https://github.com/levelinglucy/Devoured-Web/pull/8) own Territory safety. Syntax and mock-DOM tests do not prove real browser, deployed Firebase or complete site security.
 
 **Publication:** These changes are development source, **not a verified tagged or published stable release**.
 
-**Next useful steps:** Validate the Living Sigil storage-recovery candidate on the exact branch revision, review the error-state behaviour, then return to a different useful project milestone. No broad cosmetic sweep is planned.
+**Next useful steps:** After the Echoform visit-history PR is decided, select another substantive portfolio milestone from current evidence. No broad cosmetic sweep is planned.
 
 ## Decision 2026-11-11: territory faction labels are text, not markup
 
@@ -45,6 +45,14 @@ Node's tests use a tiny mock DOM and a disposable localStorage stub. They prove 
 **Choice:** Require stored history/traits to be arrays of text entries; missing keys still mean empty lists. Reject malformed or wrongly typed values without rewriting them, preflight mutation history before updating the current form, and report a damaged section as inert text while other healthy page sections remain visible. Existing valid lists and visible labels keep their format and order.
 
 **Boundaries:** This prevents the *known invalid-history preflight* partial update, not every two-key transaction failure: a browser quota error, crash or power loss between writes can still split current form and history. Browser storage remains user-editable. No silent repair or reset occurs; bad lists require manual recovery. [PR #9](https://github.com/levelinglucy/Devoured-Web/pull/9) owns exact-revision validation.
+
+## Decision 2026-11-11: an unreadable Echoform count is not a fresh first visit
+
+**Predecessor:** `echoform.js` parsed browser-local `echoformVisits` without guarding malformed JSON, then incremented arbitrary properties of a normal object. Wrong-shaped or unsafe counts could silently coerce, and the inherited names `__proto__` and `constructor` did not work as literal visit keys. The Glyph page called this code without an error display, so damaged local data broke its voice entirely.
+
+**Choice:** Treat a missing store as empty, but require an existing store to be a plain JSON object of nonnegative safe-integer counts. Reject any malformed record or unsafe next increment *before* writing, preserve its original bytes for manual recovery, and use a null-prototype map for special names. The Glyph page catches failure and shows an inert warning while keeping the original four narrative messages for ordinary valid visits.
+
+**Trade-offs:** Invalid or legacy fractional counts that previously coerced are now rejected. This is one browser-local counter, not trusted identity or a multi-key transaction. The tests use a Node VM stub and do not prove live browser, iPhone, interprocess or power-loss durability. [PR #10](https://github.com/levelinglucy/Devoured-Web/pull/10) owns exact-revision validation.
 
 ## Engineering decisions
 
