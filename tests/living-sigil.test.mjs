@@ -80,8 +80,8 @@ function sigilStorage(initial = {}) {
   const source = readFileSync(join(root, "sigil.js"), "utf8");
   const context = { localStorage };
   runInNewContext(
-    source.replace(/\\bexport\\s+(?=function)/g, "") +
-      "\\nthis.api = { getOrCreateSigil, mutateSigil, getSigilHistory, addTrait, getTraits };",
+    source.replace(/\bexport\s+(?=function)/g, "") +
+      "\nthis.api = { getOrCreateSigil, mutateSigil, getSigilHistory, addTrait, getTraits };",
     context
   );
   return { data, ...context.api };
