@@ -4,13 +4,13 @@
 
 **Goal:** Keep the interactive shard mythology usable and preserve its original voice while rendering browser-saved and fetched narrative data as inert text. Address proven functional/security regressions in small, testable changes.
 
-**Integration:** Shard feed, Councilfire, Reflective Shard, Rootcraft, Living Sigil and archive-view repairs are integrated through [PRs #1–6](https://github.com/levelinglucy/Devoured-Web/pulls?q=is%3Apr+is%3Amerged). The territory tally's stored-faction rendering correction is tracked in [PR #7](https://github.com/levelinglucy/Devoured-Web/pull/7); the PR owns its exact integration status and validation evidence.
+**Integration:** Shard feed, Councilfire, Reflective Shard, Rootcraft, Living Sigil, archive views and the inert Territory rendering fix are integrated through [PRs #1–7](https://github.com/levelinglucy/Devoured-Web/pulls?q=is%3Apr+is%3Amerged). [PR #8](https://github.com/levelinglucy/Devoured-Web/pull/8) proposes preserving corrupt tally records with visible errors; its PR owns actual integration status.
 
-**Validation:** Dependency-free `npm test` exercises Node 20/22. [PR #6](https://github.com/levelinglucy/Devoured-Web/pull/6) preserves the archive-view test history; [PR #7](https://github.com/levelinglucy/Devoured-Web/pull/7) preserves the territory test-first failure and its candidate validation. Syntax and fake-DOM tests do not prove real browser, deployed Firebase or complete site security.
+**Validation:** Dependency-free `npm test` exercises Node 20/22. [PR #6](https://github.com/levelinglucy/Devoured-Web/pull/6) preserves archive-view evidence; [PR #7](https://github.com/levelinglucy/Devoured-Web/pull/7) preserves inert Territory rendering evidence; [PR #8](https://github.com/levelinglucy/Devoured-Web/pull/8) owns corrupt tally handling tests. Syntax and mock-DOM tests do not prove real browser, deployed Firebase or complete site security.
 
 **Publication:** These changes are development source, **not a verified tagged or published stable release**.
 
-**Next useful steps:** Validate and integrate the territory change only after exact-head checks; follow confirmed regressions elsewhere if found, or choose another worthwhile portfolio project. No site-wide cosmetic or speculative security audit is planned.
+**Next useful steps:** Finish exact-head validation for [PR #8](https://github.com/levelinglucy/Devoured-Web/pull/8), then choose another confirmed functional/security defect or a worthwhile new project. No broad cosmetic sweep is planned.
 
 ## Decision 2026-11-11: territory faction labels are text, not markup
 
@@ -18,7 +18,7 @@
 
 **Choice:** Replace the single HTML string with one plain `div` per sorted faction, populated with `textContent`, and replace the loading placeholder with `replaceChildren`. Keep descending power order, the dominant-faction label, existing visit contribution, and stored record format unchanged.
 
-**Limits:** This is one display-path repair, not proof of site-wide XSS resistance, authentication or deployment security. Deliberately malformed `warpathTally` JSON can still interrupt the page, and local browser storage is neither trustworthy nor durable. [PR #7](https://github.com/levelinglucy/Devoured-Web/pull/7) is the canonical revision-specific test and integration record.
+**Limits:** This is one display-path repair, not proof of site-wide XSS resistance, authentication or deployment security. [PR #8](https://github.com/levelinglucy/Devoured-Web/pull/8) proposes a non-destructive error state for damaged `warpathTally`; local browser storage remains neither trustworthy nor durable. [PR #7](https://github.com/levelinglucy/Devoured-Web/pull/7) is the canonical revision-specific test and integration record.
 
 ### Current scope and limitations
 
@@ -29,6 +29,14 @@ Rootcraft previously imported missing `breakfold.js`, so `window.cast` did not r
 Living Sigil previously used a double-brace import that cannot parse as a JavaScript module and inserted user-editable localStorage sigil, trait and mutation strings into `innerHTML`. `mysig.html` now uses a valid named import and creates headings, spans and fallback text with `textContent`/`createTextNode`, preserving visible labels and the underlying stored records. The sigil module's JSON decoding and storage semantics are unchanged; corrupt JSON can still interrupt page setup and is not silently repaired. No live browser or deployment has been tested.
 
 Node's tests use a tiny mock DOM and a disposable localStorage stub. They prove the tested code paths and page-source contract, not comprehensive browser compatibility, actual deployment authorization, power-loss durability or site-wide XSS resistance. Other pages may still use unsafe HTML sinks; no full security audit has been performed.
+
+## Decision 2026-11-11: a damaged tally is not an empty tally
+
+**Verified predecessor:** The Territory page parsed `warpathTally` three times without handling bad JSON, stopping rendering for malformed records. A wrong-shaped or overflowing count could also be silently coerced by `+ 1`; faction keys such as `__proto__` did not behave as ordinary own properties on a plain object.
+
+**Choice:** Load a missing key as an empty tally, but reject unreadable, non-object, negative, non-integer, non-finite or unsafe-integer counts before any write. Copy valid keys to a null-prototype map and refuse an increment that would exceed the safe-integer range. On failure, show a plain-text error and keep the original localStorage record for manual recovery. This is intentionally not auto-repair, auto-reset, or a migration of existing values.
+
+**Trade-offs and revisit:** Existing locally edited fractional or enormous counts are now rejected rather than coerced, prioritising evidence preservation over permissive display. No automatic recovery is possible without deciding how to interpret damaged counts. Real-browser behaviour, storage corruption outside this route and power-loss durability remain untested. [PR #8](https://github.com/levelinglucy/Devoured-Web/pull/8) holds the revision-specific evidence.
 
 ## Engineering decisions
 

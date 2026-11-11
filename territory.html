@@ -29,18 +29,26 @@
 <script type="module">
   import { contributeToFaction, getDominantFaction, getAllFactionPower } from './warpath.js';
 
-  contributeToFaction();
-  const top = getDominantFaction();
-  document.getElementById("top").innerText = "Dominant Faction: " + top;
+  const topElement = document.getElementById("top");
+  const tableElement = document.getElementById("table");
+  try {
+    contributeToFaction();
+    const top = getDominantFaction();
+    topElement.innerText = "Dominant Faction: " + top;
 
-  const all = getAllFactionPower();
-  const sorted = Object.entries(all).sort((a, b) => b[1] - a[1]);
-  const rows = sorted.map(([f, p]) => {
-    const row = document.createElement("div");
-    row.textContent = `> ${f} — Power: ${p}`;
-    return row;
-  });
-  document.getElementById("table").replaceChildren(...rows);
+    const all = getAllFactionPower();
+    const sorted = Object.entries(all).sort((a, b) => b[1] - a[1]);
+    const rows = sorted.map(([f, p]) => {
+      const row = document.createElement("div");
+      row.textContent = `> ${f} — Power: ${p}`;
+      return row;
+    });
+    tableElement.replaceChildren(...rows);
+  } catch {
+    topElement.innerText = "Dominant Faction: unavailable";
+    tableElement.textContent =
+      "The saved faction tally could not be read or updated; it was not cleared.";
+  }
 </script>
 </body>
 </html>
