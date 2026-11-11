@@ -4,13 +4,21 @@
 
 **Goal:** Keep the interactive shard mythology usable and protect user-editable browser-local history while preserving its original voice. Fix confirmed security, data-integrity and entry-point failures in bounded changes.
 
-**Integration:** Previous [Echoform PR #10](https://github.com/levelinglucy/Devoured-Web/pull/10) is merged. [Rootrite PR #11](https://github.com/levelinglucy/Devoured-Web/pull/11) proposes the nondestructive faction-change behaviour described below; integration must be verified independently.
+**Integration:** [Rootrite PR #11](https://github.com/levelinglucy/Devoured-Web/pull/11) is merged. [Throne-history PR #12](https://github.com/levelinglucy/Devoured-Web/pull/12) proposes preserving an already earned crown and refusing malformed registry data. Observe merge status separately.
 
-**Validation:** Dependency-free `npm test` covers Node 20/22 in GitHub Actions. Rootrite's new tests exercise the actual inline module with disposable storage and a simulated failed write; consult [PR #11](https://github.com/levelinglucy/Devoured-Web/pull/11) for revision-specific results. Mock DOM and Node tests do not establish live-browser or iPhone behaviour.
+**Validation:** Dependency-free `npm test` covers Node 20/22 in GitHub Actions. Throne-history tests use synthetic browser storage; [PR #12](https://github.com/levelinglucy/Devoured-Web/pull/12) is the exact-revision validation record. No live-browser/iPhone, concurrent-tab or power-loss proof is claimed.
 
 **Publication:** No new tagged or published stable release is verified.
 
-**Selected next steps:** Validate Rootrite on the exact branch head; merge only if required checks and repository protections allow, then select another evidence-backed milestone. Worldheart and Beacon compatibility candidates remain separately parked.
+**Selected next steps:** Validate PR #12 at its exact final candidate revision, integrate only with applicable checks and protections satisfied; then choose another useful milestone. Worldheart and Beacon remain separate parked candidates.
+
+## Decision 2026-11-11: previously earned crowns are not recalculated
+
+**Verified predecessor:** `claimThrone()` recomputed a fresh title/date on every completed quest and returned it even when a crown already existed in `aletheThroneRegistry`. If the quest later became incomplete, it returned `null` despite the stored crown. Wrong-shaped registry data could also throw an unhelpful error. These are behavioural/history consistency defects in the source, not evidence of erased real-world user records.
+
+**Choice:** Check and validate the saved registry first. Return an existing crown unchanged, regardless of today's quest state, without writing again or re-running the quest. Only a previously unclaimed sigil with a currently complete quest receives a new record. Refuse unreadable JSON and entries without a usable sigil rather than silently clearing or replacing any record. Preserve legacy extra fields and optional display-field omissions. The existing throne screen's recovery warning applies to invalid archives.
+
+**Trade-offs:** Records written by an old version remain authoritative, even if quest rules or story titles later change. Incomplete quests cannot create new crowns. A damaged archive blocks new claims until manually recovered; this avoids concealed history loss. Concurrent browser tabs, transactions, browser deployment, hostile local edits and power-loss durability are not guaranteed. [PR #12](https://github.com/levelinglucy/Devoured-Web/pull/12) holds revision-specific validation.
 
 ## Decision 2026-11-11: Rootrite faction change must not erase earned thrones
 
