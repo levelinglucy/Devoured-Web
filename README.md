@@ -8,4 +8,6 @@ Stored echo text is displayed as **text**, not trusted HTML, in the Sentinel, Em
 
 **Rootcraft (local-only):** Use `rootrite.html` to adopt the Wanderer story faction, then `rootcraft.html` to save up to 2,000 characters per root-script into the existing `aletheFragments` collection in *this browser only*. View them in `fragments.html`. These scripts are not published to Firebase or visible to other visitors. Browser storage can be cleared or manually edited; the Wanderer check is a narrative gate, **not real authentication**. Back up anything you want to keep. Invalid existing archive data is not automatically overwritten. The original `breakfold.js` implementation was absent; this is a limited reconstruction, not a recovered original.
 
+**Territory (browser-local):** Opening `territory.html` adds one visit to your current faction's local power tally and lists faction strengths in descending order. Browser-saved faction names are displayed as literal text, not HTML. This is fictional local state rather than authentication or a public leaderboard. Damaged `warpathTally` JSON may still prevent this view from loading; do not rely on browser storage as a backup.
+
 For offline checks, use Node 20 or 22: `npm test` (no dependencies to install). See [developer notes](./DEV_NOTES.md) and [changes](./CHANGELOG.md).
