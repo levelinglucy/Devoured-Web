@@ -1,6 +1,7 @@
 # Change history
 
 ## Unreleased
+- Refuse malformed Fire/Lost Echoquest progress without resetting saved records, and show a recovery warning instead of a stalled quest screen.
 - Keep Archivegod's unsaved defaults independent; refuse malformed browser-local god state without clearing it and show recoverable errors on the Pulse page.
 - Count Firestore-sourced Fold rebellion sigils with an independent map, so reserved JavaScript object names cannot corrupt shared prototypes or misclassify Ignited status.
 - Preserve each awarded Shard Throne's stored title/date on repeat visits, and refuse damaged throne registries rather than silently inventing or replacing historical claims.
