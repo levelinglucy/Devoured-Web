@@ -40,15 +40,24 @@
 <script type="module">
   import { getEchoquest } from './echoquest.js';
 
-  const q = getEchoquest();
-  document.getElementById("title").innerText = q.title;
-  document.getElementById("task").innerText = q.task;
+  const titleEl = document.getElementById("title");
+  const taskEl = document.getElementById("task");
   const statusEl = document.getElementById("status");
-  if (q.complete) {
-    statusEl.innerText = "Quest Complete";
-    statusEl.classList.add("complete");
-  } else {
-    statusEl.innerText = "Incomplete";
+  try {
+    const q = getEchoquest();
+    titleEl.innerText = q.title;
+    taskEl.innerText = q.task;
+    if (q.complete) {
+      statusEl.innerText = "Quest Complete";
+      statusEl.classList.add("complete");
+    } else {
+      statusEl.innerText = "Incomplete";
+      statusEl.classList.add("incomplete");
+    }
+  } catch {
+    titleEl.innerText = "Echoquest unavailable";
+    taskEl.innerText = "Preserve your saved quest records before recovery.";
+    statusEl.innerText = "Progress unreadable; no automatic reset was attempted.";
     statusEl.classList.add("incomplete");
   }
 </script>
