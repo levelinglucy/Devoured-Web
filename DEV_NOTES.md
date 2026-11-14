@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Preserve a present but malformed browser-local sigil without silently regenerating or mutating it, and keep mutations inside the generator's uppercase base36 seed alphabet.
+**Goal:** Preserve an existing but malformed browser-local `aletheFragments` archive instead of treating it as empty or rewriting malformed entries during a new Rootcraft fragment append.
 
-**Integration:** [Draft PR #17](https://github.com/levelinglucy/Devoured-Web/pull/17) is open and unmerged. The predecessor is main `b733eb58`; this branch changes the original sigil engine, the separate inline Threshold entrance, focused tests and accompanying notes. This is not deployment.
+**Integration:** [Draft PR #18](https://github.com/levelinglucy/Devoured-Web/pull/18) proposes the fragment archive correction from main `b54aa336`. It remains open and unmerged pending review and hosted validation. Prior identity-integrity PR #17 is merged at `b54aa336`; Git integration is not browser deployment.
 
-**Validation:** The test-first run [43585040433](https://github.com/levelinglucy/Devoured-Web/actions/runs/43585040433) exercised 78 predecessor tests and failed the five expected new cases on each of Node 20 and Node 22 (73 pass, 5 fail), with both logs inspected. Final corrected-branch CI is pending at this writing. Do not describe any red run as a green validation, and do not infer browser or iPhone proof from Node VM fixtures.
+**Validation:** Exact predecessor fragment blob `89f835bda4`: **3/6** new regression tests passed, **3/6 failed as expected**, locally on Node 22.16.0. Corrected fragment blob `9c2e62a72680` and test blob `80f93ae832cd`: **6/6** focused tests passed and `node --check fragments.js` passed locally. Independently read back both blobs from PR branch. Hosted full-suite CI is not yet verified; no browser, iPhone or power-loss evidence.
 
-**Release:** Not released or deployed by this PR; no stable tag.
+**Release:** Not released, deployed or tagged by this proposal.
 
-**Selected next steps:** (1) Obtain and inspect exact-head hosted tests on Node 20/22. (2) Review compatibility of intentionally edited/historical sigils before any merge. (3) Retain a reviewable draft if either the compatibility or validation evidence is insufficient; no need for routine bookkeeping commits.
+**Selected next steps:** (1) Verify full hosted tests at exact final PR head on Node 20 and 22. (2) Review historical/manual fragment entries lacking title or text fields and any project-specific integration requirements; retain draft if uncertain. (3) Only consider merging after relevant validation and compatibility review.
+
+## Decision 2026-11-14: preserve damaged fragment archives before append
+
+**Reproduced predecessor:** `getFragments()` treated any present falsy string as absent via `getItem(...) || "[]"`. A saved empty string could therefore be overwritten when `addFragment()` appended a new story entry. Other malformed JSON shapes, including present `null`, objects, or entries lacking valid fields, were not checked before append; missing writer arguments could be serialized as partial records. Predecessor-test failures reproduced these behaviours against source blob `89f835bda4` locally.
+
+**Choice:** Return a new empty array only for an actually absent key (null). Parse present JSON and require an array of non-array objects with string `title` and `text` before appending. Preserve all extra fields on valid entries. Refuse non-string writer input before saving. Preserve malformed raw browser storage unchanged and display the existing inert archive warning on `fragments.html` instead of silently replacing it. Rootcraft continues to report thrown errors; explicit `clearFragments()` remains unchanged.
+
+**Compatibility and limitations:** The tracked writer (`addFragment`, called by `breakfold.js`) creates title/text strings, and Rootcraft validates its input, but independently edited or older deployed archives may have entries without them. Those entries now remain readable only as raw storage/manual recovery, not appendable; there is no automatic migration or byte-level archive export here. Browser localStorage is not transactional or a durable backup. Real browsers, deployment, iPhone, concurrent tabs and abrupt termination remain untested. Revisit the strict entry contract if a supported historical alternate format is demonstrated.
 
 ## Decision 2026-11-14: preserve malformed identities and base36 mutation format
 
