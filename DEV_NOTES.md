@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Keep browser-local sigil identity and its history aligned when `localStorage` rejects either write during `mutateSigil()`, without silently clearing existing records.
+**Goal:** Preserve a present but malformed browser-local sigil without silently regenerating or mutating it, and keep mutations inside the generator's uppercase base36 seed alphabet.
 
-**Integration:** The Living Sigil storage-recovery candidate and its integration decision are tracked in [PR #16](https://github.com/levelinglucy/Devoured-Web/pull/16); use that PR's live state and merge commit as the authoritative integration record. The Echoquest repair was integrated by PR #15 at main `08588cb8`. Git source integration is not deployment.
+**Integration:** [Draft PR #17](https://github.com/levelinglucy/Devoured-Web/pull/17) is open and unmerged. The predecessor is main `b733eb58`; this branch changes the original sigil engine, the separate inline Threshold entrance, focused tests and accompanying notes. This is not deployment.
 
-**Validation:** Source-matching predecessor `sigil.js` (blob `4b4a202a`) failed all four injected-storage-failure checks locally on Node 22.16.0. The corrected source (blob `4c8e1a7d`) passed those four, and `node --check sigil.js` passed. [Hosted PR-head run 43571310495](https://github.com/levelinglucy/Devoured-Web/actions/runs/43571310495) at `1aed9cab5048aa76df0767245149287cd81563ac` passed **71/71 tests on Node 20 and 71/71 on Node 22**, with both job logs independently inspected (no failed or skipped tests). This exact run precedes this documentation-only revision; executable source and regression test blobs remain unchanged. No browser, deployed-site, iPhone, multi-tab or power-loss proof is claimed.
+**Validation:** The test-first run [43585040433](https://github.com/levelinglucy/Devoured-Web/actions/runs/43585040433) exercised 78 predecessor tests and failed the five expected new cases on each of Node 20 and Node 22 (73 pass, 5 fail), with both logs inspected. Final corrected-branch CI is pending at this writing. Do not describe any red run as a green validation, and do not infer browser or iPhone proof from Node VM fixtures.
 
-**Release:** No new stable tag or deployment for this repair is verified. Earlier Echoquest, Archivegod and Fold source fixes were integrated without a separately verified release.
+**Release:** Not released or deployed by this PR; no stable tag.
 
-**Selected next steps:** (1) Keep the tested source/test blobs and PR integration evidence traceable. (2) Investigate real-browser or simultaneous-tab failure only if useful new evidence becomes available; synchronous compensating rollback is not an atomic transaction. (3) Verify deployment separately if one is later published. Keep Worldheart PR #10 parked.
+**Selected next steps:** (1) Obtain and inspect exact-head hosted tests on Node 20/22. (2) Review compatibility of intentionally edited/historical sigils before any merge. (3) Retain a reviewable draft if either the compatibility or validation evidence is insufficient; no need for routine bookkeeping commits.
+
+## Decision 2026-11-14: preserve malformed identities and base36 mutation format
+
+**Reproduced predecessor:** Both `sigil.js` and the independent Threshold entrance used truthiness to decide a sigil was absent, so an existing empty string was overwritten with a newly generated identity. `mutateSigil()` accepted a malformed present string such as `Z` and could overwrite it with `A-undefined`. When mutating the seed digit 9, the letter-only shift calculation produced `:` rather than a valid digit. Exact-head tests reproduced five new failures against the predecessor on both hosted Node versions; no user data was inspected.
+
+**Choice:** Permit generation only when `getItem()` returns null. Validate present identities against a deliberately broad structural contract: nonempty uppercase ASCII alphanumeric seed, hyphen and nonempty ASCII decimal shard; do not silently write or repair nonconforming values. Threshold displays an inert recovery warning and blocks navigation when identity is unreadable. Rotate letters A–Z as before and digits 0–9 separately, with 9 rolling to 0. Pad a zero-randomness seed to six characters so even the edge case stays within the same format. Keep history-first rejected-write compensation from PR #16 unchanged.
+
+**Compatibility and limits:** The current and Threshold generators both use six-character uppercase base36 seeds and a three-digit shard; the accepted regex is intentionally more permissive of shorter historical IDs. Nevertheless, intentionally edited sigils containing lowercase, spaces, punctuation or other external formats now fail closed and remain unchanged until deliberate recovery. This is a client-side narrative ID, not authentication. Concurrent tabs, corrupted browser storage beyond this field, real browser/deployment behaviour and device support are unverified.
 
 ## Decision 2026-11-14: best-effort rollback for failed two-key sigil mutation
 

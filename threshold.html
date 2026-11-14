@@ -56,22 +56,32 @@
 
 <script>
 function generateSigil() {
-  const seed = Math.random().toString(36).substring(2, 8).toUpperCase();
+  const seed = Math.random().toString(36).substring(2, 8).padEnd(6, "0").toUpperCase();
   const shard = Math.floor(Math.random() * 999).toString().padStart(3, '0');
   return `${seed}-${shard}`;
 }
 
 function getOrCreateSigil() {
-  let sigil = localStorage.getItem("aletheSigil");
-  if (!sigil) {
-    sigil = generateSigil();
-    localStorage.setItem("aletheSigil", sigil);
+  const saved = localStorage.getItem("aletheSigil");
+  if (saved !== null) {
+    if (!/^[A-Z0-9]+-[0-9]+$/.test(saved)) {
+      throw new Error("Saved sigil is invalid");
+    }
+    return saved;
   }
+  const sigil = generateSigil();
+  localStorage.setItem("aletheSigil", sigil);
   return sigil;
 }
 
-const sigil = getOrCreateSigil();
-document.getElementById("sigilDisplay").innerText = "Your sigil: " + sigil;
+let sigil = null;
+try {
+  sigil = getOrCreateSigil();
+  document.getElementById("sigilDisplay").innerText = "Your sigil: " + sigil;
+} catch {
+  document.getElementById("sigilDisplay").innerText =
+    "Saved sigil is invalid or unavailable; existing identity was not cleared.";
+}
 
 function sigilInfluence(sigil) {
   if (sigil.endsWith("777")) return "lucid";
@@ -84,6 +94,11 @@ function sigilInfluence(sigil) {
 }
 
 function decideShard() {
+  if (sigil === null) {
+    document.getElementById("result").innerText =
+      "Cannot enter while the saved sigil is unavailable; existing identity was not cleared.";
+    return;
+  }
   const q1 = document.getElementById("q1").value.toLowerCase();
   const q2 = document.getElementById("q2").value.toLowerCase();
   const q3 = document.getElementById("q3").value.toLowerCase();
