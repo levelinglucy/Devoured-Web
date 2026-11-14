@@ -15,8 +15,22 @@ const defaultState = {
   }
 };
 
+// Never expose the shared default object: an unsuccessful first write must not
+// change what a later unsaved read returns (including nested influence values).
 export function getGodState() {
-  const state = JSON.parse(localStorage.getItem(key)) || defaultState;
+  const raw = localStorage.getItem(key);
+  if (raw === null) {
+    return { ...defaultState, influence: { ...defaultState.influence } };
+  }
+
+  // Present-but-damaged archives are evidence, not an invitation to reset.
+  const state = JSON.parse(raw);
+  if (!state || typeof state !== "object" || Array.isArray(state) ||
+      typeof state.dominantMask !== "string" ||
+      typeof state.mood !== "string" ||
+      typeof state.prophecy !== "string") {
+    throw new Error("Archivegod state is invalid; preserve the stored record before repair.");
+  }
   return state;
 }
 
