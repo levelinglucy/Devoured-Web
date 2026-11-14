@@ -1,11 +1,17 @@
 // sigil.js — Living Sigil System
 
 export function getOrCreateSigil() {
-  let sigil = localStorage.getItem("aletheSigil");
-  if (!sigil) {
-    sigil = generateSigil();
-    localStorage.setItem("aletheSigil", sigil);
+  const saved = localStorage.getItem("aletheSigil");
+  if (saved !== null) {
+    // Absence permits creation; a present but damaged identity does not.
+    // Accept historical variable-length uppercase base36 seeds and numeric shards.
+    if (!/^[A-Z0-9]+-[0-9]+$/.test(saved)) {
+      throw new Error("Saved sigil is invalid; existing identity was not cleared");
+    }
+    return saved;
   }
+  const sigil = generateSigil();
+  localStorage.setItem("aletheSigil", sigil);
   return sigil;
 }
 
@@ -17,7 +23,10 @@ export function mutateSigil() {
   const part = sigil.split("-");
   let code = part[0].split("");
   const shift = Math.floor(Math.random() * code.length);
-  code[shift] = String.fromCharCode(((code[shift].charCodeAt(0) - 65 + 1) % 26) + 65);
+  // The generated seed is base36: digits must not roll into punctuation.
+  code[shift] = /[0-9]/.test(code[shift])
+    ? String((Number(code[shift]) + 1) % 10)
+    : String.fromCharCode(((code[shift].charCodeAt(0) - 65 + 1) % 26) + 65);
   const mutated = code.join("") + "-" + part[1];
   storeMutationHistory(mutated, history, previousHistory);
   return mutated;
@@ -83,7 +92,7 @@ export function hasTrait(trait) {
 }
 
 function generateSigil() {
-  const seed = Math.random().toString(36).substring(2, 8).toUpperCase();
+  const seed = Math.random().toString(36).substring(2, 8).padEnd(6, "0").toUpperCase();
   const shard = Math.floor(Math.random() * 999).toString().padStart(3, '0');
   return `${seed}-${shard}`;
 }
