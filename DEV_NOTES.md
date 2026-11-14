@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Protect interactive story state from silent browser-local data loss and preserve the original narrative while repairing confirmed correctness defects.
+**Goal:** Reject malformed Echoquest Fire/Lost progress before it causes invented completions, concealed malformed timestamps or silent timer reset; show a non-destructive page warning.
 
-**Integration:** Fold PR #13 and Archivegod PR #14 are integrated on main; Archivegod's squash-merge revision is `9862ac7e164dae42df3c2730023d59a3179a0d4a` ([PR #14](https://github.com/levelinglucy/Devoured-Web/pull/14)). The merged `archivegod.js` and its focused test blob IDs match the successfully tested candidate.
+**Integration:** Echoquest repair is on review branch noe/echoquest-progress-integrity; **not merged**. Earlier Fold PR #13 and Archivegod PR #14 remain integrated on main.
 
-**Validation:** Archivegod's previous source failed 3/5 focused predecessor checks on local Node 22. Seven focused candidate tests passed locally. Final PR head `8a4aa0a76ea60f01d1d6a5a8f4fe5ea9a6587c10` passed 61/61 tests each on Node 20 and Node 22 ([CI 43556525340](https://github.com/levelinglucy/Devoured-Web/actions/runs/43556525340)); both hosted logs were inspected. These exact revision checks precede the squash merge; no separate merged-main CI run was observed at the time of this note. No live browser, iPhone or power-loss durability validation.
+**Validation:** At predecessor main 99450a0f, three of six new focused Node 22.16.0 checks failed for actual bugs (false Fire completion on prefix text, unrecognised damaged Lost progress, and a stuck quest screen). After the repair, all six focused checks and node --check echoquest.js passed locally. The tested files' Git blobs match the published candidate: engine 9b9d6267, page 25013441, test bcacd7ed. The full hosted Node 20/22 suite has **not** been verified at this revision. A separate attempt to navigate a local HTTP server in Chromium was blocked by the execution environment, so there is no real-browser proof.
 
-**Publication:** Source integrated, but no new tagged or published stable release is verified.
+**Publication:** Proposed Echoquest changes remain unreleased and unmerged. Prior integrated browser-local repairs also have no new stable tag/deployment verification.
 
-**Selected next steps:** Revisit partial historical records only if actual format evidence emerges; do not auto-migrate damaged archives. A real-browser storage-failure check would be more valuable than another duplicate synthetic test. Keep other parked experiments separate.
+**Selected next steps:** Review source compatibility and actual current/deployed producer of echoCount, verify full suite/CI if available, then decide whether to merge. Keep the Worldheart checkpoint-alias draft parked for unrelated recovery risks.
+
+## Decision 2026-11-14: refuse malformed Echoquest progress without rewriting it
+
+**Predecessor:** Fire quest used parseInt(echoCount), so a saved value such as "5junk" could falsely complete a quest with glitchTrigger=true. Lost quest used parseInt(lostVisit) and treated the *present* empty string as missing, silently starting a new timer; arbitrary text quietly yielded NaN and an indefinitely incomplete state. The Quest page did not catch thrown storage/dependency failures and could stay on "Checking...". All three defects reproduced with test-first isolated Node VM fixtures against source-matching predecessor.
+
+**Choice:** Parse existing Fire counts and Lost timestamps only as canonical, nonnegative, safe decimal integers. Missing Fire count means zero; missing Lost timestamp starts the original timer once. Wrong-shaped, noncanonical or unsafe saved values are refused **without a write, reset or automatic migration**. A future but valid timestamp remains incomplete rather than being rewritten; normal 24-hour completion remains unchanged. The Quest page now displays inert warning text on failure. Historical ZIPs, other quests and Firestore data are untouched.
+
+**Compatibility and limitations:** Values such as "05" and "1700000000000ms" that permissive prefix parsing previously consumed are now rejected, preserving their raw bytes for deliberate recovery. Tracked source search found no writer for echoCount and only Echoquest itself writes lostVisit; this is **not** evidence about old deployments, external scripts or manual editing. The existing Lost quest description mentions visiting fragments.html although its timer is initialized when the quest is evaluated; semantics were not redesigned here. Tests use Node VM stubs, not live browser storage, actual deployment, multi-tab races, iPhone or power-loss durability. Full suite and review remain required before merge.
 
 ## Decision 2026-11-14: preserve Archivegod default and unreadable records
 
