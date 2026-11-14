@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Reject malformed Echoquest Fire/Lost progress before it causes invented completions, concealed malformed timestamps or silent timer reset; show a non-destructive page warning.
+**Goal:** Keep browser-local sigil identity and its history aligned when `localStorage` rejects either write during `mutateSigil()`, without silently clearing existing records.
 
-**Integration:** Echoquest repair is on review branch noe/echoquest-progress-integrity; **not merged**. Earlier Fold PR #13 and Archivegod PR #14 remain integrated on main.
+**Integration:** A reviewable candidate is being prepared on `noe/sigil-mutation-failure-recovery`; **not merged**. Echoquest PR #15 is confirmed integrated on main at `08588cb8`.
 
-**Validation:** At predecessor main 99450a0f, three of six new focused Node 22.16.0 checks failed for actual bugs (false Fire completion on prefix text, unrecognised damaged Lost progress, and a stuck quest screen). After the repair, all six focused checks and node --check echoquest.js passed locally. The tested files' Git blobs match the published candidate: engine 9b9d6267, page 25013441, test bcacd7ed. Full PR-head 4cffac50f93d27e8ea17af032f3a5bf7aecc5df7 [GitHub Actions run 43561957742](https://github.com/levelinglucy/Devoured-Web/actions/runs/43561957742) passed **67/67 tests each on Node 20 and Node 22**; both job logs independently inspected (run completed/success). A separate attempt to navigate a local HTTP server in Chromium was blocked by the execution environment, so there is no real-browser proof.
+**Validation:** Source-matching predecessor `sigil.js` (blob `4b4a202a`) failed all four new injected-storage-failure checks locally on Node 22.16.0. With the repair (blob `4c8e1a7d`), all four new tests passed, and `node --check sigil.js` passed. Test blob `1bce2ebe` and source blob match the locally tested files. Full hosted Node 20/22 suite and browser/device behaviour are **not yet verified** for this candidate.
 
-**Publication:** Proposed Echoquest changes remain unreleased and unmerged. Prior integrated browser-local repairs also have no new stable tag/deployment verification.
+**Release:** The new fix is unreleased and unmerged; previous Echoquest, Archivegod and Fold source fixes were merged but no separate stable tag has been verified.
 
-**Selected next steps:** Review source compatibility and actual current/deployed producer of echoCount, verify full suite/CI if available, then decide whether to merge. Keep the Worldheart checkpoint-alias draft parked for unrelated recovery risks.
+**Selected next steps:** (1) Verify full PR-head Node 20/22 checks and exact source/test revisions. (2) Review residual two-key/concurrent-tab compatibility risk. (3) Merge only after validation and permitted reviews/checks; otherwise leave draft. Keep Worldheart PR #10 parked.
+
+## Decision 2026-11-14: best-effort rollback for failed two-key sigil mutation
+
+**Reproduced predecessor:** `mutateSigil()` updated `aletheSigil` before writing `sigilHistory`. A rejected history write (for example storage quota or policy) left the current sigil advanced without recording that change. The failure was reproduced against the exact pre-change source with deterministic browser-storage stubs. Existing checks addressed corrupt history *before* writes but not rejected writes *after* mutation.
+
+**Choice:** Validate existing history before any mutation, snapshot the exact prior history text, and write the expanded history first. If this (potentially larger) write fails, the current sigil is unchanged. If the subsequent current-sigil write fails, restore the previous history's exact bytes, or remove the newly created history key if previously absent. If restoration also fails, throw a clear error that both operations failed and the records may be inconsistent; never report successful mutation.
+
+**Boundaries:** This is compensating rollback for ordinary synchronous `localStorage` exceptions, **not a transaction**. Abrupt termination between writes, races across tabs, hostile browser modification, unavailable rollback storage, initial sigil generation, and power-loss durability remain unprotected. A failed rollback leaves evidence for manual recovery, not an automatic destructive reset. The current browser pages do not invoke this function directly; the correction is to the exported local story engine. Unrelated local records, Firebase and historical ZIP archives are untouched.
 
 ## Decision 2026-11-14: refuse malformed Echoquest progress without rewriting it
 
