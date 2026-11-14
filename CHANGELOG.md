@@ -1,6 +1,7 @@
 # Change history
 
 ## Unreleased
+- Preserve damaged existing fragment archives without silent reset or partial-entry rewrites; validate new entries before local append.
 - Preserve malformed present Living Sigils on both the engine and Threshold entrance; keep mutation rotations within base36 and generate a nonempty seed at a zero-randomness boundary.
 - Keep the current Living Sigil unchanged if history storage fails, and best-effort restore exact history when a later sigil write is rejected; report failed rollback explicitly.
 - Refuse malformed Fire/Lost Echoquest progress without resetting saved records, and show a recovery warning instead of a stalled quest screen.
