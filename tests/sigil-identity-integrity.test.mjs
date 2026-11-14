@@ -107,3 +107,12 @@ test("Threshold still recognises an ordinary existing sigil", () => {
   assert.equal(s.elements.sigilDisplay.innerText, "Your sigil: ABCDEF-123");
   assert.equal(s.writes.length, 0);
 });
+
+test("a missing sigil gets a structurally valid seed even when randomness is zero", () => {
+  const s = engine({});
+  assert.equal(s.getOrCreateSigil(), "000000-000");
+  assert.equal(s.data.get("aletheSigil"), "000000-000");
+  const entrance = threshold({});
+  assert.equal(entrance.elements.sigilDisplay.innerText, "Your sigil: 000000-000");
+  assert.equal(entrance.data.get("aletheSigil"), "000000-000");
+});
