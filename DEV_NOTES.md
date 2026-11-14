@@ -4,13 +4,13 @@
 
 **Goal:** Protect interactive story state from silent browser-local data loss and preserve the original narrative while repairing confirmed correctness defects.
 
-**Integration:** Fold PR #13 merged on main 260c00fa. Archivegod default-state and malformed-archive recovery is proposed on branch noe/archivegod-default-archive-integrity; it is NOT integrated.
+**Integration:** Fold PR #13 is on main `260c00fa`. Archivegod PR #14 is a separate review-branch repair; it has not yet been merged or released.
 
-**Validation:** Fold PR #13's exact merged-main CI passed 54/54 each Node 20/22 ([run 43546763727](https://github.com/levelinglucy/Devoured-Web/actions/runs/43546763727)). Archivegod's predecessor failed three of five new local checks on Node 22: a mutable shared default, a first-write failure changing future default reads, and acceptance of present-but-invalid archives. The proposed source/page/tests passed 7/7 local Node 22 checks, with three committed source/test blob IDs matched to the tested files. Hosted PR CI, real browser, device and storage durability remain unverified until directly observed.
+**Validation:** Archivegod's previous source failed 3/5 focused predecessor checks on local Node 22. Seven focused candidate tests passed locally. Exact candidate `681c67fb4ed253e8e4aea28813ac537d03a0ff84` passed 61/61 tests on both Node 20 and 22 ([CI 43551723783](https://github.com/levelinglucy/Devoured-Web/actions/runs/43551723783)); both hosted test logs were independently checked. The current PR code and this updated documentation must be checked against their own final revision; no live browser, iPhone or power-loss durability validation.
 
-**Publication:** No new tag or stable published release is verified.
+**Publication:** No new tagged or published stable release is verified.
 
-**Next steps:** Obtain exact-head PR CI and inspect test logs; review compatibility of rejecting malformed or incomplete Archivegod records before any merge; keep other parked experiments separate.
+**Selected next steps:** Verify the current PR's exact-head checks after this documentation review and current branch rules. Merge only when checks/reviews permit; otherwise keep it in review. Keep other parked experiments separate.
 
 ## Decision 2026-11-14: preserve Archivegod default and unreadable records
 
@@ -18,7 +18,9 @@
 
 **Proposed choice:** Return an independent copy of the default with an independent influence map for a genuinely missing key. For a present key, require parseable non-array object data and the three existing story text fields; refuse invalid data without rewriting any original bytes. Preserve valid custom fields and influence values on mood/mask updates. Archivegod Pulse displays inert text explaining that the stored history was not cleared and should be preserved for manual recovery. No automatic reset, backup rewrite or schema migration is attempted.
 
-**Compatibility/risk limits:** Incomplete legacy records lacking mood, mask or prophecy now fail visibly instead of displaying undefined or being silently edited. Unknown fields and influence structure are left intact, deliberately avoiding invented reconstruction. This is browser-local fictional state, not an authentication boundary. Concurrent tabs, write failures between other keys, browser deployment, iPhone and power-loss durability are unverified. The separate draft PR is the place for exact-revision test evidence and review.
+**Compatibility decision (reviewed 2026-11-14):** Current tracked `archivegod.js` is the only indexed source writer for `archivegodState` found in this repository; its first write copies all three display fields from the complete default and edits only mood or mask. The Pulse page reads those three fields. A focused review therefore found no **tracked producer** of incomplete mood/mask/prophecy records, and the candidate tests exercise complete archives, custom extra fields, and unchanged invalid records. This is not proof that no older deployment or manually edited record exists. The compatibility choice is deliberate fail-closed behaviour: incomplete records now show a recovery warning and retain their exact bytes, rather than being silently rewritten with invented fields. Avoid automatic partial-record migration until there is a documented version/schema to migrate from.
+
+**Compatibility/risk limits:** Unknown fields and the influence structure are left intact, deliberately avoiding invented reconstruction. This is browser-local fictional state, not an authentication boundary. Concurrent tabs, write failures between other keys, browser deployment, iPhone and power-loss durability are unverified. The separate PR is the place for exact-revision test evidence and review.
 
 ## Decision 2026-11-11: previously earned crowns are not recalculated
 
