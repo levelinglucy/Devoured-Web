@@ -37,10 +37,16 @@
 <script type="module">
   import { getGodState } from './archivegod.js';
 
-  const state = getGodState();
-  document.getElementById("mask").innerText = "Dominant Mask: " + state.dominantMask;
-  document.getElementById("mood").innerText = "Mood: " + state.mood;
-  document.getElementById("prophecy").innerText = "“" + state.prophecy + "”";
+  try {
+    const state = getGodState();
+    document.getElementById("mask").innerText = "Dominant Mask: " + state.dominantMask;
+    document.getElementById("mood").innerText = "Mood: " + state.mood;
+    document.getElementById("prophecy").innerText = "“" + state.prophecy + "”";
+  } catch {
+    document.getElementById("mask").innerText = "Archivegod state unreadable.";
+    document.getElementById("mood").innerText = "Saved history was not cleared.";
+    document.getElementById("prophecy").innerText = "Preserve archivegodState before attempting recovery.";
+  }
 </script>
 </body>
 </html>
