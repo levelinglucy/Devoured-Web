@@ -12,14 +12,14 @@ export function getOrCreateSigil() {
 export function mutateSigil() {
   // Validate saved history before changing even the current sigil.
   const history = readStringList("sigilHistory");
+  const previousHistory = localStorage.getItem("sigilHistory");
   let sigil = getOrCreateSigil();
   const part = sigil.split("-");
   let code = part[0].split("");
   const shift = Math.floor(Math.random() * code.length);
   code[shift] = String.fromCharCode(((code[shift].charCodeAt(0) - 65 + 1) % 26) + 65);
   const mutated = code.join("") + "-" + part[1];
-  localStorage.setItem("aletheSigil", mutated);
-  storeMutationHistory(mutated, history);
+  storeMutationHistory(mutated, history, previousHistory);
   return mutated;
 }
 
@@ -39,9 +39,27 @@ function readStringList(name) {
   return entries;
 }
 
-function storeMutationHistory(newForm, history) {
+function storeMutationHistory(newForm, history, previousHistory) {
   if (!history.includes(newForm)) history.push(newForm);
+  // Persist the history first: if this larger write hits a storage limit,
+  // the current identity must not advance without its history entry.
   localStorage.setItem("sigilHistory", JSON.stringify(history));
+  try {
+    localStorage.setItem("aletheSigil", newForm);
+  } catch (writeError) {
+    // localStorage has no multi-key transaction. On a rejected second write,
+    // restore the exact previous bytes (including the absent-key case).
+    try {
+      if (previousHistory === null) localStorage.removeItem("sigilHistory");
+      else localStorage.setItem("sigilHistory", previousHistory);
+    } catch (rollbackError) {
+      throw new AggregateError(
+        [writeError, rollbackError],
+        "Sigil write and history rollback failed; saved records may be inconsistent. Preserve them for manual recovery."
+      );
+    }
+    throw writeError;
+  }
 }
 
 export function getSigilHistory() {

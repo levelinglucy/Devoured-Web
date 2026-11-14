@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Reject malformed Echoquest Fire/Lost progress before it causes invented completions, concealed malformed timestamps or silent timer reset; show a non-destructive page warning.
+**Goal:** Keep browser-local sigil identity and its history aligned when `localStorage` rejects either write during `mutateSigil()`, without silently clearing existing records.
 
-**Integration:** Echoquest repair is on review branch noe/echoquest-progress-integrity; **not merged**. Earlier Fold PR #13 and Archivegod PR #14 remain integrated on main.
+**Integration:** The Living Sigil storage-recovery candidate and its integration decision are tracked in [PR #16](https://github.com/levelinglucy/Devoured-Web/pull/16); use that PR's live state and merge commit as the authoritative integration record. The Echoquest repair was integrated by PR #15 at main `08588cb8`. Git source integration is not deployment.
 
-**Validation:** At predecessor main 99450a0f, three of six new focused Node 22.16.0 checks failed for actual bugs (false Fire completion on prefix text, unrecognised damaged Lost progress, and a stuck quest screen). After the repair, all six focused checks and node --check echoquest.js passed locally. The tested files' Git blobs match the published candidate: engine 9b9d6267, page 25013441, test bcacd7ed. Full PR-head 4cffac50f93d27e8ea17af032f3a5bf7aecc5df7 [GitHub Actions run 43561957742](https://github.com/levelinglucy/Devoured-Web/actions/runs/43561957742) passed **67/67 tests each on Node 20 and Node 22**; both job logs independently inspected (run completed/success). A separate attempt to navigate a local HTTP server in Chromium was blocked by the execution environment, so there is no real-browser proof.
+**Validation:** Source-matching predecessor `sigil.js` (blob `4b4a202a`) failed all four injected-storage-failure checks locally on Node 22.16.0. The corrected source (blob `4c8e1a7d`) passed those four, and `node --check sigil.js` passed. [Hosted PR-head run 43571310495](https://github.com/levelinglucy/Devoured-Web/actions/runs/43571310495) at `1aed9cab5048aa76df0767245149287cd81563ac` passed **71/71 tests on Node 20 and 71/71 on Node 22**, with both job logs independently inspected (no failed or skipped tests). This exact run precedes this documentation-only revision; executable source and regression test blobs remain unchanged. No browser, deployed-site, iPhone, multi-tab or power-loss proof is claimed.
 
-**Publication:** Proposed Echoquest changes remain unreleased and unmerged. Prior integrated browser-local repairs also have no new stable tag/deployment verification.
+**Release:** No new stable tag or deployment for this repair is verified. Earlier Echoquest, Archivegod and Fold source fixes were integrated without a separately verified release.
 
-**Selected next steps:** Review source compatibility and actual current/deployed producer of echoCount, verify full suite/CI if available, then decide whether to merge. Keep the Worldheart checkpoint-alias draft parked for unrelated recovery risks.
+**Selected next steps:** (1) Keep the tested source/test blobs and PR integration evidence traceable. (2) Investigate real-browser or simultaneous-tab failure only if useful new evidence becomes available; synchronous compensating rollback is not an atomic transaction. (3) Verify deployment separately if one is later published. Keep Worldheart PR #10 parked.
+
+## Decision 2026-11-14: best-effort rollback for failed two-key sigil mutation
+
+**Reproduced predecessor:** `mutateSigil()` updated `aletheSigil` before writing `sigilHistory`. A rejected history write (for example storage quota or policy) left the current sigil advanced without recording that change. The failure was reproduced against the exact pre-change source with deterministic browser-storage stubs. Existing checks addressed corrupt history *before* writes but not rejected writes *after* mutation.
+
+**Choice:** Validate existing history before any mutation, snapshot the exact prior history text, and write the expanded history first. If this (potentially larger) write fails, the current sigil is unchanged. If the subsequent current-sigil write fails, restore the previous history's exact bytes, or remove the newly created history key if previously absent. If restoration also fails, throw a clear error that both operations failed and the records may be inconsistent; never report successful mutation.
+
+**Boundaries:** This is compensating rollback for ordinary synchronous `localStorage` exceptions, **not a transaction**. Abrupt termination between writes, races across tabs, hostile browser modification, unavailable rollback storage, initial sigil generation, and power-loss durability remain unprotected. A failed rollback leaves evidence for manual recovery, not an automatic destructive reset. The current browser pages do not invoke this function directly; the correction is to the exported local story engine. Unrelated local records, Firebase and historical ZIP archives are untouched.
 
 ## Decision 2026-11-14: refuse malformed Echoquest progress without rewriting it
 
