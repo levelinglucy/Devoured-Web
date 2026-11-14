@@ -4,6 +4,19 @@ import { getSigilPath } from './sigilpath.js';
 import { getFragments } from './fragments.js';
 import { getSigilHistory } from './sigil.js';
 
+// Progress is stored as decimal text. Prefix parsing (e.g. "5junk") can
+// falsely complete a quest; malformed records must remain untouched.
+function readSavedProgress(raw, key) {
+  if (typeof raw !== "string" || !/^(0|[1-9][0-9]*)$/.test(raw)) {
+    throw new Error("Saved " + key + " progress is invalid; preserve the original record.");
+  }
+  const value = Number(raw);
+  if (!Number.isSafeInteger(value)) {
+    throw new Error("Saved " + key + " progress is outside the safe integer range.");
+  }
+  return value;
+}
+
 export function getEchoquest() {
   const path = getSigilPath();
   const fragments = getFragments();
@@ -23,18 +36,19 @@ export function getEchoquest() {
   } else if (path.id === "fire") {
     quest.title = "The Ember’s Call";
     quest.task = "Leave 5 echoes and trigger a glitch (redirected to glitch.html).";
-    const echoed = localStorage.getItem("echoCount") || 0;
+    const rawEchoed = localStorage.getItem("echoCount");
+    const echoed = rawEchoed === null ? 0 : readSavedProgress(rawEchoed, "echoCount");
     const glitched = localStorage.getItem("glitchTrigger") === "true";
-    quest.complete = parseInt(echoed) >= 5 && glitched;
+    quest.complete = echoed >= 5 && glitched;
   } else if (path.id === "lost") {
     quest.title = "Fade and Return";
     quest.task = "Visit fragments.html, then do not return for 24 hours.";
     const lastVisit = localStorage.getItem("lostVisit");
     const now = Date.now();
-    if (!lastVisit) {
+    if (lastVisit === null) {
       localStorage.setItem("lostVisit", now.toString());
     } else {
-      const elapsed = now - parseInt(lastVisit);
+      const elapsed = now - readSavedProgress(lastVisit, "lostVisit");
       quest.complete = elapsed >= 86400000; // 24h
     }
   } else if (path.id === "split") {
