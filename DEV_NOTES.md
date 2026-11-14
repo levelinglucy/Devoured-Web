@@ -4,13 +4,13 @@
 
 **Goal:** Keep browser-local sigil identity and its history aligned when `localStorage` rejects either write during `mutateSigil()`, without silently clearing existing records.
 
-**Integration:** A reviewable candidate is being prepared on `noe/sigil-mutation-failure-recovery`; **not merged**. Echoquest PR #15 is confirmed integrated on main at `08588cb8`.
+**Integration:** The Living Sigil storage-recovery candidate and its integration decision are tracked in [PR #16](https://github.com/levelinglucy/Devoured-Web/pull/16); use that PR's live state and merge commit as the authoritative integration record. The Echoquest repair was integrated by PR #15 at main `08588cb8`. Git source integration is not deployment.
 
-**Validation:** Source-matching predecessor `sigil.js` (blob `4b4a202a`) failed all four new injected-storage-failure checks locally on Node 22.16.0. With the repair (blob `4c8e1a7d`), all four new tests passed, and `node --check sigil.js` passed. Test blob `1bce2ebe` and source blob match the locally tested files. Full hosted Node 20/22 suite and browser/device behaviour are **not yet verified** for this candidate.
+**Validation:** Source-matching predecessor `sigil.js` (blob `4b4a202a`) failed all four injected-storage-failure checks locally on Node 22.16.0. The corrected source (blob `4c8e1a7d`) passed those four, and `node --check sigil.js` passed. [Hosted PR-head run 43571310495](https://github.com/levelinglucy/Devoured-Web/actions/runs/43571310495) at `1aed9cab5048aa76df0767245149287cd81563ac` passed **71/71 tests on Node 20 and 71/71 on Node 22**, with both job logs independently inspected (no failed or skipped tests). This exact run precedes this documentation-only revision; executable source and regression test blobs remain unchanged. No browser, deployed-site, iPhone, multi-tab or power-loss proof is claimed.
 
-**Release:** The new fix is unreleased and unmerged; previous Echoquest, Archivegod and Fold source fixes were merged but no separate stable tag has been verified.
+**Release:** No new stable tag or deployment for this repair is verified. Earlier Echoquest, Archivegod and Fold source fixes were integrated without a separately verified release.
 
-**Selected next steps:** (1) Verify full PR-head Node 20/22 checks and exact source/test revisions. (2) Review residual two-key/concurrent-tab compatibility risk. (3) Merge only after validation and permitted reviews/checks; otherwise leave draft. Keep Worldheart PR #10 parked.
+**Selected next steps:** (1) Keep the tested source/test blobs and PR integration evidence traceable. (2) Investigate real-browser or simultaneous-tab failure only if useful new evidence becomes available; synchronous compensating rollback is not an atomic transaction. (3) Verify deployment separately if one is later published. Keep Worldheart PR #10 parked.
 
 ## Decision 2026-11-14: best-effort rollback for failed two-key sigil mutation
 
