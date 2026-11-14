@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Keep the interactive shard mythology usable and protect user-editable browser-local history while preserving its original voice. Fix confirmed security, data-integrity and entry-point failures in bounded changes.
+**Goal:** Protect interactive story state from silent browser-local data loss and preserve the original narrative while repairing confirmed correctness defects.
 
-**Integration:** Rootrite PR #11 and throne-history PR #12 are integrated on main `69e70157`. Fold-state reserved-sigil repair is a separate review-branch candidate, not merged.
+**Integration:** Fold PR #13 merged on main 260c00fa. Archivegod default-state and malformed-archive recovery is proposed on branch noe/archivegod-default-archive-integrity; it is NOT integrated.
 
-**Validation:** Existing throne-history regression suite passed 51/51 per Node 20/22 on exact main `69e70157` ([CI](https://github.com/levelinglucy/Devoured-Web/actions/runs/43087630053)). For the Fold candidate, three new synthetic tests passed under local Node 22 after one reserved-key test first failed on predecessor. The exact candidate head `85a556f4` passed 54/54 hosted tests in each Node 20/22 ([CI run 43546517091](https://github.com/levelinglucy/Devoured-Web/actions/runs/43546517091)); this evidence applies to that revision and byte-identical source/test files. No live Firebase/browser, iPhone or storage durability proof is claimed.
+**Validation:** Fold PR #13's exact merged-main CI passed 54/54 each Node 20/22 ([run 43546763727](https://github.com/levelinglucy/Devoured-Web/actions/runs/43546763727)). Archivegod's predecessor failed three of five new local checks on Node 22: a mutable shared default, a first-write failure changing future default reads, and acceptance of present-but-invalid archives. The proposed source/page/tests passed 7/7 local Node 22 checks, with three committed source/test blob IDs matched to the tested files. Hosted PR CI, real browser, device and storage durability remain unverified until directly observed.
 
-**Publication:** No new tagged or published stable release is verified.
+**Publication:** No new tag or stable published release is verified.
 
-**Selected next steps:** Review Fold candidate's exact-head CI and code diff; keep it unmerged if any relevant check is unverified or failing. Preserve separate Worldheart and Beacon parked candidates.
+**Next steps:** Obtain exact-head PR CI and inspect test logs; review compatibility of rejecting malformed or incomplete Archivegod records before any merge; keep other parked experiments separate.
+
+## Decision 2026-11-14: preserve Archivegod default and unreadable records
+
+**Predecessor:** When archivegodState was absent, getGodState() returned the shared defaultState object. Mutating its returned nested influence (or an unsuccessful shiftMood()/setMask() write) changed what future unsaved reads returned, despite nothing being committed to browser storage. Existing literal "null" was treated as a missing state; a parsed array or primitive could be mutated or displayed as meaningless story fields. Malformed JSON threw without a visible recovery message, leaving Archivegod Pulse on "Loading...".
+
+**Proposed choice:** Return an independent copy of the default with an independent influence map for a genuinely missing key. For a present key, require parseable non-array object data and the three existing story text fields; refuse invalid data without rewriting any original bytes. Preserve valid custom fields and influence values on mood/mask updates. Archivegod Pulse displays inert text explaining that the stored history was not cleared and should be preserved for manual recovery. No automatic reset, backup rewrite or schema migration is attempted.
+
+**Compatibility/risk limits:** Incomplete legacy records lacking mood, mask or prophecy now fail visibly instead of displaying undefined or being silently edited. Unknown fields and influence structure are left intact, deliberately avoiding invented reconstruction. This is browser-local fictional state, not an authentication boundary. Concurrent tabs, write failures between other keys, browser deployment, iPhone and power-loss durability are unverified. The separate draft PR is the place for exact-revision test evidence and review.
 
 ## Decision 2026-11-11: previously earned crowns are not recalculated
 
