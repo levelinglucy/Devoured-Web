@@ -4,13 +4,13 @@
 
 **Goal:** Keep the interactive shard mythology usable and protect user-editable browser-local history while preserving its original voice. Fix confirmed security, data-integrity and entry-point failures in bounded changes.
 
-**Integration:** [Rootrite PR #11](https://github.com/levelinglucy/Devoured-Web/pull/11) is merged. [Throne-history PR #12](https://github.com/levelinglucy/Devoured-Web/pull/12) proposes preserving an already earned crown and refusing malformed registry data. Observe merge status separately.
+**Integration:** Rootrite PR #11 and throne-history PR #12 are integrated on main `69e70157`. Fold-state reserved-sigil repair is a separate review-branch candidate, not merged.
 
-**Validation:** Dependency-free `npm test` covers Node 20/22 in GitHub Actions. Throne-history tests use synthetic browser storage; [PR #12](https://github.com/levelinglucy/Devoured-Web/pull/12) is the exact-revision validation record. No live-browser/iPhone, concurrent-tab or power-loss proof is claimed.
+**Validation:** Existing throne-history regression suite passed 51/51 per Node 20/22 on exact main `69e70157` ([CI](https://github.com/levelinglucy/Devoured-Web/actions/runs/43087630053)). For the Fold candidate, three new synthetic tests passed under local Node 22 after one reserved-key test first failed on predecessor. The exact candidate head `85a556f4` passed 54/54 hosted tests in each Node 20/22 ([CI run 43546517091](https://github.com/levelinglucy/Devoured-Web/actions/runs/43546517091)); this evidence applies to that revision and byte-identical source/test files. No live Firebase/browser, iPhone or storage durability proof is claimed.
 
 **Publication:** No new tagged or published stable release is verified.
 
-**Selected next steps:** Validate PR #12 at its exact final candidate revision, integrate only with applicable checks and protections satisfied; then choose another useful milestone. Worldheart and Beacon remain separate parked candidates.
+**Selected next steps:** Review Fold candidate's exact-head CI and code diff; keep it unmerged if any relevant check is unverified or failing. Preserve separate Worldheart and Beacon parked candidates.
 
 ## Decision 2026-11-11: previously earned crowns are not recalculated
 
@@ -91,3 +91,11 @@ The historical static pages and ZIP uploads are retained. Explain verified earli
 Pantheon, Ritual Trail and Shard Thrones previously contained literal escape characters before JavaScript template-literal delimiters and interpolation expressions; the inline modules therefore could not parse. Ritual Trail and Shard Thrones additionally interpolated locally editable registry records into HTML. PR #6 replaces the three page renderers with explicit DOM elements and textContent, preserving the original labels, field ordering, 200-character preview length, CSS class names and localStorage formats.
 
 Empty lists show plain-text messages; unreadable or wrong-shaped local registries show an error without clearing the underlying storage. The tests check native parsing, hostile-looking saved text, field rendering and malformed registries. No claim is made about archived ZIP content, real-browser deployment, or cross-origin storage attackers.
+
+## Decision 2026-11-14: Firestore sigil IDs are data, not object prototypes
+
+**Observed predecessor:** `fold.js` used `traitMap = {}` to group Firestore-sourced echo sigils. Reserved strings `__proto__`, `constructor` and `toString` instead resolved inherited properties. Three independent sigils with three rebellion echoes each produced `Awake`, not the intended `Ignited`. In particular, incrementing `__proto__` could assign `rekindled = NaN` to `Object.prototype` within the page realm. A Node VM regression using synthetic Firestore snapshots first failed on this exact old source (2 pass / 1 fail).
+
+**Choice:** Use `Map` with `has/get/set` for per-sigil rebellion counters, leaving the existing `Fractured > Ignited > Awake > Still` thresholds and queries unchanged. Reserved strings are now ordinary distinct identities; the counting path no longer accesses inherited object properties. No data migration or Firebase rules change is involved.
+
+**Validation and limits:** Local Node 22 tests on the candidate passed 3/3 including module syntax, the ordinary thresholds and reserved-name isolation; exact candidate `fold.js` and new test Git blobs were independently read back against locally tested files. This is a small in-memory counting correction, **not** a Firestore schema validation or site-wide prototype-pollution audit. Non-string missing/ambiguous IDs and malformed anomaly categories deserve separate schema decisions rather than implicit coercion here. No live Firebase/browser or release claim. The exact candidate head `85a556f4` passed 54/54 hosted tests on each Node 20 and 22; check current branch revisions separately. Revisit if Firestore schemas become defined, especially how to treat absent IDs.

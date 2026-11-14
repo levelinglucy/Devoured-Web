@@ -10,12 +10,15 @@ export async function getFoldState() {
   const echoCount = echoSnap.size;
   const anomalyCount = anomalySnap.size;
 
-  const traitMap = {};
+  // Firestore sigils are data, not Object property names. Inherited names such as
+  // "__proto__" must count normally and must not mutate global prototypes.
+  const traitMap = new Map();
 
   echoSnap.forEach(doc => {
     const data = doc.data();
-    if (!traitMap[data.sigil]) traitMap[data.sigil] = { rekindled: 0 };
-    if (data.tone === "rebellion") traitMap[data.sigil].rekindled++;
+    const sigil = data.sigil;
+    if (!traitMap.has(sigil)) traitMap.set(sigil, 0);
+    if (data.tone === "rebellion") traitMap.set(sigil, traitMap.get(sigil) + 1);
   });
 
   const glitchedUsers = new Set();
@@ -26,7 +29,7 @@ export async function getFoldState() {
     }
   });
 
-  const rekindledBursts = Object.values(traitMap).filter(v => v.rekindled >= 3).length;
+  const rekindledBursts = Array.from(traitMap.values()).filter(count => count >= 3).length;
 
   if (glitchedUsers.size >= 3) return "Fractured";
   if (rekindledBursts >= 3) return "Ignited";
