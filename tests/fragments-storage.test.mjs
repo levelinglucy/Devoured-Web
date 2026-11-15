@@ -21,50 +21,55 @@ function fixture(raw = null, failWrite = false) {
     },
     removeItem: key => entries.delete(key)
   };
-  const context = { localStorage: storage };
-  runInNewContext(source.replace(/\bexport\s+(?=function)/g, "") +
+  const navigator = { locks: { request: (name, options, callback) => {
+    assert.equal(name, "aletheFragments:write:v1");
+    assert.equal(options.mode, "exclusive");
+    return Promise.resolve().then(callback);
+  } } };
+  const context = { localStorage: storage, navigator };
+  runInNewContext(source.replace(/\bexport\s+(?=(?:async\s+)?function)/g, "") +
     "\nthis.api = { getFragments, addFragment };", context);
   return { entries, get writes() { return writes; }, ...context.api };
 }
 
-test("new fragment archives begin empty and round-trip ordinary entries", () => {
+test("new fragment archives begin empty and round-trip ordinary entries", async () => {
   const state = fixture();
   assert.equal(state.getFragments().length, 0);
   assert.equal(state.entries.has("aletheFragments"), false);
-  state.addFragment("First", "The tide keeps its shells");
+  assert.equal(await state.addFragment("First", "The tide keeps its shells"), true);
   assert.deepEqual(JSON.parse(state.entries.get("aletheFragments")),
     [{ title: "First", text: "The tide keeps its shells" }]);
-  state.addFragment("First", "Do not overwrite an existing title");
+  assert.equal(await state.addFragment("First", "Do not overwrite an existing title"), false);
   assert.equal(state.writes, 1);
 });
 
-test("present but damaged archive roots are refused without replacing raw data", () => {
+test("present but damaged archive roots are refused without replacing raw data", async () => {
   for (const raw of ["", "null", "{}", "0", '"broken"', "{broken"]) {
     const state = fixture(raw);
     assert.throws(() => state.getFragments(), /fragment|archive|unreadable|invalid/i, raw);
-    assert.throws(() => state.addFragment("New", "safe"), /fragment|archive|unreadable|invalid/i, raw);
+    await assert.rejects(state.addFragment("New", "safe"), /fragment|archive|unreadable|invalid/i, raw);
     assert.equal(state.entries.get("aletheFragments"), raw);
     assert.equal(state.writes, 0);
   }
 });
 
-test("malformed individual entries are not silently reserialized on append", () => {
+test("malformed individual entries are not silently reserialized on append", async () => {
   for (const raw of [
     '[null]', '["free text"]', '[["array"]]',
     '[{"title":"old"}]', '[{"text":"orphan"}]',
     '[{"title":"old","text":null}]'
   ]) {
     const state = fixture(raw);
-    assert.throws(() => state.addFragment("New", "safe"), /fragment|archive|invalid/i, raw);
+    await assert.rejects(state.addFragment("New", "safe"), /fragment|archive|invalid/i, raw);
     assert.equal(state.entries.get("aletheFragments"), raw);
     assert.equal(state.writes, 0);
   }
 });
 
-test("valid older entries and additional custom fields are preserved", () => {
+test("valid older entries and additional custom fields are preserved", async () => {
   const raw = '[{"title":"Old","text":"Lore","source":"manual"}]';
   const state = fixture(raw);
-  state.addFragment("New", "Hello");
+  await state.addFragment("New", "Hello");
   const entries = JSON.parse(state.entries.get("aletheFragments"));
   assert.deepEqual(entries, [
     { title: "Old", text: "Lore", source: "manual" },
@@ -72,18 +77,18 @@ test("valid older entries and additional custom fields are preserved", () => {
   ]);
 });
 
-test("a rejected archive write does not claim persistence or erase original data", () => {
+test("a rejected archive write does not claim persistence or erase original data", async () => {
   const raw = '[{"title":"Old","text":"Lore"}]';
   const state = fixture(raw, true);
-  assert.throws(() => state.addFragment("New", "safe"), /Storage rejected write/);
+  await assert.rejects(state.addFragment("New", "safe"), /Storage rejected write/);
   assert.equal(state.entries.get("aletheFragments"), raw);
   assert.equal(state.writes, 1);
 });
 
-test("a fragment writer refuses fields that would serialize as missing", () => {
+test("a fragment writer refuses fields that would serialize as missing", async () => {
   const state = fixture();
-  assert.throws(() => state.addFragment("Bad", undefined), /fragment|title|text|invalid/i);
-  assert.throws(() => state.addFragment(null, "Text"), /fragment|title|text|invalid/i);
+  await assert.rejects(state.addFragment("Bad", undefined), /fragment|title|text|invalid/i);
+  await assert.rejects(state.addFragment(null, "Text"), /fragment|title|text|invalid/i);
   assert.equal(state.writes, 0);
   assert.equal(state.entries.has("aletheFragments"), false);
 });
