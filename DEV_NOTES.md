@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Preserve an existing but malformed browser-local `aletheFragments` archive instead of treating it as empty or rewriting malformed entries during a new Rootcraft fragment append.
+**Goal:** Prevent cooperating tabs of the current site from silently losing browser-local lore when they append concurrently. Rootcraft must allocate its next numbered title inside the same exclusive critical section as its storage write.
 
-**Integration:** [Draft PR #18](https://github.com/levelinglucy/Devoured-Web/pull/18) proposes the fragment archive correction from main `b54aa336`. It remains open and unmerged pending review and hosted validation. Prior identity-integrity PR #17 is merged at `b54aa336`; Git integration is not browser deployment.
+**Integration:** Draft branch `noe/fragment-web-locks-spike` against Devoured-Web main `7944a9b5`. Unmerged. Existing archive stays in the same `aletheFragments` localStorage key; no migration or overwrite of historical raw bytes. The export contracts for `addFragment`, `clearFragments` and `injectFragment` become asynchronous and therefore require integration review.
 
-**Validation:** Exact predecessor fragment blob `89f835bda4`: **3/6** new regression tests passed, **3/6 failed as expected**, locally on Node 22.16.0. Corrected fragment blob `9c2e62a72680` and test blob `80f93ae832cd`: **6/6** focused tests passed and `node --check fragments.js` passed locally. Independently read back both blobs from PR branch. Hosted full-suite CI is not yet verified; no browser, iPhone or power-loss evidence.
+**Validation:** A detached, source-corresponding Node 22.16.0 test harness passed 17/17 focused regressions: shared mocked lock serialization, duplicate-title allocation, rejected writes, unreadable raw preservation, absent-lock refusal, serial clear, Rootcraft gating and asynchronous UI handling. This is a *mock Web Locks* test, not actual multi-tab proof. Hosted repo suite and exact remote PR-head CI remain pending. Chromium 144 launch succeeded in the testing sandbox, but navigation was blocked by policy (`net::ERR_BLOCKED_BY_ADMINISTRATOR`), including a data: page, so real browser results are unavailable.
 
-**Release:** Not released, deployed or tagged by this proposal.
+**Release:** None; do not merge or deploy based on the mocked interleaving alone.
 
-**Selected next steps:** (1) Verify full hosted tests at exact final PR head on Node 20 and 22. (2) Review historical/manual fragment entries lacking title or text fields and any project-specific integration requirements; retain draft if uncertain. (3) Only consider merging after relevant validation and compatibility review.
+**Selected next steps:** (1) Verify exact draft PR-head Node 20/22 suite and source readback. (2) Test real Web Locks and mixed-version concurrent tabs in a permitted HTTPS browser before considering deployment. (3) Revisit lack-of-lock fallback and the asynchronous public API compatibility; preserve the original source via main and branch history.
+
+## Decision 2026-11-15: cooperative exclusive lock as a no-migration prototype
+
+**Problem:** Rootcraft previously selected a numbered title using an unlocked snapshot then called an independent append. Two tabs can choose the same title and the duplicate can silently no-op. Independent `addFragment` writers can also overwrite one another's snapshots. These are deterministic simulated hazards, not verified real-user incidents.
+
+**Prototype:** Route *every tracked writer* (`addFragment`, Rootcraft numbering and `clearFragments`) through the same named `navigator.locks.request(..., {mode: 'exclusive'}, callback)`. Within one callback re-read the current saved archive, validate its shape, choose a free title if needed and call one `localStorage.setItem`. Preserve any valid custom fields and the original raw archive bytes on validation/write failure. Rootcraft awaits completion before reporting success and ignores repeated clicks while awaiting. No Web Locks or denied lock request means a visible failure and **no fallback write**.
+
+**Trade-offs and limits:** The [Web Locks interface](https://developer.mozilla.org/en-US/docs/Web/API/Web_Locks_API) is secure-context-only; a file: URL, old browser, denied API or restricted embedded context may refuse all writes. The lock only protects *cooperating same-origin agents that use this new code*. Old already-open tabs, third-party scripts and manually modified storage can still clobber changes; there is no durable database transaction, backup, power-loss guarantee or actual browser interleaving proof. `getFragments` stays synchronous for existing readers, but formerly synchronous writer functions now return Promises. Do not call this an atomic cross-version migration or a complete repair. The alternative IndexedDB transaction approach remains open if browser/integration evidence finds Web Locks unsuitable.
 
 ## Decision 2026-11-14: preserve damaged fragment archives before append
 
