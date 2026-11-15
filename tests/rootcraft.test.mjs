@@ -10,6 +10,13 @@ const html = readFileSync(join(root, "rootcraft.html"), "utf8");
 const script = html.match(/<script\s+type=["']module["']\s*>([\s\S]*?)<\/script>/i)?.[1];
 assert.ok(script, "Rootcraft must have its module script");
 
+// Node's navigator has a getter; use a deterministic mock of the Web Locks
+// callback contract for these tests, not a claim about real browser locking.
+Object.defineProperty(globalThis, "navigator", {
+  configurable: true,
+  value: { locks: { request: (_name, _options, callback) => Promise.resolve().then(callback) } }
+});
+
 function storage(initial = {}) {
   const values = new Map(Object.entries(initial));
   return {
@@ -23,17 +30,17 @@ test("Rootcraft's imported local-only module is available and Wanderer-gated", a
   const { isWanderer, injectFragment } = await import("../breakfold.js");
   globalThis.localStorage = storage();
   assert.equal(isWanderer(), false);
-  assert.throws(() => injectFragment("Denied"), /Wanderer/);
+  await assert.rejects(injectFragment("Denied"), /Wanderer/);
   assert.equal(localStorage.getItem("aletheFragments"), null);
 
   localStorage.setItem("visitorFaction", "Wanderer");
   assert.equal(isWanderer(), true);
-  assert.throws(() => injectFragment(" \n "), /empty|Write|fragment/i);
-  assert.throws(() => injectFragment("a".repeat(2001)), /long|2000/i);
+  await assert.rejects(injectFragment(" \n "), /empty|Write|fragment/i);
+  await assert.rejects(injectFragment("a".repeat(2001)), /long|2000/i);
   assert.equal(localStorage.getItem("aletheFragments"), null);
 
-  const first = injectFragment("<img src=x onerror=alert(1)>");
-  const second = injectFragment("Another root");
+  const first = await injectFragment("<img src=x onerror=alert(1)>");
+  const second = await injectFragment("Another root");
   assert.notEqual(first, second);
   assert.deepEqual(JSON.parse(localStorage.getItem("aletheFragments")), [
     { title: first, text: "<img src=x onerror=alert(1)>" },
@@ -47,11 +54,11 @@ test("Malformed existing archive is not silently replaced", async () => {
     visitorFaction: "Wanderer",
     aletheFragments: "{damaged"
   });
-  assert.throws(() => injectFragment("New root"));
+  await assert.rejects(injectFragment("New root"));
   assert.equal(localStorage.getItem("aletheFragments"), "{damaged");
 });
 
-test("Rootcraft UI reports denial, success, and storage errors accurately", () => {
+test("Rootcraft UI reports denial, success, and storage errors accurately", async () => {
   assert.match(script, /import\s*\{\s*injectFragment,\s*isWanderer\s*\}\s*from\s*["']\.\/breakfold\.js["']/);
   const stripped = script.replace(/^\s*import\s*\{\s*injectFragment,\s*isWanderer\s*\}\s*from\s*["']\.\/breakfold\.js["'];?\s*$/m, "");
   assert.notEqual(stripped, script);
@@ -70,15 +77,15 @@ test("Rootcraft UI reports denial, success, and storage errors accurately", () =
     }
   };
   runInNewContext(stripped, context);
-  context.window.cast();
+  await context.window.cast();
   assert.equal(called, 0);
   assert.match(nodes.result.innerText, /Only Wanderers/);
   permitted = true;
-  context.window.cast();
+  await context.window.cast();
   assert.equal(called, 1);
   assert.match(nodes.result.innerText, /saved|injected/i);
   shouldThrow = true;
-  context.window.cast();
+  await context.window.cast();
   assert.equal(called, 2);
   assert.doesNotMatch(nodes.result.innerText, /injected|saved/i);
 });
