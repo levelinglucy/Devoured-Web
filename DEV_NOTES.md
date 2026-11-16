@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Prevent malformed Archivegod mood/mask edit arguments from corrupting browser-local narrative state.
+**Goal:** Let visitors manually copy their original browser-local fragment or ritual-trail storage text, even when malformed data blocks ordinary display. Preserve the story, not silently replace it.
 
-**Integration:** Draft branch `noe/portfolio-archivegod-input-guards` adds synchronous type checks to `shiftMood` and `setMask` before reading/writing storage and extends the existing Archivegod regression tests. This change is not yet integrated.
+**Integration:** Draft branch `noe/portfolio-local-archive-backup` adds a shared, opt-in, read-only raw-text view to `fragments.html` and `trail.html`. This is **not integrated** into main. Previous Archivegod input guards were independently merged at main `ed221616df34188ebf7c92d8f6b09876982bc4a3`, verified with 95/95 Node 20 and 22 exact-main tests and Pages deployment; see PR #23 and Workshop 195.
 
-**Validation:** The exact predecessor `archivegod.js` was reproduced in a detached V8 harness: `shiftMood(undefined)`, `shiftMood(0)`, `setMask(null)` and `setMask({})` silently wrote malformed state that later fails `getGodState()`. A patched-source V8 check rejected 20 invalid input combinations against missing and present data with raw bytes preserved, and still accepted valid empty strings. This remains a synthetic check, not an actual browser-storage test. Hosted PR CI at `b169d3bce7db13bb0044664d9022368ce0e664a4` passed 95/95 tests on each Node 20 and 22 in workflow [43823853395](https://github.com/levelinglucy/Devoured-Web/actions/runs/43823853395); both job logs independently inspected. Review the latest candidate commit and its checks before merging; these are not post-merge or live-browser results.
+**Validation:** New read-only helper and wiring have an isolated six-case Node 22 rehearsal (malformed/present-empty/absent text, blocked reads, key restriction and module syntax); live GitHub branch test matrix, actual browser selection/copy, Safari and device backup remain unverified. The PR should carry exact-revision validation evidence rather than duplicating it here.
 
-**Release:** No merge, deployment or tag for this draft. The preceding Ritual Trail repair was independently confirmed merged at main `cdbdf5ed`, with 93/93 tests on each Node 20/22 and a successful Pages workflow for that SHA, but native browser/localStorage and multi-tab durability remain unverified.
+**Release:** Current backup branch is draft and unreleased; prior Archivegod source is merged and Pages-deployed but no software tag was established.
 
-**Next:** (1) Review current PR #23 checks, current main base and merge requirements. (2) Integrate only with passing checks and permitted review state; verify exact merged-main CI and any deployment separately. (3) Retain browser/device/multi-tab uncertainty; never imply a localStorage transaction.
+**Next:** (1) Run and inspect branch CI against its exact head; fix any test compatibility failures. (2) Review navigation accessibility, privacy and actual copy affordance; keep draft until adequate validation. (3) Leave the independent Web Locks and IndexedDB experiments parked pending real browser evidence.
+
+## Decision 2026-11-16: reveal raw local history without rewriting it
+
+**Need:** Existing fragment and trail readers intentionally refuse damaged browser-local JSON, but visitors then have no built-in way to copy that raw text before considering manual recovery. The README previously advised backing up data without offering a route inside these pages.
+
+**Choice:** An explicit click reveals one selected localStorage value in a read-only `textarea`; no parsing, serialization, HTML interpolation, network calls or storage writes. An absent key shows a separate message; a present empty string remains visible as a legitimate saved value. Blocked storage reads display an inert warning. Only the two named story keys are supported, and nothing is revealed on initial page load.
+
+**Boundaries:** Copying into a private file is a manual user action, not an actual completed backup, download, restoration, transaction or durable archive. This can only read records still held under the current browser origin; it cannot reconstruct previously deleted data. Real browser behaviour, permissions, devices and cross-tab changes remain unverified. Do not add automatic repair or uploads without a separate reviewed design.
 
 ## Decision 2026-11-16: reject invalid Archivegod edits before storage
 
