@@ -24,7 +24,7 @@
 </head>
 <body>
   <h1>Alethe's Fold</h1>
-  <div id="state" class="state">Scanning...</div>
+  <div id="state" class="state" role="status" aria-atomic="true">Scanning...</div>
   <div id="desc" class="desc">...</div>
 
 <script type="module">
@@ -55,6 +55,10 @@
   getFoldState().then(state => {
     stateEl.innerText = "Current State: " + state;
     descEl.innerText = foldDescriptions[state] || "Unknown disturbance detected.";
+  }).catch(() => {
+    // Keep remote errors out of page text, and do not leave Scanning forever.
+    stateEl.textContent = "Fold state unavailable. Try again later.";
+    descEl.textContent = "The Archive could not be reached.";
   });
 </script>
 </body>
