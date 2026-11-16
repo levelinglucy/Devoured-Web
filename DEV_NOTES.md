@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Prevent a single malformed Firestore document from crashing the Fold-state classification. Keep the existing counting thresholds and historical string/list category semantics intact.
+**Goal:** When the network or Firestore read fails, replace the indefinite "Loading..." placeholder on all four domain echo feeds with a safe, inert warning; preserve successful rendering.
 
-**Integration:** Draft PR #25, branch `noe/fold-malformed-records-20261116`, protects `fold.js` from null record bodies and numeric/map anomaly categories. This is **not merged into main**. The preceding opt-in local archive backup feature was merged as PR #24 at `2a4a219a5df390b39a4eb5d0b1053de7c10bad23` and Pages deployment was independently verified in Workshop 199.
+**Integration:** Draft PR [#26](https://github.com/levelinglucy/Devoured-Web/pull/26), `noe/echo-feed-error-ui-20261116`; not merged. Prior Fold malformed-snapshot repair PR #25 **was merged** at `19b3a5c803ad3cbc7c8eec157fb6259bfbc3b54d` and its exact-main Node 20/22 suite passed 104/104 each, with successful Pages deployment workflow [43908919448](https://github.com/levelinglucy/Devoured-Web/actions/runs/43908919448). This is NOT a tagged release or live cloud validation.
 
-**Validation:** Tests-first PR commit `8705397a` failed exactly 2 of 104 tests on each Node 20/22 (run [43908487213](https://github.com/levelinglucy/Devoured-Web/actions/runs/43908487213)). With source fix commit `f37b8a36`, all 104/104 tests passed on Node 20 and 22 (run [43908573263](https://github.com/levelinglucy/Devoured-Web/actions/runs/43908573263)); both job logs independently inspected. These are mocked Firestore snapshots, not live cloud data or browser-device tests.
+**Validation:** Added a Node VM fixture that runs the four page scripts with fake Firestore and DOM, with explicit rejected reads and successful snapshots. Review the candidate PR matrix (Node 20/22), actual job logs and current head before promoting. No completed candidate CI claimed in this note.
 
-**Release:** Fix is draft/unmerged/unreleased. Previous archive feature is merged and Pages-deployed without a verified software tag.
+**Release:** Feed error handling is draft/unmerged/unreleased. No production cloud, browser, iPhone or network-outage evidence.
 
-**Next:** (1) Review PR #25's changed source and current branch checks after documentation changes. (2) If review permits integration, independently validate exact merged-main tests and deployment; record each state separately. (3) Do not claim that malformed Firestore records actually exist in production or that network/auth failures have been addressed.
+**Next:** (1) Inspect exact-head tests and regression logs. (2) Review all four page changes and confirm branch head and required checks before any merge. (3) If integrated, validate merged main and Pages deployment separately; do not claim users have experienced cloud failures.
+
+## Decision 2026-11-16: make echo-feed loading failures visible
+
+**Observed code-level issue:** `sentinel.html`, `ember.html`, `lucid.html` and `mirror.html` awaited Firestore `getDocs()` without a catch. If the promise rejects, the page keeps displaying "Loading..." indefinitely; its unhandled rejection does not give the visitor a useful explanation. This is inferred from the source and tested with synthetic rejection, not evidence of actual site outages.
+
+**Choice:** Wrap each existing asynchronous fetch-and-render path in a catch which sets static `textContent`. Keep the existing shared inert-text renderer and unchanged normal success path. Do not expose raw Firebase error messages, rewrite data, or silently clear stored history. No retry loop or new network access added.
+
+**Boundaries:** Mocked Firestore/DOM exercise the page's inline scripts, not an actual Firebase outage or browser/device deployment. A failure inside the renderer will also show a generic warning, not a stack trace. Revisit if user-facing retry becomes a demonstrable need.
 
 ## Decision 2026-11-16: tolerate malformed Fold snapshot fields
 
