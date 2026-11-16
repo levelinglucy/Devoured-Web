@@ -35,12 +35,18 @@ export function getGodState() {
 }
 
 export function shiftMood(newMood) {
+  if (typeof newMood !== "string") {
+    throw new TypeError("Archivegod mood must be a string; saved history was not changed");
+  }
   const state = getGodState();
   state.mood = newMood;
   localStorage.setItem(key, JSON.stringify(state));
 }
 
 export function setMask(maskName) {
+  if (typeof maskName !== "string") {
+    throw new TypeError("Archivegod mask must be a string; saved history was not changed");
+  }
   const state = getGodState();
   state.dominantMask = maskName;
   localStorage.setItem(key, JSON.stringify(state));
