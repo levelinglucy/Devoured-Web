@@ -14,6 +14,10 @@
     .glitch {
       animation: glitch 0.15s infinite alternate;
     }
+    /* Respect the visitor's OS motion preference; keep default animation. */
+    @media (prefers-reduced-motion: reduce) {
+      .glitch { animation: none; }
+    }
     @keyframes glitch {
       0% { opacity: 1; transform: translateX(0); }
       100% { opacity: 0.95; transform: translateX(-1px); }

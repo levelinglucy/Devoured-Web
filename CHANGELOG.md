@@ -1,6 +1,7 @@
 # Change history
 
 ## Unreleased
+- Respect the operating system's reduced-motion preference by disabling continuous Echoform Glyph and Rootrite heading flicker only for visitors who request reduced motion.
 - Preserve damaged existing fragment archives without silent reset or partial-entry rewrites; validate new entries before local append.
 - Preserve malformed present Living Sigils on both the engine and Threshold entrance; keep mutation rotations within base36 and generate a nonempty seed at a zero-randomness boundary.
 - Keep the current Living Sigil unchanged if history storage fails, and best-effort restore exact history when a later sigil write is rejected; report failed rollback explicitly.
