@@ -2,15 +2,27 @@
 
 ## Development
 
-**Goal:** Preserve exact historical browser-local ritual trail bytes when adding a new entry; never turn damaged existing data into an empty archive or partially serialized record.
+**Goal:** Prevent malformed Archivegod mood/mask edit arguments from corrupting browser-local narrative state.
 
-**Integration:** Candidate branch `noe/portfolio-ritual-trail-preservation` changes `pagespawn.js`, adds `tests/pagespawn-storage.test.mjs`; review through a draft PR before integration. Previously integrated reduced-motion CSS remains on main at `54ebc996`, with exact-main 85/85 tests each on Node 20/22 and successful GitHub Pages deployment workflow (see PR #21). Separate Web Locks PR #20 remains draft and is out of scope.
+**Integration:** Draft branch `noe/portfolio-archivegod-input-guards` adds synchronous type checks to `shiftMood` and `setMask` before reading/writing storage and extends the existing Archivegod regression tests. This change is not yet integrated.
 
-**Validation:** The predecessor failed 3 of 6 new focused tests (blank present data, malformed historical entries, and invalid new record); corrected source passed 8/8 focused tests on local Node 22.16.0, plus syntax check. This does **not** validate a served browser, multitab concurrency, abrupt termination or full hosted CI at this candidate revision.
+**Validation:** The exact predecessor `archivegod.js` was reproduced in a detached V8 harness: `shiftMood(undefined)`, `shiftMood(0)`, `setMask(null)` and `setMask({})` silently wrote malformed state that later fails `getGodState()`. A patched-source V8 check rejected 20 invalid input combinations against missing and present data with raw bytes preserved, and still accepted valid empty strings. This remains a synthetic check, not an actual browser-storage test. Hosted PR CI at `b169d3bce7db13bb0044664d9022368ce0e664a4` passed 95/95 tests on each Node 20 and 22 in workflow [43823853395](https://github.com/levelinglucy/Devoured-Web/actions/runs/43823853395); both job logs independently inspected. Review the latest candidate commit and its checks before merging; these are not post-merge or live-browser results.
 
-**Release:** Proposed, not integrated and not tagged/released. No proof of live site behaviour.
+**Release:** No merge, deployment or tag for this draft. The preceding Ritual Trail repair was independently confirmed merged at main `cdbdf5ed`, with 93/93 tests on each Node 20/22 and a successful Pages workflow for that SHA, but native browser/localStorage and multi-tab durability remain unverified.
 
-**Next:** (1) Review compatibility and full Node 20/22 PR checks. (2) If acceptable, merge low-risk code only after current branch/required reviews/checks permit. (3) Leave native browser and concurrent-tab integrity unverified until a permitted test environment can observe them.
+**Next:** (1) Review current PR #23 checks, current main base and merge requirements. (2) Integrate only with passing checks and permitted review state; verify exact merged-main CI and any deployment separately. (3) Retain browser/device/multi-tab uncertainty; never imply a localStorage transaction.
+
+## Decision 2026-11-16: reject invalid Archivegod edits before storage
+
+**Reproduced:** Existing Archivegod reads require text `dominantMask`, `mood`, `prophecy`, but the two exported writers accepted arbitrary arguments. `undefined` is omitted by JSON serialization, while number/null/object values replace expected text and leave `getGodState()` unable to read the saved story. This is a deterministic API defect, not evidence of actual user data loss; default-branch search located no application callers beyond tests.
+
+**Choice:** Reject non-primitive strings with a `TypeError` before calling `getGodState()`, so rejected writes do not rewrite existing bytes or create default state. Preserve legitimate empty strings, all valid history fields and current storage-error propagation. No silent coercion to text, no automatic archive repair.
+
+**Boundaries:** This guards this pair of exported writers only; direct/hostile storage changes, concurrent tabs, abrupt termination, device-specific behaviour and durability remain untested. If a verified historical caller needs numeric moods, revisit with explicit migration rather than silently weakening stored-text integrity.
+
+## Previous completed milestone: Ritual Trail source preservation
+
+Merged PR #22 into `main` at exact SHA `cdbdf5ed4baba86666829579f1c3e7124d278e90`; 93/93 Node tests on each 20/22 and Pages workflow succeeded on that SHA. No tag or live-browser certification. Full rationale below.
 
 ## Decision 2026-11-16: append to Ritual Trail without rewriting earlier bytes
 

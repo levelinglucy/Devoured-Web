@@ -115,3 +115,31 @@ test("Archivegod Pulse warns on invalid saved state without clearing it", () => 
     assert.equal(state.state.storage.get("archivegodState"), raw);
   }
 });
+
+
+test("Invalid mood and mask arguments never damage existing or missing story state", () => {
+  const existing = JSON.stringify({
+    dominantMask: "Original", mood: "Quiet", prophecy: "Still here.",
+    influence: { Wanderers: 7 }, custom: { history: ["kept"] }
+  });
+  for (const raw of [null, existing]) {
+    for (const method of ["shiftMood", "setMask"]) {
+      for (const invalid of [undefined, null, 0, NaN, {}, new String("wrapped")]) {
+        const state = fixture(raw);
+        assert.throws(() => state[method](invalid), /must be a string/);
+        assert.equal(state.storage.get("archivegodState") ?? null, raw,
+          `${method} must not change original bytes for ${String(invalid)}`);
+      }
+    }
+  }
+});
+
+test("Blank mood and mask strings are still valid textual story choices", () => {
+  const state = fixture();
+  state.shiftMood("");
+  state.setMask("");
+  const saved = state.getGodState();
+  assert.equal(saved.mood, "");
+  assert.equal(saved.dominantMask, "");
+  assert.equal(saved.prophecy, "The root will crack the seal. The silence will speak first.");
+});
