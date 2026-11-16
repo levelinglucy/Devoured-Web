@@ -15,7 +15,7 @@
 </head>
 <body>
   <h1 id="title">Shard Interface</h1>
-  <p id="desc">Let the Fold reveal its skin...</p>
+  <p id="desc" role="status" aria-atomic="true">Let the Fold reveal its skin...</p>
 
 <script type="module">
   import { applyWorldskin } from './worldskin.js';
@@ -33,6 +33,9 @@
     } else if (state === "Ignited") {
       desc.innerText = "The Fold burns. Ember’s breath reaches every corner.";
     }
+  }).catch(() => {
+    // Avoid a permanent pending state on a rejected Fold/Firestore read.
+    document.getElementById("desc").textContent = "Fold state unavailable. Try again later.";
   });
 </script>
 </body>

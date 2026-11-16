@@ -2,15 +2,29 @@
 
 ## Development
 
-**Goal:** Give Rootcraft a genuine mobile viewport, a persistent form label and a polite status region so local-writing outcomes are easier to read and understand on small screens and with assistive technology. Preserve all writing, validation, storage and denial logic.
+**Goal:** Make the Fold state viewer and the Shard skin viewer fail visibly and safely when their asynchronous Fold/Firestore read rejects; leave successful state rendering, database configuration and browser-local archives unchanged.
 
-**Integration:** Proposed on `noe/rootcraft-mobile-accessibility-20261116` for review. This change is not merged, deployed or a tagged release. The previous echo-feed error-state repair PR [#26](https://github.com/levelinglucy/Devoured-Web/pull/26) is merged on `main` at `de678ead4f901372a19d4adbfec2f3bc185eeb13`.
+**Integration:** Proposed on `noe/fold-page-error-visibility-20261116` for review; not yet merged. Rootcraft accessibility PR [#27](https://github.com/levelinglucy/Devoured-Web/pull/27) is merged at exact main `5e27da2f8d5a4959765a6113275b67253dcb2fc1`.
 
-**Validation:** An earlier isolated Chromium 144 experiment with the original Rootcraft page and stubs demonstrated a 390px mobile viewport, correct label association, a 44px button and the same three denial/success/error messages (12 synthetic desktop/mobile scenarios). The checked-in Node UI/markup regression is part of this proposed patch; hosted Node 20/22 checks on the final PR revision remain to be verified. This does not establish actual screen-reader announcements, a real iPhone, or live storage.
+**Validation:** The previous exact inline Fold/Shard scripts were executed with a synthetic rejected Promise: both propagated rejection and left the placeholder unchanged. A focused new source-script regression tests rejected and successful states; hosted checks of the candidate remain to be confirmed. Rootcraft PR #27 separately passed 107/107 Node 20 and Node 22 tests on merged main ([run 43929026363](https://github.com/levelinglucy/Devoured-Web/actions/runs/43929026363)) and its exact SHA was deployed by Pages ([run 43929023268](https://github.com/levelinglucy/Devoured-Web/actions/runs/43929023268)).
 
-**Release:** Rootcraft accessibility changes are unmerged and unreleased. The previously merged feed error-state repair has exact-main 106/106 tests per Node 20/22 in [run 43918423134](https://github.com/levelinglucy/Devoured-Web/actions/runs/43918423134) and a successful Pages workflow [43918421128](https://github.com/levelinglucy/Devoured-Web/actions/runs/43918421128), but no live Firestore outage or phone test was performed.
+**Release:** New Fold/Shard error-state changes are unmerged and unreleased. Rootcraft is integrated and Pages-deployed, but untagged; actual iPhone Safari, screen-reader announcements, real Firestore outages and live interaction remain unverified.
 
-**Next:** (1) Check proposed branch head and hosted Node matrix. (2) Review narrow-screen layout and status semantics without altering local archive behaviour. (3) Integrate only if relevant checks and branch policy permit; verify merged-main and deployment separately.
+**Next:** (1) Validate the candidate Node 20/22 suite and inspect review checks. (2) Merge only if the exact candidate passes required checks and permissions permit. (3) Verify exact merged-main tests and Pages separately; no device or Firebase outage claim from simulated tests.
+
+## Decision 2026-11-16: show rejected Fold state reads
+
+**Observed:** The baseline `fold.html` and `shard.html` module scripts each attached only a success handler to their asynchronous Fold request. A forced rejected Promise left `Scanning...` or `Let the Fold reveal its skin...` visible and propagated a rejection indefinitely. Both pages therefore need an explicit failure rendering boundary; this is source/synthetic evidence, not proof of production Firestore failures.
+
+**Choice:** Add a static text-only catch to each page, exposing neither remote error details nor raw HTML. Preserve success classification and styling logic, add polite status semantics for changing text, and do not retry, write browser storage or change Firebase configuration.
+
+**Limitations:** A Node VM with simulated remote dependencies checks the inline handlers; it does not demonstrate live Firebase, real-browser/assistive-technology rendering, deployment or iPhone compatibility. Revisit if an actual outage needs a retry interaction.
+
+## Previous completed milestone: Rootcraft mobile/accessibility improvement
+
+**Integration:** [PR #27](https://github.com/levelinglucy/Devoured-Web/pull/27) merged at `5e27da2f8d5a4959765a6113275b67253dcb2fc1`.
+
+**Validation and deployment:** Exact-main Node 20 and Node 22 each passed 107/107 in [run 43929026363](https://github.com/levelinglucy/Devoured-Web/actions/runs/43929026363); [Pages run 43929023268](https://github.com/levelinglucy/Devoured-Web/actions/runs/43929023268) deployed the same revision. No tagged release or live phone/screen-reader test.
 
 ## Decision 2026-11-16: Rootcraft mobile and accessible feedback
 

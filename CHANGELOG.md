@@ -1,6 +1,7 @@
 # Change history
 
 ## Unreleased
+- Display inert failure messages on Fold and Shard pages when the Fold state query rejects, avoiding indefinitely pending placeholders.
 - Improve Rootcraft's mobile viewport, visible writing-field label, polite result announcements and touch-target sizing without changing local save/denial behaviour.
 - Replace stalled loading text on the four Firestore shard feeds with an inert error warning when reads or rendering fail.
 - Tolerate null or wrongly typed Firestore Fold snapshot fields without aborting classification; retain valid string/list anomaly categories and existing thresholds.
