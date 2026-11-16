@@ -52,8 +52,13 @@ const shard = "lucid";
 
 async function loadEchoes() {
   const grid = document.getElementById("grid");
-  const snapshot = await getDocs(collection(db, "echoes"));
-  renderShardEchoes(grid, snapshot, shard);
+  try {
+    const snapshot = await getDocs(collection(db, "echoes"));
+    renderShardEchoes(grid, snapshot, shard);
+  } catch {
+    // Do not leak internal Firebase details or leave an indefinite loading screen.
+    grid.textContent = "Echoes could not be loaded. Try again later.";
+  }
 }
 
 loadEchoes();
