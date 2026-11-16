@@ -59,3 +59,29 @@ test("Firestore sigil names matching inherited Object properties count as ordina
   assert.equal(await ctx.fold(), "Ignited", "Three reserved sigil names count as three independent bursts");
   assert.equal(ctx.prototypeHasCount(), false, "Firestore-sourced names must not modify Object.prototype");
 });
+
+test("malformed anomaly category types do not abort Fold state evaluation", async () => {
+  const anomalies = [
+    null,
+    { sigil: "number", category: 12 },
+    { sigil: "map", category: { type: "loop" } },
+    { sigil: "one", category: "loop" },
+    { sigil: "two", category: ["self"] },
+    { sigil: "three", category: "self-loop" }
+  ];
+  assert.equal(await evaluate([], anomalies).fold(), "Fractured",
+    "Valid string or array labels still count, malformed categories are inert");
+  assert.equal(await evaluate([], [
+    { sigil: "number", category: 12 },
+    { sigil: "map", category: { type: "loop" } }
+  ]).fold(), "Awake",
+    "Two malformed anomaly documents still contribute to the existing anomaly count");
+});
+
+test("null Firestore record bodies are inert rather than crashing the Fold", async () => {
+  assert.equal(await evaluate([
+    null, { sigil: "ordinary", tone: "rebellion" }
+  ], [null]).fold(), "Still");
+  assert.equal(await evaluate([null, null, null, null, null], []).fold(), "Awake",
+    "Echo count threshold still counts the queried documents");
+});
