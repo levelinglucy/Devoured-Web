@@ -82,3 +82,12 @@ test("Rootcraft UI reports denial, success, and storage errors accurately", () =
   assert.equal(called, 2);
   assert.doesNotMatch(nodes.result.innerText, /injected|saved/i);
 });
+
+test("Rootcraft provides a mobile viewport, a persistent input label, and accessible status feedback", () => {
+  assert.match(html, /<meta\s+name="viewport"\s+content="width=device-width, initial-scale=1">/);
+  assert.match(html, /<label\s+for="frag">Root-script text<\/label>/);
+  assert.match(html, /<textarea\s+id="frag"/);
+  assert.match(html, /<div\s+id="result"\s+role="status"\s+aria-atomic="true"/);
+  assert.match(html, /textarea\s*\{[^}]*font-size:\s*16px;[^}]*box-sizing:\s*border-box;[^}]*max-width:\s*100%;/);
+  assert.match(html, /button\s*\{[^}]*min-height:\s*44px;/);
+});
