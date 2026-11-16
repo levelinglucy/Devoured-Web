@@ -1,0 +1,28 @@
+name: Local archive browser smoke
+on:
+  pull_request:
+    paths:
+      - 'fragments.html'
+      - 'trail.html'
+      - 'fragments.js'
+      - 'pagespawn.js'
+      - 'local-archive-backup.js'
+      - 'tests/browser/local-archive-browser.mjs'
+      - '.github/workflows/local-archive-browser.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  served-origin-copy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated browser driver (no lockfile changes)
+        run: npm install --no-save --no-package-lock playwright@1.56.1
+      - name: Test real Chrome page reveal and clipboard behaviour
+        run: node tests/browser/local-archive-browser.mjs
