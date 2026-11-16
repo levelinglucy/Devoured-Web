@@ -1,6 +1,7 @@
 # Change history
 
 ## Unreleased
+- Improve Rootcraft's mobile viewport, visible writing-field label, polite result announcements and touch-target sizing without changing local save/denial behaviour.
 - Replace stalled loading text on the four Firestore shard feeds with an inert error warning when reads or rendering fail.
 - Tolerate null or wrongly typed Firestore Fold snapshot fields without aborting classification; retain valid string/list anomaly categories and existing thresholds.
 - Add opt-in raw archive previews and lossless JSON-escaped manual-copy views for fragments and ritual trail, including malformed records, without writing or uploading archives.

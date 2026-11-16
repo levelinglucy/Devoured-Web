@@ -2,15 +2,29 @@
 
 ## Development
 
-**Goal:** When the network or Firestore read fails, replace the indefinite "Loading..." placeholder on all four domain echo feeds with a safe, inert warning; preserve successful rendering.
+**Goal:** Give Rootcraft a genuine mobile viewport, a persistent form label and a polite status region so local-writing outcomes are easier to read and understand on small screens and with assistive technology. Preserve all writing, validation, storage and denial logic.
 
-**Integration:** Draft PR [#26](https://github.com/levelinglucy/Devoured-Web/pull/26), `noe/echo-feed-error-ui-20261116`; not merged. Prior Fold malformed-snapshot repair PR #25 **was merged** at `19b3a5c803ad3cbc7c8eec157fb6259bfbc3b54d` and its exact-main Node 20/22 suite passed 104/104 each, with successful Pages deployment workflow [43908919448](https://github.com/levelinglucy/Devoured-Web/actions/runs/43908919448). This is NOT a tagged release or live cloud validation.
+**Integration:** Proposed on `noe/rootcraft-mobile-accessibility-20261116` for review. This change is not merged, deployed or a tagged release. The previous echo-feed error-state repair PR [#26](https://github.com/levelinglucy/Devoured-Web/pull/26) is merged on `main` at `de678ead4f901372a19d4adbfec2f3bc185eeb13`.
 
-**Validation:** Added a Node VM fixture that runs the four page scripts with fake Firestore and DOM, with explicit rejected reads and successful snapshots. Review the candidate PR matrix (Node 20/22), actual job logs and current head before promoting. No completed candidate CI claimed in this note.
+**Validation:** An earlier isolated Chromium 144 experiment with the original Rootcraft page and stubs demonstrated a 390px mobile viewport, correct label association, a 44px button and the same three denial/success/error messages (12 synthetic desktop/mobile scenarios). The checked-in Node UI/markup regression is part of this proposed patch; hosted Node 20/22 checks on the final PR revision remain to be verified. This does not establish actual screen-reader announcements, a real iPhone, or live storage.
 
-**Release:** Feed error handling is draft/unmerged/unreleased. No production cloud, browser, iPhone or network-outage evidence.
+**Release:** Rootcraft accessibility changes are unmerged and unreleased. The previously merged feed error-state repair has exact-main 106/106 tests per Node 20/22 in [run 43918423134](https://github.com/levelinglucy/Devoured-Web/actions/runs/43918423134) and a successful Pages workflow [43918421128](https://github.com/levelinglucy/Devoured-Web/actions/runs/43918421128), but no live Firestore outage or phone test was performed.
 
-**Next:** (1) Inspect exact-head tests and regression logs. (2) Review all four page changes and confirm branch head and required checks before any merge. (3) If integrated, validate merged main and Pages deployment separately; do not claim users have experienced cloud failures.
+**Next:** (1) Check proposed branch head and hosted Node matrix. (2) Review narrow-screen layout and status semantics without altering local archive behaviour. (3) Integrate only if relevant checks and branch policy permit; verify merged-main and deployment separately.
+
+## Decision 2026-11-16: Rootcraft mobile and accessible feedback
+
+**Observed:** Rootcraft had no viewport metadata, its textarea relied on placeholder text alone, and its result region lacked live-status semantics. A source-locked isolated Chromium comparison observed a 980px mobile layout viewport for the baseline at emulated 390px device width. Existing success, denial and storage-error text were already accurate.
+
+**Choice:** Add `width=device-width, initial-scale=1`, a visible `<label for="frag">`, `role="status"` with `aria-atomic="true"` on the existing result, 16px textarea/button fonts, constrained textarea box sizing and a 44px minimum button height. Preserve the module import and `cast()` handler exactly. Status is advisory rather than urgent, consistent with the [WAI-ARIA status-role guidance](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/status_role); viewport sizing follows [HTML viewport guidance](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name/viewport).
+
+**Boundaries:** Markup checks and emulated Chromium are not assistive-technology audits or iPhone Safari certification. The prototype substituted storage-gate functions with synthetic handlers, so no real visitor archive was read or changed. Revisit if real screen-reader or zoom tests reveal a problem; do not claim WCAG conformance from this alone.
+
+## Previous completed milestone: echo-feed failure messages
+
+**Integration:** PR [#26](https://github.com/levelinglucy/Devoured-Web/pull/26) merged at `de678ead4f901372a19d4adbfec2f3bc185eeb13`.
+
+**Validation:** Exact-main Node 20/22 each passed 106/106 in [run 43918423134](https://github.com/levelinglucy/Devoured-Web/actions/runs/43918423134); Pages workflow [43918421128](https://github.com/levelinglucy/Devoured-Web/actions/runs/43918421128) succeeded. No live outage or iPhone verification, no new tag.
 
 ## Decision 2026-11-16: make echo-feed loading failures visible
 
