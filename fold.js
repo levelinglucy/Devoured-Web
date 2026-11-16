@@ -16,15 +16,20 @@ export async function getFoldState() {
 
   echoSnap.forEach(doc => {
     const data = doc.data();
-    const sigil = data.sigil;
+    // A malformed Firestore document must not blank the entire Fold state.
+    const sigil = data?.sigil;
     if (!traitMap.has(sigil)) traitMap.set(sigil, 0);
-    if (data.tone === "rebellion") traitMap.set(sigil, traitMap.get(sigil) + 1);
+    if (data?.tone === "rebellion") traitMap.set(sigil, traitMap.get(sigil) + 1);
   });
 
   const glitchedUsers = new Set();
   anomalySnap.forEach(doc => {
     const d = doc.data();
-    if (d.category?.includes("loop") || d.category?.includes("self")) {
+    const category = d?.category;
+    // Firestore categories may be text or historical lists; other types are
+    // inert rather than throwing on a missing/non-callable includes method.
+    if ((typeof category === "string" || Array.isArray(category)) &&
+        (category.includes("loop") || category.includes("self"))) {
       glitchedUsers.add(d.sigil);
     }
   });

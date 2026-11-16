@@ -1,6 +1,7 @@
 # Change history
 
 ## Unreleased
+- Tolerate null or wrongly typed Firestore Fold snapshot fields without aborting classification; retain valid string/list anomaly categories and existing thresholds.
 - Add opt-in raw archive previews and lossless JSON-escaped manual-copy views for fragments and ritual trail, including malformed records, without writing or uploading archives.
 - Reject invalid non-string Archivegod mood and mask edits before writing browser-local story history.
 - Preserve exact saved Ritual Trail JSON bytes on append; refuse damaged archives and invalid new records instead of resetting or normalizing historical entries.
