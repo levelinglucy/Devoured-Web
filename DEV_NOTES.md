@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Let visitors manually copy their original browser-local fragment or ritual-trail storage text, even when malformed data blocks ordinary display. Preserve the story, not silently replace it.
+**Goal:** Prevent a single malformed Firestore document from crashing the Fold-state classification. Keep the existing counting thresholds and historical string/list category semantics intact.
 
-**Integration:** Draft branch `noe/portfolio-local-archive-backup` adds opt-in raw previews and JSON-escaped lossless-copy views to `fragments.html` and `trail.html`. This is **not integrated** into main. Previous Archivegod input guards were independently merged at main `ed221616df34188ebf7c92d8f6b09876982bc4a3`, verified with 95/95 Node 20 and 22 exact-main tests and Pages deployment; see PR #23 and Workshop 195.
+**Integration:** Draft PR #25, branch `noe/fold-malformed-records-20261116`, protects `fold.js` from null record bodies and numeric/map anomaly categories. This is **not merged into main**. The preceding opt-in local archive backup feature was merged as PR #24 at `2a4a219a5df390b39a4eb5d0b1053de7c10bad23` and Pages deployment was independently verified in Workshop 199.
 
-**Validation:** At reviewed source head `5ce4030d9f6d60eef4961000d8746479bfd1567f`, GitHub Actions [43858836964](https://github.com/levelinglucy/Devoured-Web/actions/runs/43858836964) passed 102/102 Node tests on each of Node 20 and 22. A separate hosted Google Chrome served-origin [smoke](https://github.com/levelinglucy/Devoured-Web/actions/runs/43858837108) passed 3/3: keyboard reveal, JSON-escaped exact text round-trip, actual clipboard copy, denied-read clearing, and absent versus present-empty differentiation using disposable localStorage. Both workflows' job logs were inspected. The runner tested a localhost site, not the deployed Pages origin; Safari/iPhone, touch copying, real visitor backup and durability remain unverified. The PR holds canonical evidence; documentation-only updates do not retroactively invalidate that source-tested revision.
+**Validation:** Tests-first PR commit `8705397a` failed exactly 2 of 104 tests on each Node 20/22 (run [43908487213](https://github.com/levelinglucy/Devoured-Web/actions/runs/43908487213)). With source fix commit `f37b8a36`, all 104/104 tests passed on Node 20 and 22 (run [43908573263](https://github.com/levelinglucy/Devoured-Web/actions/runs/43908573263)); both job logs independently inspected. These are mocked Firestore snapshots, not live cloud data or browser-device tests.
 
-**Release:** Current backup branch is draft and unreleased; prior Archivegod source is merged and Pages-deployed but no software tag was established.
+**Release:** Fix is draft/unmerged/unreleased. Previous archive feature is merged and Pages-deployed without a verified software tag.
 
-**Next:** (1) Review the exact candidate and merge gates with the narrower desktop Chrome capability claim, including check freshness after any further changes. (2) After any permitted integration, independently verify merged-main tests and Pages deployment; the Chrome workflow currently runs on pull requests only. (3) Keep Safari/iPhone, touchscreen, full restore and durability unverified, and leave independent Web Locks/IndexedDB experiments parked.
+**Next:** (1) Review PR #25's changed source and current branch checks after documentation changes. (2) If review permits integration, independently validate exact merged-main tests and deployment; record each state separately. (3) Do not claim that malformed Firestore records actually exist in production or that network/auth failures have been addressed.
+
+## Decision 2026-11-16: tolerate malformed Fold snapshot fields
+
+**Reproduced:** A null `doc.data()` caused `data.sigil` or `d.category` to throw. A numeric or map-valued anomaly category caused `category?.includes(...)` to try calling an absent method; optional chaining only skips nullish values. Either defect aborts the entire Fold classification even when other snapshot records are valid.
+
+**Choice:** Read echo fields with optional access and apply anomaly substring/list membership checks only to strings or arrays. Keep invalid/missing categories inert, preserve original queried document counts for existing `Awake` thresholds, preserve the 3-distinct-sigil `Fractured` and 3-rekindled-sigil `Ignited` rules, and do not change storage or remote data.
+
+**Boundaries:** Synthetic snapshots and Node tests only. We do not rewrite malformed cloud records or claim live Firestore, network, auth, browser, mobile or deployment validation. If a supported category schema other than text or arrays emerges, revisit explicitly with real data and tests.
 
 ## Decision 2026-11-16: reveal raw local history without rewriting it
 
