@@ -21,19 +21,25 @@
 </head>
 <body>
   <h1>The Councilfire</h1>
-  <div id="dialogue">Gathering Echoforms...</div>
+  <div id="dialogue" role="status" aria-live="polite">Gathering Echoforms...</div>
 
 <script type="module">
   import { summonCouncil } from './councilfire.js';
 
-  const lines = await summonCouncil();
   const d = document.getElementById("dialogue");
-  d.replaceChildren();
-  for (const dialogue of lines) {
-    const line = document.createElement("div");
-    line.className = "line";
-    line.textContent = dialogue;
-    d.appendChild(line);
+  try {
+    const lines = await summonCouncil();
+    d.replaceChildren();
+    for (const dialogue of lines) {
+      const line = document.createElement("div");
+      line.className = "line";
+      line.textContent = dialogue;
+      d.appendChild(line);
+    }
+  } catch {
+    // Do not expose stored-data diagnostics or leave the gathering placeholder.
+    d.replaceChildren();
+    d.textContent = "The Council could not gather. Please try again later.";
   }
 </script>
 </body>
