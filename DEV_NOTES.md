@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Make the Fold state viewer and the Shard skin viewer fail visibly and safely when their asynchronous Fold/Firestore read rejects; leave successful state rendering, database configuration and browser-local archives unchanged.
+**Goal:** Show a safe, accessible Councilfire failure state when the local sigil, quest or throne-history read rejects, instead of leaving "Gathering Echoforms..." indefinitely. Preserve the normal five-line display and text-only rendering.
 
-**Integration:** Proposed on `noe/fold-page-error-visibility-20261116` for review; not yet merged. Rootcraft accessibility PR [#27](https://github.com/levelinglucy/Devoured-Web/pull/27) is merged at exact main `5e27da2f8d5a4959765a6113275b67253dcb2fc1`.
+**Integration:** Proposed on `noe/councilfire-page-error-boundary-20261116`, not merged. The prior Fold/Shard failure-boundary PR [#28](https://github.com/levelinglucy/Devoured-Web/pull/28) was merged into main at `5d059c61ac04859e4bce965e54774e5404905b41`.
 
-**Validation:** The previous exact inline Fold/Shard scripts were executed with a synthetic rejected Promise: both propagated rejection and left the placeholder unchanged. A focused new source-script regression tests rejected and successful states; hosted checks of the candidate remain to be confirmed. Rootcraft PR #27 separately passed 107/107 Node 20 and Node 22 tests on merged main ([run 43929026363](https://github.com/levelinglucy/Devoured-Web/actions/runs/43929026363)) and its exact SHA was deployed by Pages ([run 43929023268](https://github.com/levelinglucy/Devoured-Web/actions/runs/43929023268)).
+**Validation:** Local isolated Node 22.16.0 VM baseline test exposed an unhandled promise rejection (1 failure, 1 successful control). The candidate passed 2/2 focused tests and module syntax check locally. Hosted Node 20/22 CI and exact-main deployment are **not yet verified**. This injects a simulated rejection; it is not evidence of an actual user archive failure.
 
-**Release:** New Fold/Shard error-state changes are unmerged and unreleased. Rootcraft is integrated and Pages-deployed, but untagged; actual iPhone Safari, screen-reader announcements, real Firestore outages and live interaction remain unverified.
+**Release:** Proposed only, not merged, tagged, or deployed. Historical saved records remain unmodified by this page-level error handling. Real browser, iPhone Safari and assistive-technology announcements remain untested.
 
-**Next:** (1) Validate the candidate Node 20/22 suite and inspect review checks. (2) Merge only if the exact candidate passes required checks and permissions permit. (3) Verify exact merged-main tests and Pages separately; no device or Firebase outage claim from simulated tests.
+**Next:** (1) Inspect candidate hosted CI and current PR review gates. (2) Merge only if exact candidate and required checks support it. (3) Independently check exact-main tests and Pages deployment, keeping live/device claims separate.
+
+## Decision 2026-11-16: Councilfire failure boundary
+
+**Observed:** `councilfire.html` awaited `summonCouncil()` at module top level without catching errors. The service may throw on malformed saved sigil/quest/throne records, deliberately preserving rather than rewriting them. Injecting a rejected Promise confirmed that the page left the gathering placeholder unchanged and its inline module rejected.
+
+**Choice:** Keep `summonCouncil()` and its persistence rules untouched, wrap only the page's render path in a failure boundary, clear any partial output, and show fixed inert text without exposing exception diagnostics. Add a polite status role to the existing display. Successful dialogue is still assembled as individual text-only elements.
+
+**Trade-off:** No retry button, diagnostics download or browser history alteration is introduced. A genuine storage fault may require manual recovery; this UI only makes the failure visible. Node VM tests cannot establish real-browser accessibility or behavior of live data.
 
 ## Decision 2026-11-16: show rejected Fold state reads
 
