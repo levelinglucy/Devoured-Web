@@ -24,6 +24,31 @@
       font-size: 0.8em;
       color: #999;
     }
+  
+    #backup {
+      margin: 3em auto 0;
+      max-width: 680px;
+      border-top: 1px solid #088;
+      padding-top: 1.5em;
+      text-align: left;
+    }
+    #backup button {
+      padding: 0.65em 1em;
+      background: #10272a;
+      color: #cfffff;
+      border: 1px solid #0ff;
+      cursor: pointer;
+    }
+    #backup textarea {
+      box-sizing: border-box;
+      width: 100%;
+      min-height: 10em;
+      background: #111;
+      color: #eee;
+      border: 1px solid #0ff;
+      padding: 0.7em;
+    }
+    #backup textarea[hidden] { display: none; }
   </style>
 </head>
 <body>
@@ -68,6 +93,24 @@
     // Do not erase, repair or replace damaged browser-local records on display.
     container.textContent = "Could not read the local ritual trail. Existing records remain untouched.";
   }
+</script>
+
+<section id="backup" aria-label="Local archive backup">
+  <h2>Keep a copy of your local story</h2>
+  <p>This browser can lose local story records. Reveal the saved raw text only when you want to copy it privately; this action does not upload, repair or change it.</p>
+  <button id="show-backup" type="button">Reveal raw text for backup</button>
+  <p id="backup-status" role="status" aria-live="polite"></p>
+  <textarea id="backup-raw" readonly hidden rows="8" aria-label="Raw local ritual trail archive preview"></textarea>
+  <p>Preview text can normalize carriage-return line endings. For a lossless manual backup, copy the JSON-escaped version below into a private file; it must be decoded as JSON before restoration.</p>
+  <textarea id="backup-encoded" readonly hidden rows="8" spellcheck="false" aria-label="Lossless JSON-escaped local ritual trail archive backup"></textarea>
+</section>
+
+<script type="module">
+  import { revealRawArchive } from './local-archive-backup.js';
+  document.getElementById("show-backup").addEventListener("click", () => {
+    revealRawArchive("trail", document.getElementById("backup-raw"),
+      document.getElementById("backup-encoded"), document.getElementById("backup-status"));
+  });
 </script>
 </body>
 </html>

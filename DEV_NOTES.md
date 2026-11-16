@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Prevent malformed Archivegod mood/mask edit arguments from corrupting browser-local narrative state.
+**Goal:** Let visitors manually copy their original browser-local fragment or ritual-trail storage text, even when malformed data blocks ordinary display. Preserve the story, not silently replace it.
 
-**Integration:** Draft branch `noe/portfolio-archivegod-input-guards` adds synchronous type checks to `shiftMood` and `setMask` before reading/writing storage and extends the existing Archivegod regression tests. This change is not yet integrated.
+**Integration:** Draft branch `noe/portfolio-local-archive-backup` adds opt-in raw previews and JSON-escaped lossless-copy views to `fragments.html` and `trail.html`. This is **not integrated** into main. Previous Archivegod input guards were independently merged at main `ed221616df34188ebf7c92d8f6b09876982bc4a3`, verified with 95/95 Node 20 and 22 exact-main tests and Pages deployment; see PR #23 and Workshop 195.
 
-**Validation:** The exact predecessor `archivegod.js` was reproduced in a detached V8 harness: `shiftMood(undefined)`, `shiftMood(0)`, `setMask(null)` and `setMask({})` silently wrote malformed state that later fails `getGodState()`. A patched-source V8 check rejected 20 invalid input combinations against missing and present data with raw bytes preserved, and still accepted valid empty strings. This remains a synthetic check, not an actual browser-storage test. Hosted PR CI at `b169d3bce7db13bb0044664d9022368ce0e664a4` passed 95/95 tests on each Node 20 and 22 in workflow [43823853395](https://github.com/levelinglucy/Devoured-Web/actions/runs/43823853395); both job logs independently inspected. Review the latest candidate commit and its checks before merging; these are not post-merge or live-browser results.
+**Validation:** At reviewed source head `5ce4030d9f6d60eef4961000d8746479bfd1567f`, GitHub Actions [43858836964](https://github.com/levelinglucy/Devoured-Web/actions/runs/43858836964) passed 102/102 Node tests on each of Node 20 and 22. A separate hosted Google Chrome served-origin [smoke](https://github.com/levelinglucy/Devoured-Web/actions/runs/43858837108) passed 3/3: keyboard reveal, JSON-escaped exact text round-trip, actual clipboard copy, denied-read clearing, and absent versus present-empty differentiation using disposable localStorage. Both workflows' job logs were inspected. The runner tested a localhost site, not the deployed Pages origin; Safari/iPhone, touch copying, real visitor backup and durability remain unverified. The PR holds canonical evidence; documentation-only updates do not retroactively invalidate that source-tested revision.
 
-**Release:** No merge, deployment or tag for this draft. The preceding Ritual Trail repair was independently confirmed merged at main `cdbdf5ed`, with 93/93 tests on each Node 20/22 and a successful Pages workflow for that SHA, but native browser/localStorage and multi-tab durability remain unverified.
+**Release:** Current backup branch is draft and unreleased; prior Archivegod source is merged and Pages-deployed but no software tag was established.
 
-**Next:** (1) Review current PR #23 checks, current main base and merge requirements. (2) Integrate only with passing checks and permitted review state; verify exact merged-main CI and any deployment separately. (3) Retain browser/device/multi-tab uncertainty; never imply a localStorage transaction.
+**Next:** (1) Review the exact candidate and merge gates with the narrower desktop Chrome capability claim, including check freshness after any further changes. (2) After any permitted integration, independently verify merged-main tests and Pages deployment; the Chrome workflow currently runs on pull requests only. (3) Keep Safari/iPhone, touchscreen, full restore and durability unverified, and leave independent Web Locks/IndexedDB experiments parked.
+
+## Decision 2026-11-16: reveal raw local history without rewriting it
+
+**Need:** Existing fragment and trail readers intentionally refuse damaged browser-local JSON, but visitors then have no built-in way to copy that raw text before considering manual recovery. The README previously advised backing up data without offering a route inside these pages.
+
+**Choice:** An explicit click reveals one selected localStorage value in a read-only `textarea` preview and a second JSON-escaped `textarea` for lossless manual recovery. The source archive is not parsed or rewritten, and neither view interpolates HTML, invokes network calls or writes browser storage. An absent key shows a separate message; a present empty string remains visible as a legitimate saved value. Blocked storage reads display an inert warning. Only the two named story keys are supported, and nothing is revealed on initial page load.
+
+**Boundaries:** The HTML textarea API normalizes CR and CRLF, so its raw preview alone cannot promise an exact copied DOMString. The escaped field (`JSON.stringify(raw)`) round-trips the original text with `JSON.parse` and preserves exceptional line endings and lone surrogates. Copying is still a manual user action, not an actual completed backup, download, restoration, transaction or durable archive. This can only read records still held under the current browser origin; it cannot reconstruct previously deleted data. Served-origin keyboard reveal and clipboard copying have been demonstrated in hosted desktop Chrome with synthetic data; actual Pages behaviour, Safari/iPhone, touchscreen copying, cross-tab changes, device permissions and durability remain unverified. Do not add automatic repair or uploads without a separate reviewed design.
 
 ## Decision 2026-11-16: reject invalid Archivegod edits before storage
 
