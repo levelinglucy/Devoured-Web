@@ -2,15 +2,20 @@
 
 ## Development
 
-**Goal:** Preserve an existing but malformed browser-local `aletheFragments` archive instead of treating it as empty or rewriting malformed entries during a new Rootcraft fragment append.
+**Goal:** Improve nonessential heading motion accessibility in Echoform Glyph and Rootrite, without changing story text, storage, scripts or the existing default animation.
 
-**Integration:** [Draft PR #18](https://github.com/levelinglucy/Devoured-Web/pull/18) proposes the fragment archive correction from main `b54aa336`. It remains open and unmerged pending review and hosted validation. Prior identity-integrity PR #17 is merged at `b54aa336`; Git integration is not browser deployment.
+**Integration:** [Draft PR #21](https://github.com/levelinglucy/Devoured-Web/pull/21) proposes a scoped `prefers-reduced-motion: reduce` override in each of `echoform-glyph.html` and `rootrite.html`. Nothing is merged or deployed by this draft. Prior fragment preservation [PR #18](https://github.com/levelinglucy/Devoured-Web/pull/18) **was merged** on main `7944a9b5` (the former status line calling it open was stale). Separate new-storage [PR #20](https://github.com/levelinglucy/Devoured-Web/pull/20) remains draft; it is not part of this CSS work.
 
-**Validation:** Exact predecessor fragment blob `89f835bda4`: **3/6** new regression tests passed, **3/6 failed as expected**, locally on Node 22.16.0. Corrected fragment blob `9c2e62a72680` and test blob `80f93ae832cd`: **6/6** focused tests passed and `node --check fragments.js` passed locally. Independently read back both blobs from PR branch. Hosted full-suite CI is not yet verified; no browser, iPhone or power-loss evidence.
+**Validation:** The original exact source files were inspected at blobs `7f9429ce` and `264a9e5a`. The isolated helper's native Chromium CSS computed-style experiment passed 8/8 assertions before/after the proposed override across both motion preferences. An independent Chromium/Playwright equivalent-rule fixture also passed 8/8 checks. On PR #21, the edited HTML blobs `a85f1c56` and `31654fe7` were independently read back, and the only code change in each is an opt-in CSS override. **The final site pages have not been navigated in a real browser, and neither Safari nor deployed assets have been tested.** These are focused CSS checks, not full Node suite/CI or formal WCAG certification.
 
-**Release:** Not released, deployed or tagged by this proposal.
+**Release:** PR #21 is draft and unreleased. No new tag, deployment or device certification.
 
-**Selected next steps:** (1) Verify full hosted tests at exact final PR head on Node 20 and 22. (2) Review historical/manual fragment entries lacking title or text fields and any project-specific integration requirements; retain draft if uncertain. (3) Only consider merging after relevant validation and compatibility review.
+**Next steps:** (1) Inspect the exact PR head and any required checks; run the project test suite when admitted. (2) Verify actual served-page visual behaviour on a permitted origin with operating-system Reduce Motion enabled, where available. (3) Consider merging only after branch and review checks permit; do not infer iPhone/Safari support from Linux Chromium.
+
+## Decision 2026-11-16: opt-in static headings
+
+Two independently animated `.glitch` headings use 0.1-second flicker or 0.15-second glitch loops with no motion preference override. A narrow CSS media query turns *off* only those animations when the visitor requests reduced motion, preserving their static title, page interactions and original default animation. This avoids removing an artistic effect for users who prefer it. The change does not touch browser-local archives, identity, Firebase or any script. The measured browser behaviour is for isolated CSS fixtures, not full site navigation or deployment.
+
 
 ## Decision 2026-11-14: preserve damaged fragment archives before append
 
