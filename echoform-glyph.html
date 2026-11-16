@@ -14,6 +14,10 @@
     .glitch {
       animation: flicker 0.1s infinite alternate;
     }
+    /* Respect the visitor's OS motion preference; keep default animation. */
+    @media (prefers-reduced-motion: reduce) {
+      .glitch { animation: none; }
+    }
     @keyframes flicker {
       0% { opacity: 1; }
       100% { opacity: 0.9; transform: translateX(1px); }
