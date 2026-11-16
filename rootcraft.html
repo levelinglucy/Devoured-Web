@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Rootcraft</title>
   <style>
     body {
@@ -18,6 +19,18 @@
       color: #f0f;
       font-family: monospace;
       margin-top: 1em;
+      font-size: 16px;
+      box-sizing: border-box;
+      max-width: 100%;
+    }
+    label {
+      display: block;
+      margin-top: 1em;
+    }
+    button {
+      font-size: 16px;
+      min-height: 44px;
+      padding: .5em 1em;
     }
   </style>
 </head>
@@ -25,10 +38,11 @@
   <h1>Create a Root-Script</h1>
   <p>Wanderers may write fragments into this browser’s local Archive.</p>
   <p>Root-scripts stay on this device; they are not sent to Firebase or other visitors.</p>
+  <label for="frag">Root-script text</label>
   <textarea id="frag" placeholder="Write your rootfragment here..."></textarea>
   <br><br>
   <button onclick="cast()">Inject</button>
-  <div id="result" style="margin-top:2em;"></div>
+  <div id="result" role="status" aria-atomic="true" style="margin-top:2em;"></div>
 
 <script type="module">
   import { injectFragment, isWanderer } from './breakfold.js';
