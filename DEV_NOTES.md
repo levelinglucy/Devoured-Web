@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Improve nonessential heading motion accessibility in Echoform Glyph and Rootrite, without changing story text, storage, scripts or the existing default animation.
+**Goal:** Preserve exact historical browser-local ritual trail bytes when adding a new entry; never turn damaged existing data into an empty archive or partially serialized record.
 
-**Integration:** [Draft PR #21](https://github.com/levelinglucy/Devoured-Web/pull/21) proposes a scoped `prefers-reduced-motion: reduce` override in each of `echoform-glyph.html` and `rootrite.html`. Nothing is merged or deployed by this draft. Prior fragment preservation [PR #18](https://github.com/levelinglucy/Devoured-Web/pull/18) **was merged** on main `7944a9b5` (the former status line calling it open was stale). Separate new-storage [PR #20](https://github.com/levelinglucy/Devoured-Web/pull/20) remains draft; it is not part of this CSS work.
+**Integration:** Candidate branch `noe/portfolio-ritual-trail-preservation` changes `pagespawn.js`, adds `tests/pagespawn-storage.test.mjs`; review through a draft PR before integration. Previously integrated reduced-motion CSS remains on main at `54ebc996`, with exact-main 85/85 tests each on Node 20/22 and successful GitHub Pages deployment workflow (see PR #21). Separate Web Locks PR #20 remains draft and is out of scope.
 
-**Validation:** The original exact source files were inspected at blobs `7f9429ce` and `264a9e5a`. The isolated helper's native Chromium CSS computed-style experiment passed 8/8 assertions before/after the proposed override across both motion preferences. An independent Chromium/Playwright equivalent-rule fixture also passed 8/8 checks. On PR #21, the edited HTML blobs `a85f1c56` and `31654fe7` were independently read back, and the only code change in each is an opt-in CSS override. **The final site pages have not been navigated in a real browser, and neither Safari nor deployed assets have been tested.** These are focused CSS checks, not full Node suite/CI or formal WCAG certification.
+**Validation:** The predecessor failed 3 of 6 new focused tests (blank present data, malformed historical entries, and invalid new record); corrected source passed 8/8 focused tests on local Node 22.16.0, plus syntax check. This does **not** validate a served browser, multitab concurrency, abrupt termination or full hosted CI at this candidate revision.
 
-**Release:** PR #21 is draft and unreleased. No new tag, deployment or device certification.
+**Release:** Proposed, not integrated and not tagged/released. No proof of live site behaviour.
 
-**Next steps:** (1) Inspect the exact PR head and any required checks; run the project test suite when admitted. (2) Verify actual served-page visual behaviour on a permitted origin with operating-system Reduce Motion enabled, where available. (3) Consider merging only after branch and review checks permit; do not infer iPhone/Safari support from Linux Chromium.
+**Next:** (1) Review compatibility and full Node 20/22 PR checks. (2) If acceptable, merge low-risk code only after current branch/required reviews/checks permit. (3) Leave native browser and concurrent-tab integrity unverified until a permitted test environment can observe them.
+
+## Decision 2026-11-16: append to Ritual Trail without rewriting earlier bytes
+
+**Failure reproduced:** Old `pagespawn.js` interpreted a saved empty string as absent (`getItem(...) || "[]"`) and would replace it with a new one-entry array. It also accepted partial/invalid new records and reserialized all old records, which could silently normalize duplicate keys, legacy formatting or out-of-range numeric fields. Earlier read-only `trail.html` display was already tolerant of partial records.
+
+**Choice:** Distinguish absent storage from present corrupted data. The display reader still yields legacy partial records for safe inert rendering, but the writer checks that all existing records have text `title`, `filename`, `content`, `created`. Before writing, reject non-string new fields and damaged archive shapes. Insert one JSON-serialized new entry immediately before the validated array's final bracket, retaining original archival text verbatim. Storage-write errors continue to propagate; no catch silently claims success.
+
+**Trade-offs:** Strict append refusal for historic incomplete entries is intentional: the user can still view readable records, but manual recovery is required before writing. This remains single-tab read-modify-write localStorage, not a transaction: concurrent tabs could overwrite one another, and there is no crash durability or automatic backup guarantee. No current caller of `registerSpawn` was found by default-branch code search, so this is protection of an exposed browser-local API, not a claim that production users already lost trail data.
 
 ## Decision 2026-11-16: opt-in static headings
 

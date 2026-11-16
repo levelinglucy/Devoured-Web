@@ -1,6 +1,7 @@
 # Change history
 
 ## Unreleased
+- Preserve exact saved Ritual Trail JSON bytes on append; refuse damaged archives and invalid new records instead of resetting or normalizing historical entries.
 - Respect the operating system's reduced-motion preference by disabling continuous Echoform Glyph and Rootrite heading flicker only for visitors who request reduced motion.
 - Preserve damaged existing fragment archives without silent reset or partial-entry rewrites; validate new entries before local append.
 - Preserve malformed present Living Sigils on both the engine and Threshold entrance; keep mutation rotations within base36 and generate a nonempty seed at a zero-randomness boundary.
