@@ -6,11 +6,11 @@
 
 **Integration:** Draft branch `noe/portfolio-archivegod-input-guards` adds synchronous type checks to `shiftMood` and `setMask` before reading/writing storage and extends the existing Archivegod regression tests. This change is not yet integrated.
 
-**Validation:** The exact predecessor `archivegod.js` was reproduced in a detached V8 harness: `shiftMood(undefined)`, `shiftMood(0)`, `setMask(null)` and `setMask({})` silently wrote malformed state that later fails `getGodState()`. A patched-source V8 check rejected 20 invalid input combinations against missing and present data with raw bytes preserved, and still accepted valid empty strings. This is a focused synthetic check, not hosted CI or an actual browser storage test. The project test suite and CI are pending.
+**Validation:** The exact predecessor `archivegod.js` was reproduced in a detached V8 harness: `shiftMood(undefined)`, `shiftMood(0)`, `setMask(null)` and `setMask({})` silently wrote malformed state that later fails `getGodState()`. A patched-source V8 check rejected 20 invalid input combinations against missing and present data with raw bytes preserved, and still accepted valid empty strings. This remains a synthetic check, not an actual browser-storage test. Hosted PR CI at `b169d3bce7db13bb0044664d9022368ce0e664a4` passed 95/95 tests on each Node 20 and 22 in workflow [43823853395](https://github.com/levelinglucy/Devoured-Web/actions/runs/43823853395); both job logs independently inspected. Review the latest candidate commit and its checks before merging; these are not post-merge or live-browser results.
 
 **Release:** No merge, deployment or tag for this draft. The preceding Ritual Trail repair was independently confirmed merged at main `cdbdf5ed`, with 93/93 tests on each Node 20/22 and a successful Pages workflow for that SHA, but native browser/localStorage and multi-tab durability remain unverified.
 
-**Next:** (1) Verify new regression tests and exact candidate PR CI on Node 20/22. (2) Review scope and required checks/reviews before integrating. (3) Retain browser/device/multi-tab uncertainty; never imply a localStorage transaction.
+**Next:** (1) Review current PR #23 checks, current main base and merge requirements. (2) Integrate only with passing checks and permitted review state; verify exact merged-main CI and any deployment separately. (3) Retain browser/device/multi-tab uncertainty; never imply a localStorage transaction.
 
 ## Decision 2026-11-16: reject invalid Archivegod edits before storage
 
