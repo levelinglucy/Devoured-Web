@@ -12,12 +12,12 @@ const warning = "Fold state unavailable. Try again later.";
 // dependencies replaced. This is a simulated rejection, not a Firebase outage.
 function loadPage(page, getState) {
   const html = readFileSync(join(root, page + ".html"), "utf8");
-  const script = html.match(/<script type="module">([\\s\\S]*?)<\\/script>/);
+  const script = html.match(/<script type="module">([\s\S]*?)<\/script>/);
   assert.ok(script, page + " has an inline module");
-  let source = script[1].replace(/^\\s*import\\b[^\\n]*;\\s*$/gm, "");
-  source = source.replace(/\\b(getFoldState|applyWorldskin)\\(\\)\\.then\\(/,
+  let source = script[1].replace(/^\s*import\b[^\n]*;\s*$/gm, "");
+  source = source.replace(/\b(getFoldState|applyWorldskin)\(\)\.then\(/,
     "globalThis.__request = $&");
-  assert.match(source, /globalThis\\.__request = (getFoldState|applyWorldskin)\\(\\)\\.then\\(/);
+  assert.match(source, /globalThis\.__request = (getFoldState|applyWorldskin)\(\)\.then\(/);
 
   const nodes = {
     state: { innerText: "Scanning...", textContent: "Scanning..." },
