@@ -4,13 +4,13 @@
 
 **Goal:** Let visitors manually copy their original browser-local fragment or ritual-trail storage text, even when malformed data blocks ordinary display. Preserve the story, not silently replace it.
 
-**Integration:** Draft branch `noe/portfolio-local-archive-backup` adds a shared, opt-in, read-only raw-text view to `fragments.html` and `trail.html`. This is **not integrated** into main. Previous Archivegod input guards were independently merged at main `ed221616df34188ebf7c92d8f6b09876982bc4a3`, verified with 95/95 Node 20 and 22 exact-main tests and Pages deployment; see PR #23 and Workshop 195.
+**Integration:** Draft branch `noe/portfolio-local-archive-backup` adds opt-in raw previews and JSON-escaped lossless-copy views to `fragments.html` and `trail.html`. This is **not integrated** into main. Previous Archivegod input guards were independently merged at main `ed221616df34188ebf7c92d8f6b09876982bc4a3`, verified with 95/95 Node 20 and 22 exact-main tests and Pages deployment; see PR #23 and Workshop 195.
 
-**Validation:** New read-only helper and wiring have an isolated six-case Node 22 rehearsal (malformed/present-empty/absent text, blocked reads, key restriction and module syntax); live GitHub branch test matrix, actual browser selection/copy, Safari and device backup remain unverified. The PR should carry exact-revision validation evidence rather than duplicating it here.
+**Validation:** The current candidate includes a 7-case focused test file, including JSON-escaped round-trip of CRLF/CR, NUL, and lone surrogate input. GitHub Actions at source+documentation head `7f1b416a0b396595d4c6d22d46fe2016317249b9`, run 43850393643, passed 102/102 Node tests on each of Node 20 and 22; both decoded job logs were inspected. Real browser selection/copy, Safari and device backup remain unverified; the PR carries canonical test evidence.
 
 **Release:** Current backup branch is draft and unreleased; prior Archivegod source is merged and Pages-deployed but no software tag was established.
 
-**Next:** (1) Run and inspect branch CI against its exact head; fix any test compatibility failures. (2) Review navigation accessibility, privacy and actual copy affordance; keep draft until adequate validation. (3) Leave the independent Web Locks and IndexedDB experiments parked pending real browser evidence.
+**Next:** (1) Recheck the current PR-head test status if the branch changes; do not treat previous CI as proof for new commits. (2) Review real-browser selection/copy affordance, keyboard access and privacy; keep draft until adequate validation. (3) Leave the independent Web Locks and IndexedDB experiments parked pending real browser evidence.
 
 ## Decision 2026-11-16: reveal raw local history without rewriting it
 
