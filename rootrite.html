@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Rootrite</title>
   <style>
     body {
@@ -10,6 +11,18 @@
       font-family: monospace;
       text-align: center;
       padding: 4em;
+    }
+    button {
+      font-size: 16px;
+      min-height: 44px;
+      max-width: 100%;
+      padding: .5em 1em;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      box-sizing: border-box;
+    }
+    @media (max-width: 600px) {
+      body { padding: 1.5em; }
     }
     .glitch {
       animation: glitch 0.15s infinite alternate;
@@ -29,7 +42,7 @@
   <p>You’ve been cast out. But roots grow beneath walls.</p>
   <p>This changes your story faction only. Your sigil and previously claimed thrones stay saved in this browser.</p>
   <button onclick="resetFaction()">Become a Wanderer (keep your history)</button>
-  <div id="result" style="margin-top:2em;"></div>
+  <div id="result" role="status" aria-atomic="true" style="margin-top:2em;"></div>
 
 <script type="module">
   import { storeFaction } from './faction.js';

@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Make the Banned → Underfold → Whisper passage use the actual mobile device-width layout rather than a scaled 980px virtual viewport, without changing routes or story text.
+**Goal:** Restore Rootrite's mobile usability and visible result announcements without modifying faction or throne persistence.
 
-**Integration:** Reviewable candidate on `noe/underfold-passage-device-viewport-20261117`. This note records the proposed source change, not a verified merge. Fold identity PR #33 is independent and remains a draft pending historical schema evidence.
+**Integration:** Reviewable branch `noe/rootrite-mobile-status-20261117`, not merged; Fold identity PR #33 remains an independent draft awaiting authoritative historical schema evidence.
 
-**Validation:** Helper's source-locked paired headless Chromium probe reported 9/9 original-versus-candidate configurations at 320px, 390px and 1280px, including mobile width/scale and preserved exits. The three committed regression cases were also checked directly against exact branch source: original 0/3 versus patched 3/3 viewport+link assertions. Hosted Node CI and exact-main Pages status require independent verification; direct source assertions are not a full Node test invocation.
+**Validation:** Helper's isolated source-locked Chromium comparison at 320/390/1280px reported candidate device-width layout and 44px action target. Original direct source checks 0/3, candidate direct structure checks 9/9. These are not hosted Node CI, live-origin or assistive-technology validation. New Node regression cases are committed for independent execution.
 
-**Release:** Unreleased; no new tag, live-origin deployment or phone certification claimed by this entry.
+**Release:** Unreleased; no tag or live device certification claimed.
 
-**Next:** (1) Review the exact PR diff and hosted Node 20/22 CI. (2) Merge only if relevant checks and required reviews permit; independently verify merged-main validation/deployment if merged. (3) Keep Fold #33 draft until authoritative identity compatibility evidence exists.
+**Next:** (1) Check PR and hosted Node20/22 test evidence at exact branch head. (2) Integrate only if checks/reviews permit, then independently verify exact-main validation and Pages deployment. (3) Leave Fold #33 draft absent authoritative historical writer evidence.
+
+## Decision 2026-11-17: Rootrite touch action and status feedback
+
+**Observed:** At main `e49b2b07`, Rootrite lacked a mobile viewport, had a 21px-high desktop-style native button that the helper's *isolated headless Chromium emulation* measured as ~6.9/8.4 effective CSS px at 320/390 mobile widths due to virtual 980px scaling, and displayed faction-change results in an unmarked div. This was not a live iPhone or visitor observation.
+
+**Choice:** Add a standard device-width viewport without disabling zoom, a 16px/44px native button with wrapping and constrained width, a narrower <=600px body padding and `role="status" aria-atomic="true"` on the existing result element. Preserve the entire inline module and its `storeFaction("Wanderer")` write, the two existing outcome messages, story, animation and reduced-motion override unchanged.
+
+**Evidence and trade-offs:** The independent helper's source-locked Playwright Chromium comparison tested three widths, with module removed identically from both variants for isolated layout; it did not exercise the writer. Three new Node regression assertions cover viewport, action and status. Source-level predecessor checks failed 0/3 and the candidate's direct structure assertions passed 9/9 (not a Node harness run). Desktop button target becomes taller, intentionally. Live served-origin behavior, Safari/VoiceOver announcements, text zoom, cross-device storage and WCAG conformance remain unverified. Revisit if real device feedback calls for adjusted design.
 
 ## Decision 2026-11-17: Underfold passage mobile viewport
 
