@@ -16,6 +16,16 @@
       padding: 2em;
       text-align: center;
     }
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    label {
+      display: block;
+      margin-top: 8px;
+    }
     input {
       background: #111;
       border: 1px solid #0ff;
@@ -24,6 +34,8 @@
       margin: 10px;
       width: 80%;
       max-width: 500px;
+      box-sizing: border-box;
+      font-size: 16px;
     }
     button {
       background: #222;
@@ -31,6 +43,8 @@
       border: 1px solid #0ff;
       padding: 10px 20px;
       margin-top: 20px;
+      min-height: 44px;
+      font-size: 16px;
       cursor: pointer;
     }
     #sigilDisplay {
@@ -48,11 +62,16 @@
   <div id="sigilDisplay">Binding you a sigil...</div>
   <h1>Threshold</h1>
   <p>Speak before the Fold chooses—or recognizes your return.</p>
-  <input id="q1" placeholder="What do you seek?" />
-  <input id="q2" placeholder="What have you lost?" />
-  <input id="q3" placeholder="What would you sacrifice?" />
-  <button onclick="decideShard()">Enter</button>
-  <div id="result"></div>
+  <form id="thresholdEntrance" onsubmit="decideShard(); return false;">
+    <label for="q1">What do you seek?</label>
+    <input id="q1" placeholder="What do you seek?" />
+    <label for="q2">What have you lost?</label>
+    <input id="q2" placeholder="What have you lost?" />
+    <label for="q3">What would you sacrifice?</label>
+    <input id="q3" placeholder="What would you sacrifice?" />
+    <button type="submit">Enter</button>
+  </form>
+  <div id="result" role="status" aria-atomic="true"></div>
 
 <script>
 function generateSigil() {
