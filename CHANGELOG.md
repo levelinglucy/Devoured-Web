@@ -1,7 +1,7 @@
 # Change history
 
 ## Unreleased
-- Show inert recovery warnings on Force and Sigilpath when saved Living Sigil history cannot be read or rendered; keep original storage and successful story output unchanged.
+- Show inert recovery warnings on Force and Sigilpath when saved Living Sigil history cannot be read or rendered; preserve present history and successful story output without resetting malformed records.
 - Render Territory's faction heading and rows from its committed visit tally, avoiding contradictory post-write storage rereads; cross-tab write atomicity remains unaddressed.
 - Show inert Councilfire recovery text on saved-history/quest read failures instead of an endless gathering placeholder; leave dialogue rendering and history logic intact.
 - Display inert failure messages on Fold and Shard pages when the Fold state query rejects, avoiding indefinitely pending placeholders.
