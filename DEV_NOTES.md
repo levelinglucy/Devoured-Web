@@ -20,18 +20,6 @@
 
 **Limitations:** Browser localStorage offers no cross-tab transaction and may reject writes or lose stored history. Raw-preserving append is not encryption, data provenance, automatic backup, format repair, numeric precision recovery in in-memory parsed values, or proof that visitor archives actually contain exotic fields. Synthetic local VM tests only. Revisit for real supported historical formats and concurrency requirements.
 
-## Development
-
-**Goal:** Make the three remaining native-action pages (Vault, Fragments and Trail) readable and operable on narrow mobile screens without changing stored visitor histories or story actions.
-
-**Integration:** Reviewable branch `noe/grouped-mobile-controls-20261117`, pending hosted tests/review; Fold identity PR #33 remains draft pending historical Firestore evidence.
-
-**Validation:** Helper's isolated source-locked Chromium Vault test measured 16.98/20.69px effective Unseal action at 320/390px before a viewport-only change, versus 52px with device-width metadata. This grouped candidate also adds wrap-safe Trail previews and accessible-size backup controls. Four dependency-free Node source regression tests added; no hosted, live-origin or physical-device validation claimed yet.
-
-**Release:** Unreleased; no tag or actual Safari/VoiceOver certification.
-
-**Next:** (1) Review grouped source changes and hosted Node 20/22 PR results. (2) Merge only if required checks and reviews permit; verify exact-main/deployment separately. (3) Preserve all archive logic and leave Fold #33 draft.
-
 
 ## Decision 2026-11-17: grouped mobile access to Vault, Fragments and Trail
 
