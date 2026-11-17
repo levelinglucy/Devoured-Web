@@ -87,3 +87,30 @@ test("a fragment writer refuses fields that would serialize as missing", () => {
   assert.equal(state.writes, 0);
   assert.equal(state.entries.has("aletheFragments"), false);
 });
+
+test("appending preserves unusual valid historical JSON bytes verbatim", () => {
+  const raw = ' [ {"title":"Old","text":"Lore","big":1e999,"precise":9007199254740993,"k":1,"k":2,"spelling":"\\u0061"} ] \r\n';
+  const state = fixture(raw);
+  state.addFragment("New", "Now");
+  const closing = raw.lastIndexOf("]");
+  assert.equal(state.entries.get("aletheFragments"),
+    raw.slice(0, closing) + ',{"title":"New","text":"Now"}' + raw.slice(closing));
+  assert.equal(state.writes, 1);
+  assert.equal(state.getFragments().length, 2);
+  assert.equal(state.getFragments()[0].title, "Old");
+});
+
+test("appending to a formatted empty array preserves its existing whitespace", () => {
+  const raw = '\n [ \t ]\n';
+  const state = fixture(raw);
+  state.addFragment("First", "Hello");
+  assert.equal(state.entries.get("aletheFragments"), '\n [ \t {"title":"First","text":"Hello"}]\n');
+});
+
+test("duplicate titles preserve raw legacy JSON without writes", () => {
+  const raw = '[{"title":"Old","text":"Lore","n":9007199254740993}]';
+  const state = fixture(raw);
+  state.addFragment("Old", "Changed");
+  assert.equal(state.writes, 0);
+  assert.equal(state.entries.get("aletheFragments"), raw);
+});

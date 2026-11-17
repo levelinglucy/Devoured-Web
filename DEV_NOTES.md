@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Make the three remaining native-action pages (Vault, Fragments and Trail) readable and operable on narrow mobile screens without changing stored visitor histories or story actions.
+**Goal:** Preserve the exact existing browser-local fragment JSON text when appending a new fragment, without weakening validation or overwriting damaged archives.
 
-**Integration:** Reviewable branch `noe/grouped-mobile-controls-20261117`, pending hosted tests/review; Fold identity PR #33 remains draft pending historical Firestore evidence.
+**Integration:** Candidate `noe/preserve-fragment-history-20261117` is review-only pending hosted checks. Fold identity PR #33 stays parked draft.
 
-**Validation:** Helper's isolated source-locked Chromium Vault test measured 16.98/20.69px effective Unseal action at 320/390px before a viewport-only change, versus 52px with device-width metadata. This grouped candidate also adds wrap-safe Trail previews and accessible-size backup controls. Four dependency-free Node source regression tests added; no hosted, live-origin or physical-device validation claimed yet.
+**Validation:** Source-locked predecessor failed 2 of 3 new preservation assertions. Updated source passed all 9 focused synthetic Node 22 tests locally (six prior and three new). This does not validate a real visitor archive, a live browser, iPhone Safari or multi-tab atomicity. Hosted Node 20/22 not yet claimed.
 
-**Release:** Unreleased; no tag or actual Safari/VoiceOver certification.
+**Release:** Unreleased; do not infer publication from a PR.
 
-**Next:** (1) Review grouped source changes and hosted Node 20/22 PR results. (2) Merge only if required checks and reviews permit; verify exact-main/deployment separately. (3) Preserve all archive logic and leave Fold #33 draft.
+**Next:** (1) Review branch diff and run hosted Node 20/22 regression suite. (2) If clean and permitted, integrate after checking current main and required reviews/checks; verify exact main separately. (3) Preserve Fold PR #33 draft until Firestore historical identity evidence.
+
+## Decision 2026-11-17: append-only fragment history representation
+
+**Evidence:** In exact baseline fragment writer blob `9c2e62a7`, appending a new title parses then reserializes every historical entry. A synthetic, structurally valid archive with additional fields containing numeric literal `1e999`, integer `9007199254740993`, duplicate JSON keys and escaped Unicode is normalized during the append. The independent Sandbox found this and supplied a source-locked counterexample. The predecessor failed the two new history/empty-array byte-preservation checks; duplicate-title no-write was already correct.
+
+**Choice:** Use one validated raw archive snapshot; preserve the existing `getFragments()` returned array and strict title/text shape checks. Insert only the freshly serialized object before the final closing array bracket, preserving old raw bytes, whitespace and trailing line endings. Absent storage still creates a normal single-entry array. Existing malformed archive, input type and duplicate refusal behaviours remain unchanged. This follows the established Ritual Trail writer rather than introducing a new parser, migration or storage key.
+
+**Limitations:** Browser localStorage offers no cross-tab transaction and may reject writes or lose stored history. Raw-preserving append is not encryption, data provenance, automatic backup, format repair, numeric precision recovery in in-memory parsed values, or proof that visitor archives actually contain exotic fields. Synthetic local VM tests only. Revisit for real supported historical formats and concurrency requirements.
 
 
 ## Decision 2026-11-17: grouped mobile access to Vault, Fragments and Trail
