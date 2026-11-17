@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Make Territory's visit tally display one consistent committed snapshot rather than reading browser storage three separate times.
+**Goal:** Make the Force and Sigilpath screens reveal unreadable browser-local Living Sigil records without hiding the problem behind an indefinite or empty display.
 
-**Integration:** Candidate on `noe/territory-committed-snapshot-20261117`; not merged. The previous Councilfire PR [#29](https://github.com/levelinglucy/Devoured-Web/pull/29) merged at `3e6dbf8a`.
+**Integration:** Candidate on `noe/force-sigilpath-recovery-20261117`, not yet merged. Exact predecessor main: `927201769ac335d4c2b814419b602f5453ad7ef5`.
 
-**Validation:** Exact upstream source local Node 22.16.0 test-first fixture failed 2/3 focused assertions (extra reads) while write-error control passed; candidate passed 3/3 plus source and page-module syntax. Full hosted suite/real browser behaviour not yet verified. See PR for exact-revision evidence.
+**Validation:** Helper's source-locked synthetic DOM and real-module investigation (8 scenario groups on Node 22.16.0) established the baseline failure and in-memory repair. A separate upstream regression now tests healthy rendering, malformed saved records and partial-render faults. Initial candidate PR head dd33c9cb passed 117/117 each on Node 20 and 22 in Actions 44009424016 (both decoded job logs inspected). A follow-up test now checks the absent-identity path and warning wording; revalidate at final PR head. Real browser and iPhone remain unconfirmed.
 
-**Release:** Not merged, deployed or tagged. This changes only immediate rendering: not a transaction across tabs, not a global leaderboard, and not a guarantee of visitor uniqueness.
+**Release:** Review candidate only; no merge, deployment, tag or live-browser/device proof claimed.
 
-**Next:** Review the two new repo regressions, run full Node 20/22 checks, inspect current PR head and required checks before considering integration; do not merge an unrelated Web Locks durability candidate on this evidence.
+**Next:** Review focused and full Node 20/22 CI results, check current branch and PR state, then consider integration if checks pass. A static-module import failure remains outside this page-level guard.
+
+## Decision 2026-11-17: Force and Sigilpath visible read failure
+
+**Observed:** The exported `getTraits`, `getOrCreateSigil` and `getSigilHistory` deliberately throw for malformed *present* localStorage records. Force's inline script left `Calculating...` in place; Sigilpath left its fields blank. A simulated error after one successful DOM assignment could leave partially misleading text. The helper reproduced both against exact original page and module blobs without changing production source.
+
+**Choice:** Catch only page-level calculation/render errors, clear partial narrative details and present fixed text-only recovery warnings with polite status semantics. Do not show raw exception strings, change the narrative functions or read/repair/write visitor storage in the catch. For valid records, keep the existing classifications and lore.
+
+**Trade-offs:** A page can say it couldn't read saved records, but that is not a backup and does not diagnose the precise damaged key. Sigilpath calls the existing identity initializer *before* trait/history reads; an absent identity can be generated even when a later malformed record triggers the warning. The warning does not promise that zero storage writes occurred. Failure in static module loading, a missing DOM element, browser restrictions, true iPhone storage behaviour and real visitor histories are not validated. Revisit only with real evidence of a recovery UX need or a failing supported environment.
 
 ## Decision 2026-11-17: Territory committed-visit snapshot
 
