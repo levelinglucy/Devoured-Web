@@ -21,29 +21,39 @@
 <body>
   <h1>Alethe Sees You</h1>
   <p id="sigil"></p>
-  <div id="echo">Loading reflection...</div>
+  <div id="echo" role="status" aria-atomic="true">Loading reflection...</div>
 
 <script type="module">
-  import { getOrCreateSigil, hasTrait } from './sigil.js';
+  import { getOrCreateSigil, getTraits } from './sigil.js';
 
-  const sigil = getOrCreateSigil();
-  document.getElementById("sigil").innerText = "Your sigil: " + sigil;
+  const sigilNode = document.getElementById("sigil");
+  const echoNode = document.getElementById("echo");
+  try {
+    // One validated trait snapshot keeps the rendered branch internally consistent.
+    const sigil = getOrCreateSigil();
+    const traits = getTraits();
+    let response = "";
 
-  let response = "";
+    if (traits.includes("SEEKER")) {
+      response = "You’ve sought the vault more than once.\nSentinel grants you second sight.";
+    } else if (traits.includes("VAULTBOUND")) {
+      response = "The vault remembers who opened it.\nLucid will not lie to you.";
+    } else if (traits.includes("REKINDLED")) {
+      response = "You walked through fire and didn’t burn.\nEmber softens her voice.";
+    } else if (traits.includes("LIAR")) {
+      response = "Mirror turns away from you.\nYou may ask—but not be answered.";
+    } else {
+      response = "You are not yet marked.\nThe Fold watches in silence.";
+    }
 
-  if (hasTrait("SEEKER")) {
-    response = "You’ve sought the vault more than once.\nSentinel grants you second sight.";
-  } else if (hasTrait("VAULTBOUND")) {
-    response = "The vault remembers who opened it.\nLucid will not lie to you.";
-  } else if (hasTrait("REKINDLED")) {
-    response = "You walked through fire and didn’t burn.\nEmber softens her voice.";
-  } else if (hasTrait("LIAR")) {
-    response = "Mirror turns away from you.\nYou may ask—but not be answered.";
-  } else {
-    response = "You are not yet marked.\nThe Fold watches in silence.";
+    sigilNode.innerText = "Your sigil: " + sigil;
+    echoNode.innerText = response;
+  } catch {
+    // Preserve browser-local records. An absent identity may already have been
+    // created by getOrCreateSigil before a later trait read failed.
+    sigilNode.innerText = "";
+    echoNode.innerText = "Could not read your reflection. Preserve existing records for recovery.";
   }
-
-  document.getElementById("echo").innerText = response;
 </script>
 </body>
 </html>
