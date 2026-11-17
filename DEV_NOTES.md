@@ -2,15 +2,24 @@
 
 ## Development
 
-**Goal:** Restore Rootrite's mobile usability and visible result announcements without modifying faction or throne persistence.
+**Goal:** Make the three remaining native-action pages (Vault, Fragments and Trail) readable and operable on narrow mobile screens without changing stored visitor histories or story actions.
 
-**Integration:** Reviewable branch `noe/rootrite-mobile-status-20261117`, not merged; Fold identity PR #33 remains an independent draft awaiting authoritative historical schema evidence.
+**Integration:** Reviewable branch `noe/grouped-mobile-controls-20261117`, pending hosted tests/review; Fold identity PR #33 remains draft pending historical Firestore evidence.
 
-**Validation:** Helper's isolated source-locked Chromium comparison at 320/390/1280px reported candidate device-width layout and 44px action target. Original direct source checks 0/3, candidate direct structure checks 9/9. These are not hosted Node CI, live-origin or assistive-technology validation. New Node regression cases are committed for independent execution.
+**Validation:** Helper's isolated source-locked Chromium Vault test measured 16.98/20.69px effective Unseal action at 320/390px before a viewport-only change, versus 52px with device-width metadata. This grouped candidate also adds wrap-safe Trail previews and accessible-size backup controls. Four dependency-free Node source regression tests added; no hosted, live-origin or physical-device validation claimed yet.
 
-**Release:** Unreleased; no tag or live device certification claimed.
+**Release:** Unreleased; no tag or actual Safari/VoiceOver certification.
 
-**Next:** (1) Check PR and hosted Node20/22 test evidence at exact branch head. (2) Integrate only if checks/reviews permit, then independently verify exact-main validation and Pages deployment. (3) Leave Fold #33 draft absent authoritative historical writer evidence.
+**Next:** (1) Review grouped source changes and hosted Node 20/22 PR results. (2) Merge only if required checks and reviews permit; verify exact-main/deployment separately. (3) Preserve all archive logic and leave Fold #33 draft.
+
+
+## Decision 2026-11-17: grouped mobile access to Vault, Fragments and Trail
+
+**Evidence:** The helper audited the exact 29-page tracked HTML tree at Devoured-Web main `82ac86fb`: 19 pages lacked viewport meta, but only three of those contained native controls. Its isolated source-locked Chromium Vault experiment at 320/390px measured a virtual 980px layout and 16.98/20.69px effective Unseal button; device-width meta alone restored 52px. This is emulation, not a production/mobile observation.
+
+**Choice:** Add device-width, zoom-permissive viewport tags to these three action pages. Vault retains its existing UI/script unchanged. Fragments/Trail get a 44px wrapping backup button, 16px button/textarea type, and narrower mobile padding. Trail wraps the 200-character `pre` preview so one long filename/content line cannot force a sideways scroller. Do not modify either backup module or stored record logic. Keep old textarea content and accessibility names.
+
+**Evidence/limits:** Source-level script blocks are byte-identical to predecessor for all three pages; previous pages had no viewport metadata. Dependency-free Node source assertions cover the intended invariants. Neither browser-origin storage, real historical backups, actual Safari/iPhone/VoiceOver, text zoom nor WCAG conformance is demonstrated by static tests. Revisit if real devices or zoom expose a layout regression.
 
 ## Decision 2026-11-17: Rootrite touch action and status feedback
 
