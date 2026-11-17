@@ -1,6 +1,7 @@
 # Change history
 
 ## Unreleased
+- Exclude absent, null and empty Firestore sigil identities from Fold per-visitor rebellion/glitch counts while retaining raw document thresholds and not redefining unknown historical non-string IDs.
 - Show inert recovery warnings on Force and Sigilpath when saved Living Sigil history cannot be read or rendered; preserve present history and successful story output without resetting malformed records.
 - Render Territory's faction heading and rows from its committed visit tally, avoiding contradictory post-write storage rereads; cross-tab write atomicity remains unaddressed.
 - Show inert Councilfire recovery text on saved-history/quest read failures instead of an endless gathering placeholder; leave dialogue rendering and history logic intact.

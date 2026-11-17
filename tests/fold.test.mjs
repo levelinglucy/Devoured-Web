@@ -85,3 +85,28 @@ test("null Firestore record bodies are inert rather than crashing the Fold", asy
   assert.equal(await evaluate([null, null, null, null, null], []).fold(), "Awake",
     "Echo count threshold still counts the queried documents");
 });
+
+test("missing, null and empty echo identities cannot create a spurious Ignited burst", async () => {
+  const echoes = [
+    ...triple("one"), ...triple("two"),
+    ...triple(undefined), ...triple(null), ...triple("")
+  ];
+  assert.equal(await evaluate(echoes).fold(), "Awake",
+    "Raw documents still count, but missing identities are not separate rebellious users");
+});
+
+test("missing, null and empty anomaly identities cannot cause a false Fractured", async () => {
+  const anomalies = [
+    { category: "loop" },
+    { sigil: null, category: "self" },
+    { sigil: "", category: "self-loop" }
+  ];
+  assert.equal(await evaluate([], anomalies).fold(), "Awake",
+    "Anomaly documents still count towards Awake but not distinct named users");
+  assert.equal(await evaluate([], [
+    { sigil: 1, category: "loop" },
+    { sigil: 2, category: "self" },
+    { sigil: 3, category: "self-loop" }
+  ]).fold(), "Fractured",
+    "Unknown historical non-string identities are not rejected without a schema");
+});
