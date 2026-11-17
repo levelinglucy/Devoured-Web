@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Make Echoquest instructions describe implemented progress rather than ask visitors to perform Force/Fragments visits that the current predicates never check, or pursue a nonexistent glitch redirect.
+**Goal:** Rootcraft should explain when it cannot read saved faction eligibility, without losing previous archives or falsely leaving a prior success visible.
 
-**Integration:** Copy-only candidate on [PR #36](https://github.com/levelinglucy/Devoured-Web/pull/36) based on main `b42d8f1b`; not merged as of this record. Fold identity PR #33 remains a separate parked draft.
+**Integration:** Rootcraft UI-only candidate on `noe/rootcraft-eligibility-boundary-20261117`, based on exact main `cf1f282d`. A branch or PR is not an integration or release; Fold identity PR #33 remains an unrelated draft.
 
-**Validation:** Three new source-executing VM tests fail 0/3 on exact original `echoquest.js` blob `9b9d6267` and pass 3/3 on candidate blob `f81e2633` using local Node 22.16.0; exact new test blob `ef2a204c`. These test text/condition agreement and preserved legacy flag behaviour, not actual browsers or historical stored values. Hosted CI for the final branch and subsequent main is separately required.
+**Validation:** New source-executing synthetic VM cases failed 2/3 on original Rootcraft blob `9071b3eb` and passed 3/3 on corrected blob `02086843` under local Node 22.16.0. Hosted CI and any post-merge verification must be recorded separately against the actual final SHA. No real browser, Safari, iPhone, screen reader, denied-origin, or archive-durability test.
 
-**Release:** Unreleased; no tag or Pages deployment claimed for this candidate.
+**Release:** Unreleased; no deployment, tag or visitor confirmation claimed for this candidate.
 
-**Next:** (1) Verify final PR branch and hosted Node 20/22 results. (2) Merge only if review/check policy permits, then separately verify main and Pages deployment. (3) Decide whether Fire/Split should receive real progress-event writers only with an explicit event design and storage compatibility review.
+**Next:** (1) Inspect branch tests and hosted results. (2) Merge only after branch state and required checks are verified, then separately validate exact main and Pages. (3) Preserve Fold #33 as draft until historical Firestore identity provenance exists.
+
+## Decision 2026-11-17: Rootcraft eligibility-read failure boundary
+
+**Observed:** `window.cast` evaluated `isWanderer()` outside its save `try/catch`. A blocked browser-local faction read could throw without filling the existing live status region; after an earlier successful save, a later failure could leave stale success text. Reproduced with injected exceptions in the exact source module under synthetic Node VM fixtures, not with live visitors.
+
+**Choice:** Catch only failures of `isWanderer()`, display a fixed and nonrevealing "Could not check the saved faction. Nothing was changed." warning, and return before reading input or calling `injectFragment`. Preserve the existing non-Wanderer decision, success wording, writer-error behaviour and storage logic. Existing records are not automatically changed or reset.
+
+**Trade-off:** The fixed message speaks specifically about the failed eligibility-check path, not the entire session; an earlier successful save may already exist. This is not a browser policy workaround, global storage-error handler or guarantee against cross-tab changes. Revisit if genuine browser testing exposes different inaccessible-storage behaviour.
 
 ## Decision 2026-11-17: truthful Echoquest descriptions
 

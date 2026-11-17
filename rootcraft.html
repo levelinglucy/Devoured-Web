@@ -48,7 +48,15 @@
   import { injectFragment, isWanderer } from './breakfold.js';
 
   window.cast = () => {
-    if (!isWanderer()) {
+    let eligible;
+    try {
+      eligible = isWanderer();
+    } catch {
+      document.getElementById("result").innerText =
+        "Could not check the saved faction. Nothing was changed.";
+      return;
+    }
+    if (!eligible) {
       document.getElementById("result").innerText = "Only Wanderers can rootwrite.";
       return;
     }
