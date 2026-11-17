@@ -32,6 +32,7 @@ export function contributeToFaction() {
   }
   power[faction] = current + 1;
   localStorage.setItem(key, JSON.stringify(power));
+  return power; // Committed snapshot for an immediate, consistent render.
 }
 
 export function getDominantFaction() {

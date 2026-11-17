@@ -10,7 +10,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const html = readFileSync(join(root, "territory.html"), "utf8");
 const inline = html.match(/<script\s+type=["']module["']\s*>([\s\S]*?)<\/script>/i)?.[1];
 assert.ok(inline, "Territory needs its inline module");
-const pageImport = /^\s*import\s+\{\s*contributeToFaction,\s*getDominantFaction,\s*getAllFactionPower\s*\}\s+from\s+['"]\.\/warpath\.js['"];?\s*$/m;
+const pageImport = /^\s*import\s+\{\s*contributeToFaction\s*\}\s+from\s+['"]\.\/warpath\.js['"];?\s*$/m;
 const warpath = readFileSync(join(root, "warpath.js"), "utf8");
 const warpathImport = /^\s*import\s+\{\s*getFaction\s*\}\s+from\s+['"]\.\/faction\.js['"];?\s*$/m;
 
@@ -34,9 +34,19 @@ function render(initialTally, faction, options = {}) {
   const starting = Object.hasOwn(options, "raw") ? options.raw : JSON.stringify(initialTally);
   const storage = new Map();
   if (starting !== null) storage.set("warpathTally", starting);
+  let readCount = 0;
   const context = {
     localStorage: {
-      getItem: key => storage.get(key) ?? null,
+      getItem: key => {
+        readCount += 1;
+        if (options.failOnSecondRead && readCount === 2) {
+          throw new Error("Injected subsequent-read failure");
+        }
+        if (options.swapOnThirdRead && readCount === 3) {
+          storage.set(key, JSON.stringify(options.swapOnThirdRead));
+        }
+        return storage.get(key) ?? null;
+      },
       setItem: (key, value) => storage.set(key, value)
     },
     getFaction: () => faction
@@ -60,7 +70,7 @@ function render(initialTally, faction, options = {}) {
   const raw = storage.get("warpathTally") ?? null;
   let tally;
   try { tally = raw === null ? null : JSON.parse(raw); } catch { tally = null; }
-  return { elements, tally, raw };
+  return { elements, tally, raw, readCount };
 }
 
 test("Territory inline module has valid JavaScript syntax", () => {
@@ -124,4 +134,27 @@ test("Territory refuses count overflow and retains the exact previous tally", ()
   const { elements, raw: after } = render(null, "The Flamebound", { raw });
   assert.equal(after, raw);
   assert.equal(elements.top.innerText, "Dominant Faction: unavailable");
+});
+
+test("Territory still renders an increment when a subsequent storage read would fail", () => {
+  const { elements, tally, readCount } = render({ Red: 2, Blue: 1 }, "Red", {
+    failOnSecondRead: true
+  });
+  assert.equal(readCount, 1, "A committed visit needs no follow-up storage reads");
+  assert.equal(tally.Red, 3);
+  assert.equal(elements.top.innerText, "Dominant Faction: Red");
+  assert.deepEqual(elements.table.children.map(n => n.textContent), [
+    "> Red — Power: 3", "> Blue — Power: 1"
+  ]);
+});
+
+test("Territory heading and rows come from one committed snapshot", () => {
+  const { elements, readCount } = render({ Red: 2, Blue: 1 }, "Red", {
+    swapOnThirdRead: { Red: 3, Blue: 9 }
+  });
+  assert.equal(readCount, 1, "A later tab's write cannot split this render");
+  assert.equal(elements.top.innerText, "Dominant Faction: Red");
+  assert.deepEqual(elements.table.children.map(n => n.textContent), [
+    "> Red — Power: 3", "> Blue — Power: 1"
+  ]);
 });

@@ -1,6 +1,7 @@
 # Change history
 
 ## Unreleased
+- Render Territory's faction heading and rows from its committed visit tally, avoiding contradictory post-write storage rereads; cross-tab write atomicity remains unaddressed.
 - Show inert Councilfire recovery text on saved-history/quest read failures instead of an endless gathering placeholder; leave dialogue rendering and history logic intact.
 - Display inert failure messages on Fold and Shard pages when the Fold state query rejects, avoiding indefinitely pending placeholders.
 - Improve Rootcraft's mobile viewport, visible writing-field label, polite result announcements and touch-target sizing without changing local save/denial behaviour.
