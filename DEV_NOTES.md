@@ -2,6 +2,26 @@
 
 ## Development
 
+**Goal:** Make the Force and Sigilpath screens reveal unreadable browser-local Living Sigil records without hiding the problem behind an indefinite or empty display.
+
+**Integration:** Candidate on `noe/force-sigilpath-recovery-20261117`, not yet merged. Exact predecessor main: `927201769ac335d4c2b814419b602f5453ad7ef5`.
+
+**Validation:** Helper's source-locked synthetic DOM and real-module investigation (8 scenario groups on Node 22.16.0) established the baseline failure and in-memory repair. A separate upstream regression now tests healthy rendering, malformed saved records and partial-render faults. Candidate full-suite, hosted Node matrix, real browser and iPhone remain unconfirmed at writing. See PR for revision-specific outcomes.
+
+**Release:** Review candidate only; no merge, deployment, tag or live-browser/device proof claimed.
+
+**Next:** Review focused and full Node 20/22 CI results, check current branch and PR state, then consider integration if checks pass. A static-module import failure remains outside this page-level guard.
+
+## Decision 2026-11-17: Force and Sigilpath visible read failure
+
+**Observed:** The exported `getTraits`, `getOrCreateSigil` and `getSigilHistory` deliberately throw for malformed *present* localStorage records. Force's inline script left `Calculating...` in place; Sigilpath left its fields blank. A simulated error after one successful DOM assignment could leave partially misleading text. The helper reproduced both against exact original page and module blobs without changing production source.
+
+**Choice:** Catch only page-level calculation/render errors, clear partial narrative details and present fixed text-only recovery warnings with polite status semantics. Do not show raw exception strings, change the narrative functions or read/repair/write visitor storage in the catch. For valid records, keep the existing classifications and lore.
+
+**Trade-offs:** A page can say it couldn't read saved records, but that is not a backup and does not diagnose the precise damaged key. Failure in static module loading, a missing DOM element, browser restrictions, true iPhone storage behaviour and real visitor histories are not validated. Revisit only with real evidence of a recovery UX need or a failing supported environment.
+
+## Development
+
 **Goal:** Make Territory's visit tally display one consistent committed snapshot rather than reading browser storage three separate times.
 
 **Integration:** Candidate on `noe/territory-committed-snapshot-20261117`; not merged. The previous Councilfire PR [#29](https://github.com/levelinglucy/Devoured-Web/pull/29) merged at `3e6dbf8a`.
