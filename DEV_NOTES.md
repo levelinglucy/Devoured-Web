@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Give all three Threshold questions permanent accessible names and let keyboard Enter invoke the existing shard decision exactly as the Enter button does.
+**Goal:** Make Echoquest instructions describe implemented progress rather than ask visitors to perform Force/Fragments visits that the current predicates never check, or pursue a nonexistent glitch redirect.
 
-**Integration:** [PR #35](https://github.com/levelinglucy/Devoured-Web/pull/35) contains the scoped candidate against `main` `f3d0e0cc`; consult that PR for current merge status rather than assuming a candidate is deployed. Fold identity draft PR #33 remains parked for separate historic cloud-schema evidence.
+**Integration:** Copy-only candidate on [PR #36](https://github.com/levelinglucy/Devoured-Web/pull/36) based on main `b42d8f1b`; not merged as of this record. Fold identity PR #33 remains a separate parked draft.
 
-**Validation:** Helper's exact-source isolated Chromium DOM probe observed missing label associations and an inert input Enter on original; its form/labels candidate passed 12/12 DOM assertions in an about:blank synthetic fixture. Three added source/VM regressions and the full 128/128 hosted suite passed on Node 20 and Node 22 at initial PR head `1503c734` ([candidate CI](https://github.com/levelinglucy/Devoured-Web/actions/runs/44047484387)). Validation of later revisions and any merged main must be checked separately. Real-site navigation and Safari/screen-reader acceptance have not been demonstrated.
+**Validation:** Three new source-executing VM tests fail 0/3 on exact original `echoquest.js` blob `9b9d6267` and pass 3/3 on candidate blob `f81e2633` using local Node 22.16.0; exact new test blob `ef2a204c`. These test text/condition agreement and preserved legacy flag behaviour, not actual browsers or historical stored values. Hosted CI for the final branch and subsequent main is separately required.
 
-**Release:** Unreleased; no tag is claimed.
+**Release:** Unreleased; no tag or Pages deployment claimed for this candidate.
 
-**Next:** (1) Confirm the final PR head, required checks/reviews and merge before declaring integration. (2) Validate merged main and Pages deployment separately where applicable. (3) Keep actual-origin keyboard navigation, mobile zoom and assistive-technology acceptance unverified until directly tested.
+**Next:** (1) Verify final PR branch and hosted Node 20/22 results. (2) Merge only if review/check policy permits, then separately verify main and Pages deployment. (3) Decide whether Fire/Split should receive real progress-event writers only with an explicit event design and storage compatibility review.
+
+## Decision 2026-11-17: truthful Echoquest descriptions
+
+**Observed:** Witness completes on three fragments without a Force visit. The Lost timer is created on first Echoquest inspection and never examines a Fragments visit. Fire and Split consume `echoCount`/`glitchTrigger` and `mirrorLoop` flags, but the current tracked runtime showed no corresponding progress writers; `glitch.html` is absent. The independent helper confirmed these against the exact source with synthetic progress fixtures. This is not proof that older external writers or archived builds never existed.
+
+**Choice:** Change only the four visitor task sentences. Witness now names the fragment threshold; Lost accurately names the first quest inspection; Fire and Split disclose unfinished event generation and remove the dead redirect. Keep titles, predicates, existing stored flags, timer semantics and all actual storage reads/writes unchanged. No backfill, reset or invented progress.
+
+**Trade-off:** Fire/Split status can still show complete for old, manually seeded or external milestones, while their text says this build does not generate them. That is intentional compatibility. A future fully playable design should specify the events, origin and migration strategy before adding writers. This bounded wording correction is not a live game/browser acceptance result.
 
 ## Decision 2026-11-17: keyboard-accessible Threshold entrance
 
