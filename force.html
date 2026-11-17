@@ -25,15 +25,22 @@
 </head>
 <body>
   <h1>The Archive Considers You</h1>
-  <div id="force">Calculating...</div>
+  <div id="force" role="status">Calculating...</div>
   <div id="lore"></div>
 
 <script type="module">
   import { getForceFromTraits, getForceLore } from './mythos.js';
 
-  const force = getForceFromTraits();
-  document.getElementById("force").innerText = force;
-  document.getElementById("lore").innerText = getForceLore(force);
+  try {
+    const force = getForceFromTraits();
+    document.getElementById("force").innerText = force;
+    document.getElementById("lore").innerText = getForceLore(force);
+  } catch {
+    // Do not expose raw exceptions or rewrite unreadable browser-local history.
+    document.getElementById("force").textContent =
+      "Could not read your Force. Saved records were not changed.";
+    document.getElementById("lore").textContent = "";
+  }
 </script>
 </body>
 </html>
