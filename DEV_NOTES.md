@@ -2,15 +2,28 @@
 
 ## Development
 
-**Goal:** Keep Reflective Shard readable when saved Living Sigil traits/identity cannot be read, and choose narrative text from one consistent traits snapshot.
+**Goal:** Prevent absent/null/empty Firestore sigils from masquerading as distinct visitors in Fold's rebellion and glitch calculations, while retaining raw document thresholds and historical unknown identity types.
 
-**Integration:** Candidate on `noe/reflective-recovery-20261117` against exact main `240add75c8e3e99f0b5549023baaba78eff69f37`; not merged. Preserve the original narrative branches and stored records.
+**Integration:** Candidate on `noe/fold-present-identity-20261117` based on exact main `8f0659246307ce3b0251b00c89068fc5a6aa6ddf`. Not merged.
 
-**Validation:** The independent helper's source-locked equivalent probe covered 11/11 synthetic scenario groups on Node 22.16.0; it is not a real-browser test. A separate local source-shaped Node 22.16.0 run of 12/12 reflective-focused tests (existing narrative suite plus new boundary suite) passed before remote publication. Hosted full-suite CI and exact remote revision verification remain pending; do not treat local tests as proof of hosted or browser behaviour.
+**Validation:** Source-equivalent Node 22.16.0 isolated synthetic tests reproduced two baseline misclassifications (2/4 scenarios passed before repair) and passed 4/4 after a missing/empty identity guard. These are not actual Firestore/browser results. Full Node 20/22 hosted checks are pending, as is exact-main verification.
 
-**Release:** Unreleased, no new tag or Pages deployment claimed.
+**Release:** Unreleased. No new Pages deployment or tag claimed for this candidate.
 
-**Next:** (1) Inspect PR branch source/test blobs and Node 20/22 hosted checks. (2) Consider low-risk merge only if current checks/review allow; then validate the exact merged revision separately. (3) Retain browser, iPhone/Safari and assistive-technology testing as separate, unverified outcomes.
+**Next:** (1) Review exact branch source and CI against `main`. (2) Confirm that existing Firebase data producers cannot legitimately use absent/null/empty sigils before promoting; non-string IDs intentionally remain accepted pending real schema evidence. (3) Merge only if code review and required checks permit, then test exact main and deployment separately.
+
+## Decision 2026-11-17: Fold cannot infer visitors from missing identities
+
+**Observed:** Three `rebellion` echoes without an identity share the `undefined` Map key and become a fabricated third rebellious user when two legitimate identities have three echoes each. Three anomaly records with missing/null/empty sigils count as three distinct glitched users and can trigger `Fractured` incorrectly. Synthetic snapshot tests reproduced both; there is no confirmed live Firestore dataset reproducing either.
+
+**Choice:** Exclude only `null`, `undefined` and `""` from per-visitor `Map`/`Set` grouping. Keep queried echo/anomaly document counts unchanged, valid text identifiers literal (including `__proto__`) and unknown non-string IDs accepted until historical Firestore writers/rules are known.
+
+**Trade-offs:** Historical empty-string IDs, if intentionally used, would no longer contribute to per-user classifications; missing and null IDs never identify a specific visitor. The codebase contains Fold consumers but no tracked echo/anomaly writer or Firestore rules confirming production identity schema. Do not claim this is a live-data migration or a fix for all malformed types, concurrency, network failures or schema drift. Revisit with verified producer/security-rule evidence.
+
+## Previous milestone: Reflective Shard read failure
+
+**Integration:** PR [#32](https://github.com/levelinglucy/Devoured-Web/pull/32) merged at `8f0659246307ce3b0251b00c89068fc5a6aa6ddf`.
+**Validation:** Exact-main Node 20/22 122/122 each in [run 44016583711](https://github.com/levelinglucy/Devoured-Web/actions/runs/44016583711), Pages deployment [run 44016583372](https://github.com/levelinglucy/Devoured-Web/actions/runs/44016583372) reported success. No iPhone, real visitor records or screen-reader test; no tagged release.
 
 ## Decision 2026-11-17: Reflective Shard's read failure and snapshot
 
