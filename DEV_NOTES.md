@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Rootcraft should explain when it cannot read saved faction eligibility, without losing previous archives or falsely leaving a prior success visible.
+**Goal:** Make the Banned → Underfold → Whisper passage use the actual mobile device-width layout rather than a scaled 980px virtual viewport, without changing routes or story text.
 
-**Integration:** Rootcraft UI-only candidate on `noe/rootcraft-eligibility-boundary-20261117`, based on exact main `cf1f282d`. A branch or PR is not an integration or release; Fold identity PR #33 remains an unrelated draft.
+**Integration:** Reviewable candidate on `noe/underfold-passage-device-viewport-20261117`. This note records the proposed source change, not a verified merge. Fold identity PR #33 is independent and remains a draft pending historical schema evidence.
 
-**Validation:** New source-executing synthetic VM cases failed 2/3 on original Rootcraft blob `9071b3eb` and passed 3/3 on corrected blob `02086843` under local Node 22.16.0. Hosted CI and any post-merge verification must be recorded separately against the actual final SHA. No real browser, Safari, iPhone, screen reader, denied-origin, or archive-durability test.
+**Validation:** Helper's source-locked paired headless Chromium probe reported 9/9 original-versus-candidate configurations at 320px, 390px and 1280px, including mobile width/scale and preserved exits. The three committed regression cases were also checked directly against exact branch source: original 0/3 versus patched 3/3 viewport+link assertions. Hosted Node CI and exact-main Pages status require independent verification; direct source assertions are not a full Node test invocation.
 
-**Release:** Unreleased; no deployment, tag or visitor confirmation claimed for this candidate.
+**Release:** Unreleased; no new tag, live-origin deployment or phone certification claimed by this entry.
 
-**Next:** (1) Inspect branch tests and hosted results. (2) Merge only after branch state and required checks are verified, then separately validate exact main and Pages. (3) Preserve Fold #33 as draft until historical Firestore identity provenance exists.
+**Next:** (1) Review the exact PR diff and hosted Node 20/22 CI. (2) Merge only if relevant checks and required reviews permit; independently verify merged-main validation/deployment if merged. (3) Keep Fold #33 draft until authoritative identity compatibility evidence exists.
+
+## Decision 2026-11-17: Underfold passage mobile viewport
+
+**Observed:** At baseline Devoured-Web main `b12b93d0`, `banned.html`, `underfold.html` and `whisper.html` lacked viewport metadata. The helper's isolated source-locked Chromium experiment measured a 980px mobile layout viewport scaled to ~0.327 at 320px and ~0.398 at 390px. This is an instrumented rendering observation, not a report from actual visitors.
+
+**Choice:** Add only `<meta name="viewport" content="width=device-width, initial-scale=1.0">` immediately after charset in each of these three original narrative pages. Their CSS, text and four exits remain unchanged. Preserve zoom freedom; do not add `user-scalable=no` or a maximum scale restriction. Three dependency-free source tests lock those facts.
+
+**Trade-offs:** Helper's nine headless `set_content` comparisons showed device-width mobile layout without document overflow, and unchanged desktop layout/links; actual navigation was not clicked. Natural text wrapping may differ. Neither real served-origin browser behavior, iPhone Safari, text zoom, VoiceOver, WCAG conformance nor live deployment is established. Revisit if real accessibility/layout feedback differs.
 
 ## Decision 2026-11-17: Rootcraft eligibility-read failure boundary
 
