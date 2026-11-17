@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Make the Force and Sigilpath screens reveal unreadable browser-local Living Sigil records without hiding the problem behind an indefinite or empty display.
+**Goal:** Keep Reflective Shard readable when saved Living Sigil traits/identity cannot be read, and choose narrative text from one consistent traits snapshot.
 
-**Integration:** Candidate on `noe/force-sigilpath-recovery-20261117`, not yet merged. Exact predecessor main: `927201769ac335d4c2b814419b602f5453ad7ef5`.
+**Integration:** Candidate on `noe/reflective-recovery-20261117` against exact main `240add75c8e3e99f0b5549023baaba78eff69f37`; not merged. Preserve the original narrative branches and stored records.
 
-**Validation:** Helper's source-locked synthetic DOM and real-module investigation (8 scenario groups on Node 22.16.0) established the baseline failure and in-memory repair. A separate upstream regression now tests healthy rendering, malformed saved records and partial-render faults. Initial candidate PR head dd33c9cb passed 117/117 each on Node 20 and 22 in Actions 44009424016 (both decoded job logs inspected). A follow-up test now checks the absent-identity path and warning wording; revalidate at final PR head. Real browser and iPhone remain unconfirmed.
+**Validation:** The independent helper's source-locked equivalent probe covered 11/11 synthetic scenario groups on Node 22.16.0; it is not a real-browser test. A separate local source-shaped Node 22.16.0 run of 12/12 reflective-focused tests (existing narrative suite plus new boundary suite) passed before remote publication. Hosted full-suite CI and exact remote revision verification remain pending; do not treat local tests as proof of hosted or browser behaviour.
 
-**Release:** Review candidate only; no merge, deployment, tag or live-browser/device proof claimed.
+**Release:** Unreleased, no new tag or Pages deployment claimed.
 
-**Next:** Review focused and full Node 20/22 CI results, check current branch and PR state, then consider integration if checks pass. A static-module import failure remains outside this page-level guard.
+**Next:** (1) Inspect PR branch source/test blobs and Node 20/22 hosted checks. (2) Consider low-risk merge only if current checks/review allow; then validate the exact merged revision separately. (3) Retain browser, iPhone/Safari and assistive-technology testing as separate, unverified outcomes.
+
+## Decision 2026-11-17: Reflective Shard's read failure and snapshot
+
+**Observed:** The baseline calls `hasTrait()` repeatedly (up to four browser-local reads); a corrupted present `sigilTraits`, bad `aletheSigil` or blocked read throws before the page replaces `Loading reflection...`. The helper reproduced this against source-equivalent Node DOM/storage fixtures, not actual user data.
+
+**Choice:** Read the validated trait list once with `getTraits()`, preserve the same SEEKER/VAULTBOUND/REKINDLED/LIAR precedence, and put the page's text-only display behind a catch that clears partial narrative and shows a fixed recovery warning. No automatic reset, rewrite, upload or leaking raw exception strings.
+
+**Trade-offs:** `getOrCreateSigil()` can initialize a previously absent identity before a later trait read fails; the warning deliberately does not promise zero writes. A single snapshot makes this rendering internally consistent, but does not prevent cross-tab lost updates or later changes. Static import errors, DOM failure modes, real browser/iPhone/Safari and actual screen-reader announcements remain outside synthetic validation.
 
 ## Decision 2026-11-17: Force and Sigilpath visible read failure
 
