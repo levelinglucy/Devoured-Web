@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Show a safe, accessible Councilfire failure state when the local sigil, quest or throne-history read rejects, instead of leaving "Gathering Echoforms..." indefinitely. Preserve the normal five-line display and text-only rendering.
+**Goal:** Make Territory's visit tally display one consistent committed snapshot rather than reading browser storage three separate times.
 
-**Integration:** Proposed on `noe/councilfire-page-error-boundary-20261116`, not merged. The prior Fold/Shard failure-boundary PR [#28](https://github.com/levelinglucy/Devoured-Web/pull/28) was merged into main at `5d059c61ac04859e4bce965e54774e5404905b41`.
+**Integration:** Candidate on `noe/territory-committed-snapshot-20261117`; not merged. The previous Councilfire PR [#29](https://github.com/levelinglucy/Devoured-Web/pull/29) merged at `3e6dbf8a`.
 
-**Validation:** Local isolated Node 22.16.0 VM baseline test exposed an unhandled promise rejection (1 failure, 1 successful control). The candidate passed 2/2 focused tests and module syntax check locally. Hosted Node 20/22 CI and exact-main deployment are **not yet verified**. This injects a simulated rejection; it is not evidence of an actual user archive failure.
+**Validation:** Exact upstream source local Node 22.16.0 test-first fixture failed 2/3 focused assertions (extra reads) while write-error control passed; candidate passed 3/3 plus source and page-module syntax. Full hosted suite/real browser behaviour not yet verified. See PR for exact-revision evidence.
 
-**Release:** Proposed only, not merged, tagged, or deployed. Historical saved records remain unmodified by this page-level error handling. Real browser, iPhone Safari and assistive-technology announcements remain untested.
+**Release:** Not merged, deployed or tagged. This changes only immediate rendering: not a transaction across tabs, not a global leaderboard, and not a guarantee of visitor uniqueness.
 
-**Next:** (1) Inspect candidate hosted CI and current PR review gates. (2) Merge only if exact candidate and required checks support it. (3) Independently check exact-main tests and Pages deployment, keeping live/device claims separate.
+**Next:** Review the two new repo regressions, run full Node 20/22 checks, inspect current PR head and required checks before considering integration; do not merge an unrelated Web Locks durability candidate on this evidence.
+
+## Decision 2026-11-17: Territory committed-visit snapshot
+
+**Observed:** After contributing one visit, the page independently read `warpathTally` twice more to compute the dominant faction and rows. A synthetic failure on the second read caused an unavailable message **after a successful saved increment**; an interleaved third read could show a Red heading over a Blue-first table. This is a reproducible source-level interleaving, not an observed browser race.
+
+**Choice:** Return the just-written null-prototype tally from `contributeToFaction()` and derive heading and rows from that one snapshot. Preserve the existing public getters, count validation, exact stored bytes on refusal, inert faction labels and same-browser local scope. Do not introduce async writes or Web Locks without real cross-tab acceptance evidence.
+
+**Trade-off:** The displayed snapshot may become stale when another tab writes later, but its heading and rows agree with the committed visit it depicts. This does not solve lost updates between concurrent read-modify-write operations; cross-tab atomicity and Safari behaviour remain separate review gates.
 
 ## Decision 2026-11-16: Councilfire failure boundary
 
