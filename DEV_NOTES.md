@@ -4,13 +4,13 @@
 
 **Goal:** Give all three Threshold questions permanent accessible names and let keyboard Enter invoke the existing shard decision exactly as the Enter button does.
 
-**Integration:** Reviewable candidate on `noe/threshold-keyboard-labels-20261117`, based on `main` `f3d0e0cc`; not merged or deployed. Fold identity draft PR #33 remains parked for separate historic cloud-schema evidence.
+**Integration:** [PR #35](https://github.com/levelinglucy/Devoured-Web/pull/35) contains the scoped candidate against `main` `f3d0e0cc`; consult that PR for current merge status rather than assuming a candidate is deployed. Fold identity draft PR #33 remains parked for separate historic cloud-schema evidence.
 
-**Validation:** Helper's exact-source isolated Chromium DOM probe observed missing label associations and an inert input Enter on original; its form/labels candidate passed 12/12 DOM assertions in an about:blank synthetic fixture. New source regression tests exercise markup and mocked submit/storage routing. Hosted Node 20/22 and the exact final candidate revision remain to be verified; no real-site navigation or Safari/screen-reader evidence is claimed.
+**Validation:** Helper's exact-source isolated Chromium DOM probe observed missing label associations and an inert input Enter on original; its form/labels candidate passed 12/12 DOM assertions in an about:blank synthetic fixture. Three added source/VM regressions and the full 128/128 hosted suite passed on Node 20 and Node 22 at initial PR head `1503c734` ([candidate CI](https://github.com/levelinglucy/Devoured-Web/actions/runs/44047484387)). Validation of later revisions and any merged main must be checked separately. Real-site navigation and Safari/screen-reader acceptance have not been demonstrated.
 
-**Release:** Unreleased; no tag or deployment from this candidate.
+**Release:** Unreleased; no tag is claimed.
 
-**Next:** (1) Verify PR CI and source/markup against the exact head. (2) Confirm safe merge requirements; check merged-main CI and deployment only after an actual merge. (3) Keep actual-origin keyboard navigation, mobile zoom and assistive-technology acceptance as unverified until directly tested.
+**Next:** (1) Confirm the final PR head, required checks/reviews and merge before declaring integration. (2) Validate merged main and Pages deployment separately where applicable. (3) Keep actual-origin keyboard navigation, mobile zoom and assistive-technology acceptance unverified until directly tested.
 
 ## Decision 2026-11-17: keyboard-accessible Threshold entrance
 
