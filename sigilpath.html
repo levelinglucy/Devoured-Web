@@ -29,17 +29,25 @@
 </head>
 <body>
   <h1>Your Sigilpath</h1>
-  <div id="path" class="path"></div>
+  <div id="path" class="path" role="status"></div>
   <div id="desc" class="desc"></div>
   <div id="quest" class="quest"></div>
 
 <script type="module">
   import { getSigilPath } from './sigilpath.js';
 
-  const p = getSigilPath();
-  document.getElementById("path").innerText = p.name;
-  document.getElementById("desc").innerText = p.desc;
-  document.getElementById("quest").innerText = p.quest;
+  try {
+    const p = getSigilPath();
+    document.getElementById("path").innerText = p.name;
+    document.getElementById("desc").innerText = p.desc;
+    document.getElementById("quest").innerText = p.quest;
+  } catch {
+    // Preserve raw visitor history for deliberate recovery instead of resetting it.
+    document.getElementById("path").textContent =
+      "Could not read your Sigilpath. Saved records were not changed.";
+    document.getElementById("desc").textContent = "";
+    document.getElementById("quest").textContent = "";
+  }
 </script>
 </body>
 </html>
