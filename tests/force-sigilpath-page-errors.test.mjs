@@ -18,7 +18,7 @@ const cases = {
   sigilpath: {
     file: "sigilpath.html", ids: ["path", "desc", "quest"],
     initial: ["", "", ""],
-    warning: "Could not read your Sigilpath. Saved records were not changed.",
+    warning: "Could not read your Sigilpath. Preserve existing records for recovery.",
     api: { getSigilPath }
   }
 };
@@ -134,4 +134,18 @@ test("A rendering failure after partial assignment clears all page fields", () =
     assert.equal(result.writes, 0);
     assert.doesNotMatch(result.values.join("|"), /private|Partly drawn/);
   }
+});
+
+test("Sigilpath warning does not falsely promise zero writes if identity was absent", () => {
+  // The established getOrCreateSigil() semantics create a new identity before
+  // reading corrupted traits. A page-level catch must not deny that write.
+  const fields = { sigilTraits: "{broken", sigilHistory: "[]" };
+  const result = runPage("sigilpath", fields);
+  assert.equal(result.thrown, undefined);
+  assert.equal(result.values[0], cases.sigilpath.warning);
+  assert.equal(result.writes, 1, "A previously absent sigil is initialized");
+  assert.deepEqual(result.after.slice(0, 2), result.before,
+    "Already-present history remains byte-identical");
+  assert.match(result.after[2][1], /^[A-Z0-9]+-[0-9]+$/);
+  assert.equal(result.after[2][0], "aletheSigil");
 });
