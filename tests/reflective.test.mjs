@@ -23,13 +23,13 @@ test("Reflective Shard inline module has valid native JavaScript syntax", () => 
 function render(traits) {
   const nodes = { sigil: { innerText: "" }, echo: { innerText: "" } };
   const withoutImport = moduleSource.replace(
-    /^\s*import\s+\{\s*getOrCreateSigil,\s*hasTrait\s*\}\s+from\s+['"]\.\/sigil\.js['"];\s*$/m,
+    /^\s*import\s+\{\s*getOrCreateSigil,\s*getTraits\s*\}\s+from\s+['"]\.\/sigil\.js['"];\s*$/m,
     ""
   );
   assert.notEqual(withoutImport, moduleSource, "Expected the real sigil module import");
   runInNewContext(withoutImport, {
     getOrCreateSigil: () => "TEST-001",
-    hasTrait: (name) => traits.has(name),
+    getTraits: () => [...traits],
     document: {
       getElementById: (id) => {
         assert.ok(id in nodes, "unexpected element " + id);
@@ -57,6 +57,6 @@ for (const [name, traits, expected] of scenarios) {
 }
 
 test("Reflective Shard uses inert text assignment, not HTML parsing", () => {
-  assert.match(moduleSource, /getElementById\(["']echo["']\)\.innerText\s*=\s*response/);
+  assert.match(moduleSource, /echoNode\.innerText\s*=\s*response/);
   assert.doesNotMatch(moduleSource, /innerHTML\s*=/);
 });
