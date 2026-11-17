@@ -1,6 +1,7 @@
 # Change history
 
 ## Unreleased
+- Align Echoquest task instructions with actual Witness fragment and Lost timer predicates; clearly mark unimplemented Fire/Split milestone producers and remove the nonexistent glitch-page promise without changing saved progress or completion rules.
 - Give Threshold's three questions visible associated labels and native Enter-key submission, while retaining existing sigil and story routing logic.
 - Show inert recovery warnings on Force and Sigilpath when saved Living Sigil history cannot be read or rendered; preserve present history and successful story output without resetting malformed records.
 - Render Territory's faction heading and rows from its committed visit tally, avoiding contradictory post-write storage rereads; cross-tab write atomicity remains unaddressed.
