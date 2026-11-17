@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Make a successful but empty Firestore echo feed visibly different from both "Loading..." and a failed query.
+**Goal:** Give all three Threshold questions permanent accessible names and let keyboard Enter invoke the existing shard decision exactly as the Enter button does.
 
-**Integration:** Candidate on `noe/echo-feed-empty-20261117` against main `8f0659246307ce3b0251b00c89068fc5a6aa6ddf`; not merged. Unrelated Fold identity draft PR #33 remains parked pending historical schema evidence.
+**Integration:** Reviewable candidate on `noe/threshold-keyboard-labels-20261117`, based on `main` `f3d0e0cc`; not merged or deployed. Fold identity draft PR #33 remains parked for separate historic cloud-schema evidence.
 
-**Validation:** Source-locked Node 22.16.0 isolated regression: 1/3 before, 3/3 after. Full hosted suite and actual browser remain unverified until checked on the exact candidate revision.
+**Validation:** Helper's exact-source isolated Chromium DOM probe observed missing label associations and an inert input Enter on original; its form/labels candidate passed 12/12 DOM assertions in an about:blank synthetic fixture. New source regression tests exercise markup and mocked submit/storage routing. Hosted Node 20/22 and the exact final candidate revision remain to be verified; no real-site navigation or Safari/screen-reader evidence is claimed.
 
-**Release:** Unreleased; no new tag or Pages deployment claimed.
+**Release:** Unreleased; no tag or deployment from this candidate.
 
-**Next:** (1) Verify branch contents and hosted Node 20/22 CI. (2) Check current main/review requirements before any merge, then validate merged main and deployment separately. (3) Retain actual visitor-origin, iPhone Safari and assistive-technology checks as distinct unverified outcomes.
+**Next:** (1) Verify PR CI and source/markup against the exact head. (2) Confirm safe merge requirements; check merged-main CI and deployment only after an actual merge. (3) Keep actual-origin keyboard navigation, mobile zoom and assistive-technology acceptance as unverified until directly tested.
+
+## Decision 2026-11-17: keyboard-accessible Threshold entrance
+
+**Observed:** The original three text questions had only placeholder text, no explicit label associations, and the Enter control used only `onclick`, so pressing Enter from an input did not submit. The independent helper reproduced this with instrumented Chromium DOM interactions against the exact source blob. Not a live visitor report.
+
+**Choice:** Wrap the existing controls in a native form with `onsubmit="decideShard(); return false;"`, use a real submit button and explicit visible `label for` associations. Keep `decideShard()`, sigil initialization, saved identity protection and all story route conditions byte-for-byte unchanged. Keep the input labels/form centre aligned; give controls 16px fonts and the submit button a 44px minimum target. Add polite status semantics for the existing result text.
+
+**Trade-offs:** Returning false prevents the browser's default form navigation while the existing function decides the route. The change adds no archive write and does not change input data handling, but may alter layout/focus/keyboard behaviour. Source tests and synthetic DOM prove only their exercised behaviours, not served-origin navigation, mobile Safari, screen reader announcements or full WCAG conformance. Review/revisit if real-browser focus or rendering differs.
 
 ## Decision 2026-11-17: successful but empty echo feeds
 
