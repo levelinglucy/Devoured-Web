@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Keep Reflective Shard readable when saved Living Sigil traits/identity cannot be read, and choose narrative text from one consistent traits snapshot.
+**Goal:** Make a successful but empty Firestore echo feed visibly different from both "Loading..." and a failed query.
 
-**Integration:** Candidate on `noe/reflective-recovery-20261117` against exact main `240add75c8e3e99f0b5549023baaba78eff69f37`; not merged. Preserve the original narrative branches and stored records.
+**Integration:** Candidate on `noe/echo-feed-empty-20261117` against main `8f0659246307ce3b0251b00c89068fc5a6aa6ddf`; not merged. Unrelated Fold identity draft PR #33 remains parked pending historical schema evidence.
 
-**Validation:** The independent helper's source-locked equivalent probe covered 11/11 synthetic scenario groups on Node 22.16.0; it is not a real-browser test. A separate local source-shaped Node 22.16.0 run of 12/12 reflective-focused tests (existing narrative suite plus new boundary suite) passed before remote publication. Hosted full-suite CI and exact remote revision verification remain pending; do not treat local tests as proof of hosted or browser behaviour.
+**Validation:** Source-locked Node 22.16.0 isolated regression: 1/3 before, 3/3 after. Full hosted suite and actual browser remain unverified until checked on the exact candidate revision.
 
-**Release:** Unreleased, no new tag or Pages deployment claimed.
+**Release:** Unreleased; no new tag or Pages deployment claimed.
 
-**Next:** (1) Inspect PR branch source/test blobs and Node 20/22 hosted checks. (2) Consider low-risk merge only if current checks/review allow; then validate the exact merged revision separately. (3) Retain browser, iPhone/Safari and assistive-technology testing as separate, unverified outcomes.
+**Next:** (1) Verify branch contents and hosted Node 20/22 CI. (2) Check current main/review requirements before any merge, then validate merged main and deployment separately. (3) Retain actual visitor-origin, iPhone Safari and assistive-technology checks as distinct unverified outcomes.
+
+## Decision 2026-11-17: successful but empty echo feeds
+
+**Observed:** The shared renderer calls `grid.replaceChildren()` immediately and appends orbs only for records whose text `message` matches the selected domain. A fulfilled zero-record query or only unrelated/malformed messages therefore replaces "Loading..." with a blank area. This is a source-level outcome reproduced with a fake DOM, not an observed live incident.
+
+**Choice:** After processing a fulfilled snapshot, show fixed inert text "No [Domain] echoes found yet." only when no matching records were rendered. Preserve matching records, original filtering, and existing page-level Firestore failure warnings. No data or network writes and no new dependencies.
+
+**Trade-off:** "No echoes" means none matching in the successfully fetched snapshot, not proof a database has no historical records or that another user's view is identical. Fake DOM tests do not prove live Firebase, browser accessibility or mobile presentation.
 
 ## Decision 2026-11-17: Reflective Shard's read failure and snapshot
 
