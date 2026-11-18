@@ -4,13 +4,13 @@
 
 **Goal:** Keep unrelated Fire, Lost, Split and Undefined Echoquests usable even when the separate browser-local Fragment archive is damaged, without rewriting any old record or weakening Witness validation.
 
-**Integration:** [PR #42](https://github.com/levelinglucy/Devoured-Web/pull/42) is a draft, unmerged source/test candidate. Main remains unchanged. Worldheart checkpoint PR #10 is a distinct parked milestone until its portability/safety evidence changes.
+**Integration:** [PR #42](https://github.com/levelinglucy/Devoured-Web/pull/42) tracks the Echoquest fragment fault-isolation change. Check that PR and `main` for live integration state; an approved merge is not a release. Worldheart checkpoint PR #10 remains a separately parked draft pending compatibility/safety evidence.
 
-**Validation:** Test-first PR head `e005fc40` failed 4/153 tests as expected on both Node 20 and 22 ([run 44275364733](https://github.com/levelinglucy/Devoured-Web/actions/runs/44275364733)). Source-corrected head `9a9a16ac` passed 153/153 per Node 20 and 22 ([run 44275479903](https://github.com/levelinglucy/Devoured-Web/actions/runs/44275479903)); inspected Node 22 logs and job status for both versions. This covers an isolated browser-storage VM, not live navigation, Safari/iPhone, tab concurrency or browser-origin storage.
+**Validation:** The test-only predecessor failed four expected cases (149/153 per Node 20 and 22; [run 44275364733](https://github.com/levelinglucy/Devoured-Web/actions/runs/44275364733)). Exact source/test/docs draft head `86075500` passed 153/153 on both versions ([run 44275646293](https://github.com/levelinglucy/Devoured-Web/actions/runs/44275646293)); the hosted jobs and logs were inspected. This proves a synthetic browser-storage VM contract, not real navigation, Safari/iPhone, tab concurrency or browser-origin storage. Subsequent documentation-only commits do not alter the validated source.
 
-**Release:** Unreleased. No main merge or published artifact.
+**Release:** Unreleased; no publication/tag or deployment is implied by a merge.
 
-**Next:** (1) Recheck final PR head, green jobs and exact source/test blobs after documentation. (2) Review unrelated state dependencies and required checks; integrate only if current main and checks permit, without erasing malformed archives. (3) Leave Worldheart PR #10 draft until safe portability evidence.
+**Next:** (1) Check exact `main` and CI results after integration, if it occurs. (2) Seek served-origin/browser evidence if a real-world issue warrants it; do not claim Safari or iPhone testing without that evidence. (3) Leave Worldheart PR #10 draft until new portability/safety evidence.
 
 ## Decision 2026-11-18: path-scoped Fragment archive reads in Echoquest
 
