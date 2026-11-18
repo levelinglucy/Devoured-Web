@@ -1,6 +1,7 @@
 # Change history
 
 ## Unreleased
+- Keep Fire, Lost, Split and Undefined Echoquests available when unrelated saved Fragment archives are malformed; retain strict Witness rejection and preserve original stored bytes.
 - Preserve existing valid Fragment archive JSON text exactly when appending; add only the new record without normalizing legacy fields, formatting or unusual numbers.
 - Add zoom-permissive mobile viewports to Vault, Fragments and Trail; keep their story/archive scripts unchanged while sizing backup controls and wrapping long Trail preview text for narrow screens.
 - Make Rootrite's Wanderer action usable at device-width mobile sizes with a wrapping 44px button, and announce success/failure in a polite status region without changing local faction writes.
