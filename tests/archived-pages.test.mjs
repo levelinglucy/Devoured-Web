@@ -84,7 +84,7 @@ test("Ritual Trail shows saved title, filename, time and bounded preview inertly
     title: hostile, filename: hostile, created: "2026-11-07", content: hostile.repeat(20)
   }]).children[0];
   assert.equal(card.className, "spawn");
-  assert.deepEqual(card.children.map(n => n.tagName), ["DIV", "DIV", "PRE"]);
+  assert.deepEqual(card.children.map(n => n.tagName), ["H2", "DIV", "PRE"]);
   assert.equal(card.children[0].textContent, hostile);
   assert.equal(card.children[1].textContent, "[" + hostile + "] - 2026-11-07");
   assert.equal(card.children[2].textContent, hostile.repeat(20).slice(0, 200) + "...");

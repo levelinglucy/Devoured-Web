@@ -1,6 +1,7 @@
 # Change history
 
 ## Unreleased
+- Expose saved Fragment and Ritual Trail record titles as native h2 headings while matching their previous card typography and height; retain inert text and unchanged browser-local history.
 - Keep Fire, Lost, Split and Undefined Echoquests available when unrelated saved Fragment archives are malformed; retain strict Witness rejection and preserve original stored bytes.
 - Preserve existing valid Fragment archive JSON text exactly when appending; add only the new record without normalizing legacy fields, formatting or unusual numbers.
 - Add zoom-permissive mobile viewports to Vault, Fragments and Trail; keep their story/archive scripts unchanged while sizing backup controls and wrapping long Trail preview text for narrow screens.
