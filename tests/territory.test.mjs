@@ -10,7 +10,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const html = readFileSync(join(root, "territory.html"), "utf8");
 const inline = html.match(/<script\s+type=["']module["']\s*>([\s\S]*?)<\/script>/i)?.[1];
 assert.ok(inline, "Territory needs its inline module");
-const pageImport = /^\s*import\s+\{\s*contributeToFaction\s*\}\s+from\s+['"]\.\/warpath\.js['"];?\s*$/m;
+const pageImport = /^\s*import\s+\{\s*contributeToFaction\s*,\s*rankFactionPower\s*\}\s+from\s+['"]\.\/warpath\.js['"];?\s*$/m;
 const warpath = readFileSync(join(root, "warpath.js"), "utf8");
 const warpathImport = /^\s*import\s+\{\s*getFaction\s*\}\s+from\s+['"]\.\/faction\.js['"];?\s*$/m;
 
@@ -54,7 +54,7 @@ function render(initialTally, faction, options = {}) {
   assert.match(warpath, warpathImport);
   runInNewContext(
     warpath.replace(warpathImport, "").replace(/\bexport\s+(?=function)/g, "") +
-    "\nthis.services = { contributeToFaction, getDominantFaction, getAllFactionPower };",
+    "\nthis.services = { contributeToFaction, rankFactionPower, getDominantFaction, getAllFactionPower };",
     context
   );
   assert.match(inline, pageImport);
@@ -100,6 +100,18 @@ test("Territory replaces the loading placeholder and preserves ordinary tally la
     "> The Flamebound — Power: 1"
   ]);
   assert.doesNotMatch(elements.table.textContent, /Loading data/);
+});
+
+test("Territory resolves equal power independent of JSON key insertion order", () => {
+  for (const raw of ['{"Red":1,"Blue":2}', '{"Blue":2,"Red":1}']) {
+    const { elements, tally } = render(null, "Red", { raw });
+    assert.equal(tally.Red, 2);
+    assert.equal(tally.Blue, 2);
+    assert.equal(elements.top.innerText, "Dominant Faction: Blue");
+    assert.deepEqual(elements.table.children.map(n => n.textContent), [
+      "> Blue — Power: 2", "> Red — Power: 2"
+    ]);
+  }
 });
 
 test("Territory refuses corrupt or wrongly shaped tallies without erasing local records", () => {
