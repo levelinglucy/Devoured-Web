@@ -111,15 +111,15 @@ try {
   }
   // Real served-page smoke for native record headings at mobile and desktop widths.
   // Synthetic records exercise the actual imported display modules, not a copied DOM fixture.
-  for (const [pageName, key, cardSelector, titleClass, records, bottomMargin] of [
+  for (const [pageName, key, cardSelector, titleClass, records] of [
     ['fragments.html', 'aletheFragments', '.fragment', 'title', [
       { title: '<img src=x onerror=alert(1)>', text: 'Inert story text' },
       { title: 'A deliberately long saved fragment title that wraps naturally', text: 'Second record' }
-    ], '8px'],
+    ]],
     ['trail.html', 'aletheSpawnTrail', '.spawn', 'spawn-title', [
       { title: '<img src=x onerror=alert(1)>', filename: 'first.txt', created: '2026-01-01', content: 'Inert story text' },
       { title: 'A deliberately long saved ritual title that wraps naturally', filename: 'second.txt', created: '2026-01-02', content: 'Second record' }
-    ], '0px']
+    ]]
   ]) {
     const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
     try {
@@ -138,12 +138,38 @@ try {
       assert.equal(await page.locator(`${cardSelector} img`).count(), 0, 'Stored text is inert');
       for (const width of [390, 1280]) {
         await page.setViewportSize({ width, height: 844 });
-        const actual = await headings.first().evaluate(el => {
-          const style = getComputedStyle(el);
-          return { size: style.fontSize, top: style.marginTop, bottom: style.marginBottom };
+        // Compare the live heading with an equivalent disposable historical div.
+        // Chrome's default monospace size can be 13px, not 16px: avoid assuming
+        // a browser-dependent pixel value when checking visual preservation.
+        const measured = await headings.first().evaluate(el => {
+          const originalCard = el.parentElement;
+          const baselineCard = originalCard.cloneNode(true);
+          const baselineTitle = baselineCard.querySelector('h2');
+          const oldTitle = document.createElement('div');
+          oldTitle.className = baselineTitle.className;
+          oldTitle.textContent = baselineTitle.textContent;
+          baselineTitle.replaceWith(oldTitle);
+          originalCard.parentElement.appendChild(baselineCard);
+          const pick = node => {
+            const style = getComputedStyle(node);
+            return {
+              size: style.fontSize, family: style.fontFamily,
+              weight: style.fontWeight, lineHeight: style.lineHeight,
+              top: style.marginTop, bottom: style.marginBottom
+            };
+          };
+          const result = {
+            heading: pick(el), originalDiv: pick(oldTitle),
+            headingHeight: originalCard.getBoundingClientRect().height,
+            originalHeight: baselineCard.getBoundingClientRect().height
+          };
+          baselineCard.remove();
+          return result;
         });
-        assert.deepEqual(actual, { size: '16px', top: '0px', bottom: bottomMargin },
-          pageName + ': preserve typography at width ' + width);
+        assert.deepEqual(measured.heading, measured.originalDiv,
+          pageName + ': match old div typography at width ' + width);
+        assert.ok(Math.abs(measured.headingHeight - measured.originalHeight) < 0.1,
+          pageName + ': match old card height at width ' + width);
       }
       assert.equal(await page.evaluate(k => localStorage.getItem(k), key), raw);
       assert.deepEqual(errors, []);
