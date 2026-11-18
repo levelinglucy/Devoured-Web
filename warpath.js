@@ -35,9 +35,15 @@ export function contributeToFaction() {
   return power; // Committed snapshot for an immediate, consistent render.
 }
 
+// Total ordering removes hidden JSON insertion-order priority on equal power.
+// String comparison uses code-unit order, not locale or visitor history.
+export function rankFactionPower(power) {
+  return Object.entries(power).sort((a, b) =>
+    b[1] - a[1] || (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+}
+
 export function getDominantFaction() {
-  const power = readFactionPower();
-  const sorted = Object.entries(power).sort((a, b) => b[1] - a[1]);
+  const sorted = rankFactionPower(readFactionPower());
   return sorted.length > 0 ? sorted[0][0] : "None";
 }
 
