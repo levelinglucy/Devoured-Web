@@ -40,6 +40,7 @@ test("Archive display never interpolates fragment values into HTML", () => {
   const container = render([{ title: "<img src=x>", text: "<svg onload=alert(1)>" }]);
   assert.equal(container.children.length, 1);
   const card = container.children[0];
+  assert.equal(card.children[0].tag, "h2", "Record title should be a navigable heading");
   assert.equal(card.children[0].textContent, "<img src=x>");
   assert.equal(card.children[1].textContent, "<svg onload=alert(1)>");
 });
