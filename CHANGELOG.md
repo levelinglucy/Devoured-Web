@@ -1,6 +1,7 @@
 # Change history
 
 ## Unreleased
+- Prototype serialized Fragment/Rootcraft saves using cooperative Web Locks while preserving historical JSON bytes; draft-only, with unsupported-context and mixed-tab release gates.
 - Stop Worldskin's looping Shard theme animations and body colour transition for visitors requesting reduced motion, while preserving normal animation and story state.
 - Give Archivegod Pulse, Shard Thrones and Councilfire device-width viewports and narrow-screen wrapping/padding for enlarged text; leave story scripts and saved data unchanged.
 - Expose saved Fragment and Ritual Trail record titles as native h2 headings while matching their previous card typography and height; retain inert text and unchanged browser-local history.

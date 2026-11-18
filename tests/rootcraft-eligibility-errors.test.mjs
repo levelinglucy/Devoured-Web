@@ -42,38 +42,38 @@ function launch() {
   };
 }
 
-test("Rootcraft displays a fixed warning when its faction eligibility read throws", () => {
+test("Rootcraft displays a fixed warning when its faction eligibility read throws", async () => {
   const app = launch();
   app.denyRead();
-  assert.doesNotThrow(() => app.cast());
+  await assert.doesNotReject(app.cast());
   assert.match(app.nodes.result.innerText, /could not check.*saved faction/i);
   assert.match(app.nodes.result.innerText, /nothing was changed/i);
   assert.doesNotMatch(app.nodes.result.innerText, /Private storage detail/);
   assert.equal(app.saved(), 0);
 });
 
-test("Rootcraft replaces an earlier save success if a later eligibility read fails", () => {
+test("Rootcraft replaces an earlier save success if a later eligibility read fails", async () => {
   const app = launch();
-  app.cast();
+  await app.cast();
   assert.match(app.nodes.result.innerText, /saved in this browser/);
   assert.equal(app.saved(), 1);
   app.denyRead();
-  assert.doesNotThrow(() => app.cast());
+  await assert.doesNotReject(app.cast());
   assert.doesNotMatch(app.nodes.result.innerText, /saved in this browser/);
   assert.match(app.nodes.result.innerText, /could not check.*saved faction/i);
   assert.equal(app.saved(), 1, "No second fragment was written");
 });
 
-test("Rootcraft preserves ordinary denial, successful save and existing writer-error wording", () => {
+test("Rootcraft preserves ordinary denial, successful save and existing writer-error wording", async () => {
   const app = launch();
   app.denyAccess();
-  app.cast();
+  await app.cast();
   assert.match(app.nodes.result.innerText, /Only Wanderers can rootwrite/);
   assert.equal(app.saved(), 0);
   const allowed = launch();
-  allowed.cast();
+  await allowed.cast();
   assert.equal(allowed.saved(), 1);
   allowed.failWrite();
-  allowed.cast();
+  await allowed.cast();
   assert.equal(allowed.nodes.result.innerText, "save denied");
 });
