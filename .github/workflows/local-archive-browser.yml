@@ -8,6 +8,9 @@ on:
       - 'pagespawn.js'
       - 'local-archive-backup.js'
       - 'tests/browser/local-archive-browser.mjs'
+      - 'tests/browser/fragment-web-locks.mjs'
+      - 'breakfold.js'
+      - 'rootcraft.html'
       - '.github/workflows/local-archive-browser.yml'
 
 permissions:
@@ -26,3 +29,5 @@ jobs:
         run: npm install --no-save --no-package-lock playwright@1.56.1
       - name: Test real Chrome page reveal and clipboard behaviour
         run: node tests/browser/local-archive-browser.mjs
+      - name: Check native same-origin fragment locks and mixed-version risk
+        run: node tests/browser/fragment-web-locks.mjs
