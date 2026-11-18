@@ -21,7 +21,8 @@
     .title {
       font-weight: bold;
       color: #aaffff;
-      margin-bottom: 0.5em;
+      font-size: 1em;
+      margin: 0 0 0.5em;
     }
     .text {
       font-style: italic;
@@ -85,7 +86,7 @@
       for (const entry of fragments) {
         const card = document.createElement("div");
         card.className = "fragment";
-        const title = document.createElement("div");
+        const title = document.createElement("h2");
         title.className = "title";
         title.textContent = entry && typeof entry.title === "string" ? entry.title : "Untitled";
         const body = document.createElement("div");
