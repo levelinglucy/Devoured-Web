@@ -13,7 +13,7 @@ const echoSource = readFileSync(join(root, "echoquest.js"), "utf8");
 const fragmentsSource = readFileSync(join(root, "fragments.js"), "utf8");
 const stripModule = source => source
   .replace(/^\s*import\s+.*?;\s*$/gm, "")
-  .replace(/\bexport\s+(?=(?:function|const|class))/g, "");
+  .replace(/\bexport\s+(?=(?:async\s+)?(?:function|const|class))/g, "");
 
 function fixture(path, initial = {}) {
   const values = new Map(Object.entries(initial));
