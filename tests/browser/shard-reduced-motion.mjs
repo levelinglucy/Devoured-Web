@@ -55,6 +55,9 @@ try {
       document.body.className = s;
       document.body.dataset.fold = s;
     }, state);
+    // Shard transitions text colour for 1 second in ordinary mode.
+    // Compare settled colours, not a mid-transition sampled frame.
+    if (reducedMotion === 'no-preference') await page.waitForTimeout(1200);
     return page.evaluate(() => {
       const css = getComputedStyle(document.body);
       return {
