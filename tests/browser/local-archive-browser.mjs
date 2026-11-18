@@ -109,7 +109,51 @@ try {
   } finally {
     await context.close();
   }
-  assert.equal(verified, 3);
+  // Real served-page smoke for native record headings at mobile and desktop widths.
+  // Synthetic records exercise the actual imported display modules, not a copied DOM fixture.
+  for (const [pageName, key, cardSelector, titleClass, records, bottomMargin] of [
+    ['fragments.html', 'aletheFragments', '.fragment', 'title', [
+      { title: '<img src=x onerror=alert(1)>', text: 'Inert story text' },
+      { title: 'A deliberately long saved fragment title that wraps naturally', text: 'Second record' }
+    ], '8px'],
+    ['trail.html', 'aletheSpawnTrail', '.spawn', 'spawn-title', [
+      { title: '<img src=x onerror=alert(1)>', filename: 'first.txt', created: '2026-01-01', content: 'Inert story text' },
+      { title: 'A deliberately long saved ritual title that wraps naturally', filename: 'second.txt', created: '2026-01-02', content: 'Second record' }
+    ], '0px']
+  ]) {
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    try {
+      const page = await context.newPage();
+      const errors = [];
+      page.on('pageerror', error => errors.push(error.message));
+      await page.goto(`${origin}/${pageName}`);
+      const raw = JSON.stringify(records);
+      await page.evaluate(({ key, raw }) => localStorage.setItem(key, raw), { key, raw });
+      await page.reload();
+      const headings = page.locator(`${cardSelector} > h2.${titleClass}`);
+      await headings.first().waitFor();
+      assert.equal(await headings.count(), records.length, pageName + ': one h2 per record');
+      assert.equal(await page.getByRole('heading', { level: 1 }).count(), 1);
+      assert.equal(await page.getByRole('heading', { level: 2, name: records[0].title }).count(), 1);
+      assert.equal(await page.locator(`${cardSelector} img`).count(), 0, 'Stored text is inert');
+      for (const width of [390, 1280]) {
+        await page.setViewportSize({ width, height: 844 });
+        const actual = await headings.first().evaluate(el => {
+          const style = getComputedStyle(el);
+          return { size: style.fontSize, top: style.marginTop, bottom: style.marginBottom };
+        });
+        assert.deepEqual(actual, { size: '16px', top: '0px', bottom: bottomMargin },
+          pageName + ': preserve typography at width ' + width);
+      }
+      assert.equal(await page.evaluate(k => localStorage.getItem(k), key), raw);
+      assert.deepEqual(errors, []);
+      verified++;
+      console.log(`${pageName}: served-origin story heading semantics and inert content passed`);
+    } finally {
+      await context.close();
+    }
+  }
+  assert.equal(verified, 5);
 } catch (error) {
   process.exitCode = 1;
   console.error('Browser smoke did not pass:', error);
