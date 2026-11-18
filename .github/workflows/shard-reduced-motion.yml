@@ -7,6 +7,14 @@ on:
       - 'tests/browser/shard-reduced-motion.mjs'
       - '.github/workflows/shard-reduced-motion.yml'
 
+  push:
+    branches: [main]
+    paths:
+      - 'worldskin.css'
+      - 'shard.html'
+      - 'tests/browser/shard-reduced-motion.mjs'
+      - '.github/workflows/shard-reduced-motion.yml'
+
 permissions:
   contents: read
 
