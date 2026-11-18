@@ -7,24 +7,28 @@
 const key = "aletheFragments";
 const writeLockName = "aletheFragments:write:v1";
 
-export function getFragments() {
+function readFragmentArchive() {
   const raw = localStorage.getItem(key);
-  if (raw === null) return [];
+  if (raw === null) return { raw, entries: [] };
 
-  let parsed;
+  let entries;
   try {
-    parsed = JSON.parse(raw);
+    entries = JSON.parse(raw);
   } catch {
     throw new Error("Saved fragment archive is unreadable");
   }
   // Only the shape emitted by addFragment is writable. Keep additional
   // historical object fields instead of discarding them during an append.
-  if (!Array.isArray(parsed) || parsed.some(entry =>
+  if (!Array.isArray(entries) || entries.some(entry =>
       !entry || typeof entry !== "object" || Array.isArray(entry) ||
       typeof entry.title !== "string" || typeof entry.text !== "string")) {
     throw new Error("Saved fragment archive has invalid entries or shape");
   }
-  return parsed;
+  return { raw, entries };
+}
+
+export function getFragments() {
+  return readFragmentArchive().entries;
 }
 
 async function withFragmentWriteLock(operation) {
@@ -37,8 +41,15 @@ async function withFragmentWriteLock(operation) {
   return manager.request(writeLockName, { mode: "exclusive" }, operation);
 }
 
-function persistFragments(fragments) {
-  localStorage.setItem(key, JSON.stringify(fragments));
+function appendFragment(raw, entries, fragment) {
+  const serialized = JSON.stringify(fragment);
+  // The parsed entries validate the archive and provide a title index, but
+  // may have rounded numbers or dropped duplicate keys. Only splice the new
+  // serialized fragment into the original raw bytes inside the exclusive lock.
+  const close = raw === null ? -1 : raw.lastIndexOf("]");
+  const updated = raw === null ? "[" + serialized + "]" :
+    raw.slice(0, close) + (entries.length ? "," : "") + serialized + raw.slice(close);
+  localStorage.setItem(key, updated);
 }
 
 // Returns true when inserted, false when the title was already present.
@@ -48,10 +59,9 @@ export async function addFragment(title, text) {
     throw new Error("Fragment title and text must be strings");
   }
   return withFragmentWriteLock(() => {
-    const existing = getFragments();
-    if (existing.some(fragment => fragment.title === title)) return false;
-    existing.push({ title, text });
-    persistFragments(existing);
+    const { raw, entries } = readFragmentArchive();
+    if (entries.some(fragment => fragment.title === title)) return false;
+    appendFragment(raw, entries, { title, text });
     return true;
   });
 }
@@ -63,8 +73,8 @@ export async function addNumberedFragment(prefix, text) {
     throw new Error("Fragment prefix and text must be strings");
   }
   return withFragmentWriteLock(() => {
-    const existing = getFragments();
-    const titles = new Set(existing.map(fragment => fragment.title));
+    const { raw, entries } = readFragmentArchive();
+    const titles = new Set(entries.map(fragment => fragment.title));
     let next = 1;
     while (titles.has(prefix + next)) {
       if (next === Number.MAX_SAFE_INTEGER) {
@@ -73,8 +83,7 @@ export async function addNumberedFragment(prefix, text) {
       next += 1;
     }
     const title = prefix + next;
-    existing.push({ title, text });
-    persistFragments(existing);
+    appendFragment(raw, entries, { title, text });
     return title;
   });
 }
