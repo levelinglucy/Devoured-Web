@@ -19,6 +19,8 @@
     }
     .spawn-title {
       font-weight: bold;
+      font-size: 1em;
+      margin: 0;
       color: #aaffff;
     }
     .spawn-meta {
@@ -83,7 +85,7 @@
         const entry = item && typeof item === "object" ? item : {};
         const card = document.createElement("div");
         card.className = "spawn";
-        const title = document.createElement("div");
+        const title = document.createElement("h2");
         title.className = "spawn-title";
         title.textContent = typeof entry.title === "string" ? entry.title : "Untitled";
         const meta = document.createElement("div");
