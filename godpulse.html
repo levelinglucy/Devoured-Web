@@ -27,6 +27,11 @@
       font-style: italic;
       margin-top: 2em;
     }
+    /* Limit inset and allow long sigils/headings to reflow on small screens,
+       including when the user's base text size is enlarged. */
+    @media (max-width: 600px) {
+      body { padding: 1em; overflow-wrap: anywhere; }
+    }
   </style>
 </head>
 <body>
