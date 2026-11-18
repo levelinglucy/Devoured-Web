@@ -35,3 +35,11 @@ body.ignited {
   75% { transform: translateX(-1px); }
   100% { transform: translateX(0); }
 }
+
+/* Match Shard's later inline body transition without affecting normal motion. */
+@media (prefers-reduced-motion: reduce) {
+  body.still, body.awake, body.fractured, body.ignited {
+    animation: none;
+    transition: none;
+  }
+}
