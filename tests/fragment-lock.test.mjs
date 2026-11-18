@@ -104,3 +104,37 @@ test('invalid arguments fail before any attempted storage write', async () => {
   await assert.rejects(f.addNumberedFragment('', 'X'),/strings/i);
   assert.equal(s.writes,0);
 });
+
+test('locked regular append preserves opaque historical JSON bytes', async () => {
+  const raw = ' \n[{"title":"Old","text":"Lore","big":1e999,"precise":9007199254740993,"k":1,"k":2,"spelling":"\\u0061"}] \n';
+  const s = store(raw);
+  const f = client(s, locks());
+  assert.equal(await f.addFragment('New', 'Now'), true);
+  const close = raw.lastIndexOf(']');
+  assert.equal(s.getItem('aletheFragments'),
+    raw.slice(0, close) + ',' + JSON.stringify({title:'New',text:'Now'}) + raw.slice(close));
+  assert.equal(s.writes, 1);
+});
+
+test('locked numbered append preserves historical bytes while allocating under the lock', async () => {
+  const raw = ' \n[{"title":"Root-script 1","text":"Lore","big":1e999,"precise":9007199254740993,"k":1,"k":2,"spelling":"\\u0061"}] \n';
+  const s = store(raw);
+  const f = client(s, locks());
+  assert.equal(await f.addNumberedFragment('Root-script ', 'Next'), 'Root-script 2');
+  const close = raw.lastIndexOf(']');
+  assert.equal(s.getItem('aletheFragments'),
+    raw.slice(0, close) + ',' + JSON.stringify({title:'Root-script 2',text:'Next'}) + raw.slice(close));
+  assert.equal(s.writes, 1);
+});
+
+test('formatted empty arrays append without normalizing the stored whitespace', async () => {
+  for (const raw of [' [] \n', ' [\n  ] \t']) {
+    const s = store(raw);
+    const f = client(s, locks());
+    assert.equal(await f.addNumberedFragment('Root-script ', 'New'), 'Root-script 1');
+    const close = raw.lastIndexOf(']');
+    assert.equal(s.getItem('aletheFragments'),
+      raw.slice(0, close) + JSON.stringify({title:'Root-script 1',text:'New'}) + raw.slice(close));
+    assert.deepEqual(archive(s), [{title:'Root-script 1',text:'New'}]);
+  }
+});
