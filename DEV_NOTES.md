@@ -2,15 +2,27 @@
 
 ## Development
 
-**Goal:** Make Archivegod Pulse, Shard Thrones and Councilfire reflow on narrow mobile screens, including enlarged text, with device-width viewport metadata and narrow-only CSS. Keep JavaScript, story content, saved data and routes unchanged.
+**Goal:** Make the actual Shard Worldskin themes respect a visitor's OS reduced-motion preference. Stop looping theme animation and the existing one-second body colour transition only under reduced motion; retain normal animated themes, source scripts, story text and saved state.
 
-**Integration:** Proposed review-only branch `noe/passive-readers-mobile-viewports-20261118` from main `74597d0d`. Merge status must be checked independently. This milestone is separate from previously integrated saved-story heading PR #43.
+**Integration:** [Draft PR #45](https://github.com/levelinglucy/Devoured-Web/pull/45) owns this candidate. This status is review-only until actual merge is verified. Earlier passive-reader viewport [PR #44](https://github.com/levelinglucy/Devoured-Web/pull/44) is already integrated at `5f227429`; the Worldskin change is independent.
 
-**Validation:** The helper's source-locked isolated Chromium fixtures (self-selected-145) indicated a 980px virtual layout without metadata. Static source regressions passed 155/155 each on Node 20/22 at the original candidate `52d91d4` ([CI 44324654299](https://github.com/levelinglucy/Devoured-Web/actions/runs/44324654299)). A new served-origin Chrome test loads these exact pages and their actual modules at 320px/390px and enlarges root text to 200%. Its initial [red CI 44335392732](https://github.com/levelinglucy/Devoured-Web/actions/runs/44335392732) proved a real horizontal overflow: Godpulse's effective layout widened to 399px at requested 320px after enlargement. The narrow-only CSS correction passed [served-origin Chrome CI 44335971479](https://github.com/levelinglucy/Devoured-Web/actions/runs/44335971479): **6/6** real-page/module mobile tests at 320px and 390px, including 200% base font, on reviewed PR head `74fb7241`. [Node CI 44335971470](https://github.com/levelinglucy/Devoured-Web/actions/runs/44335971470) passed **155/155 each** on Node 20 and 22 against the same PR head. Logs inspected; not Safari or device certification.
+**Validation:** On the exact unchanged-CSS test-first head `63553aa1`, hosted [Node run 44346131499](https://github.com/levelinglucy/Devoured-Web/actions/runs/44346131499) produced **156/157** per Node 20 and 22 with the one intended failure: no reduced-motion rule. CSS-only source fix `84d577d5` made the source assertion green. The initial actual-served Shard HTML/CSS [Chrome run 44346522553](https://github.com/levelinglucy/Devoured-Web/actions/runs/44346522553) revealed a *test timing error*: ordinary colour was sampled during the existing 1s transition, while reduced motion snapped to the settled colour. The corrected test at `3cb594e7` waits for ordinary transitions to settle. [Node 44346874919](https://github.com/levelinglucy/Devoured-Web/actions/runs/44346874919) passed **157/157 each** on Node 20 and 22; [served HTML/CSS Chrome 44346874870](https://github.com/levelinglucy/Devoured-Web/actions/runs/44346874870) passed four theme states under both motion preferences plus the live preference toggle `glitch → none → glitch`. These runs validate that tested source/test head, not any later docs-only commit until its checks are read back.
 
-**Release:** Unreleased; no app or mobile deployment assertion follows from this candidate.
+**Release:** Unreleased. Not native iPhone/Safari, OS-level accessibility device verification or WCAG certification. The browser smoke serves the real HTML and stylesheet, but deliberately denies external Firebase/module requests and manually assigns each Fold class; it does **not** validate the live Firestore Fold-state reader, mobile device settings or every animation elsewhere.
 
-**Next:** (1) Review the exact PR patch, CI and repository merge gates, then integrate only if permitted. (2) Check exact merged-main Node and browser evidence before claiming deployment. (3) Keep native iPhone Safari/Dynamic Type, pinch-zoom usability and human readability explicitly unverified.
+**Next:** (1) Check current exact PR revision, test jobs and review gates before considering merge. (2) If integrated, independently verify exact-main tests and Pages workflow rather than equating merge with release. (3) Revisit native Safari/reduced-motion feedback when reasonably available; don't make Dylan the routine test operator.
+
+## Decision 2026-11-18: reduced-motion Worldskin CSS
+
+**Observed:** `worldskin.css` defined `pulseGlow`, `glitch` and `emberPulse` as infinite animations for Awake, Fractured and Ignited; `shard.html` declared a later 1s body background/colour transition. Neither honored `prefers-reduced-motion`. With genuine CSS evaluation, ordinary theme transitions can also yield mid-transition sampled colours; a comparison must wait for them to settle.
+
+**Choice:** Append a `@media (prefers-reduced-motion: reduce)` rule scoped to `body.still, body.awake, body.fractured, body.ignited` and declare `animation: none; transition: none;`. Class specificity beats the later plain `body` transition without `!important`. No script, story text, state mutation, stored history, timing or no-preference CSS changes were intended.
+
+**Trade-offs:** Under reduced motion, Ignited shows its static authored `#200000` background rather than the current animated Ember frame. The stylesheet can be shared by other pages with these Fold classes, where suppression is also expected. The served browser test isolates presentation and does not prove full production Firebase flow, Safari/VoiceOver, accessibility conformity or a deployment.
+
+## Previous completed milestone: passive reader mobile reflow
+
+**Integration:** [PR #44](https://github.com/levelinglucy/Devoured-Web/pull/44) merged at exact main `5f227429`. **Validation:** Served Chrome final PR [run 44336280131](https://github.com/levelinglucy/Devoured-Web/actions/runs/44336280131) passed **6/6** width/text checks; exact-main Node 20 and 22 [run 44336619519](https://github.com/levelinglucy/Devoured-Web/actions/runs/44336619519) passed **155/155 each** and [Pages workflow 44336618273](https://github.com/levelinglucy/Devoured-Web/actions/runs/44336618273) built/deployed successfully. No tagged release or native iOS certification.
 
 ## Decision 2026-11-18: passive reading width on mobile
 
