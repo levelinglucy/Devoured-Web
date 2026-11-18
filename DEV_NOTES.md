@@ -2,23 +2,23 @@
 
 ## Development
 
-**Goal:** Make the three passive reading pages Archivegod Pulse, Shard Thrones and Councilfire readable at narrow mobile widths by using zoom-permissive device-width viewport metadata. Keep their scripts, CSS, story rendering, saved data and link routes unchanged.
+**Goal:** Make Archivegod Pulse, Shard Thrones and Councilfire reflow on narrow mobile screens, including enlarged text, with device-width viewport metadata and narrow-only CSS. Keep JavaScript, story content, saved data and routes unchanged.
 
 **Integration:** Proposed review-only branch `noe/passive-readers-mobile-viewports-20261118` from main `74597d0d`. Merge status must be checked independently. This milestone is separate from previously integrated saved-story heading PR #43.
 
-**Validation:** Source-locked helper investigation self-selected-145 used isolated Chromium 144 mobile fixtures and observed 980px layout without viewport metadata versus 320/390px with it. That was *not* an actual served-page test. This change adds a Node regression for the three exact HTML files and their existing module/read-only markup; review branch CI and real Safari/iPhone behaviour separately.
+**Validation:** The helper's source-locked isolated Chromium fixtures (self-selected-145) indicated a 980px virtual layout without metadata. Static source regressions passed 155/155 each on Node 20/22 at the original candidate `52d91d4` ([CI 44324654299](https://github.com/levelinglucy/Devoured-Web/actions/runs/44324654299)). A new served-origin Chrome test loads these exact pages and their actual modules at 320px/390px and enlarges root text to 200%. Its initial [red CI 44335392732](https://github.com/levelinglucy/Devoured-Web/actions/runs/44335392732) proved a real horizontal overflow: Godpulse's effective layout widened to 399px at requested 320px after enlargement. Three narrow-only CSS corrections are under fresh Chrome review; no green result claimed until inspected.
 
 **Release:** Unreleased; no app or mobile deployment assertion follows from this candidate.
 
-**Next:** (1) Validate exact branch head with Node checks and inspect mobile layout on actual served pages if possible. (2) Keep document zoom unrestricted and verify iPhone Safari when available. (3) Only integrate after branch review and relevant checks.
+**Next:** (1) Inspect green/failing [served-origin mobile CI](https://github.com/levelinglucy/Devoured-Web/actions/runs/44335701320) and the current branch's Node checks; repair only a confirmed regression. (2) Review the exact patch and preserve pinch zoom. (3) Integrate only after checks; iPhone Safari and Dynamic Type remain separate unknowns.
 
 ## Decision 2026-11-18: passive reading width on mobile
 
 **Observed:** `godpulse.html`, `shardthrone.html` and `councilfire.html` had no viewport meta. Helper-controlled isolated Chromium mobile fixtures showed a virtual 980px layout and fractional initial visual scale at 320/390px widths. Inserting the zoom-permissive viewport into those fixtures restored actual device CSS widths. The fixture contained transcribed rather than served pages, so this is evidence of the browser viewport mechanism, not a Safari or production proof.
 
-**Change:** Insert only `<meta name="viewport" content="width=device-width, initial-scale=1.0">` immediately after the charset in all three files. The one metadata addition per page makes no storage writes, changes no module imports, and does not set `maximum-scale` or `user-scalable=no`. Static regression guards the head metadata and preserves imports and h1 elements.
+**Change:** Insert `<meta name="viewport" content="width=device-width, initial-scale=1.0">` after charset, without limiting zoom. The live browser's 200%-text failure motivated one narrow-only `@media (max-width: 600px)` rule on each page to reduce body padding from 3em to 1em and use `overflow-wrap: anywhere` for long headings/sigils. No JavaScript or storage paths changed. Static tests retain module imports and h1 elements; served Chrome test exercises real modules, not a DOM replacement.
 
-**Limits:** CSS body padding of 3em is unchanged, so very narrow screens may still need later layout adjustments. Actual user font settings, dynamic module content, touchscreen ergonomics, text autosizing, iPhone Safari and human readability have not been verified. Do not imply WCAG certification or blanket mobile support.
+**Limits:** Desktop body padding remains 3em; narrow screens now use 1em, with line wrapping that may change visual composition. Chrome's synthetic 200% root text stress is not native Safari Dynamic Type, VoiceOver, actual touch ergonomics or human readability validation. Do not claim WCAG certification or full mobile support.
 
 ## Previous completed milestone: saved story heading semantics
 
