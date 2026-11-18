@@ -19,7 +19,6 @@ function readSavedProgress(raw, key) {
 
 export function getEchoquest() {
   const path = getSigilPath();
-  const fragments = getFragments();
   const mutations = getSigilHistory().length;
 
   const quest = {
@@ -30,6 +29,8 @@ export function getEchoquest() {
   };
 
   if (path.id === "witness") {
+    // Only Witness needs the Fragment archive; never load it for other paths.
+    const fragments = getFragments();
     quest.title = "The Archivist’s Vigil";
     quest.task = "Collect at least 3 fragments.";
     quest.complete = fragments.length >= 3;
