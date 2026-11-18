@@ -2,6 +2,27 @@
 
 ## Development
 
+**Goal:** Make Archivegod Pulse, Shard Thrones and Councilfire reflow on narrow mobile screens, including enlarged text, with device-width viewport metadata and narrow-only CSS. Keep JavaScript, story content, saved data and routes unchanged.
+
+**Integration:** Proposed review-only branch `noe/passive-readers-mobile-viewports-20261118` from main `74597d0d`. Merge status must be checked independently. This milestone is separate from previously integrated saved-story heading PR #43.
+
+**Validation:** The helper's source-locked isolated Chromium fixtures (self-selected-145) indicated a 980px virtual layout without metadata. Static source regressions passed 155/155 each on Node 20/22 at the original candidate `52d91d4` ([CI 44324654299](https://github.com/levelinglucy/Devoured-Web/actions/runs/44324654299)). A new served-origin Chrome test loads these exact pages and their actual modules at 320px/390px and enlarges root text to 200%. Its initial [red CI 44335392732](https://github.com/levelinglucy/Devoured-Web/actions/runs/44335392732) proved a real horizontal overflow: Godpulse's effective layout widened to 399px at requested 320px after enlargement. The narrow-only CSS correction passed [served-origin Chrome CI 44335971479](https://github.com/levelinglucy/Devoured-Web/actions/runs/44335971479): **6/6** real-page/module mobile tests at 320px and 390px, including 200% base font, on reviewed PR head `74fb7241`. [Node CI 44335971470](https://github.com/levelinglucy/Devoured-Web/actions/runs/44335971470) passed **155/155 each** on Node 20 and 22 against the same PR head. Logs inspected; not Safari or device certification.
+
+**Release:** Unreleased; no app or mobile deployment assertion follows from this candidate.
+
+**Next:** (1) Review the exact PR patch, CI and repository merge gates, then integrate only if permitted. (2) Check exact merged-main Node and browser evidence before claiming deployment. (3) Keep native iPhone Safari/Dynamic Type, pinch-zoom usability and human readability explicitly unverified.
+
+## Decision 2026-11-18: passive reading width on mobile
+
+**Observed:** `godpulse.html`, `shardthrone.html` and `councilfire.html` had no viewport meta. Helper-controlled isolated Chromium mobile fixtures showed a virtual 980px layout and fractional initial visual scale at 320/390px widths. Inserting the zoom-permissive viewport into those fixtures restored actual device CSS widths. The fixture contained transcribed rather than served pages, so this is evidence of the browser viewport mechanism, not a Safari or production proof.
+
+**Change:** Insert `<meta name="viewport" content="width=device-width, initial-scale=1.0">` after charset, without limiting zoom. The live browser's 200%-text failure motivated one narrow-only `@media (max-width: 600px)` rule on each page to reduce body padding from 3em to 1em and use `overflow-wrap: anywhere` for long headings/sigils. No JavaScript or storage paths changed. Static tests retain module imports and h1 elements; served Chrome test exercises real modules, not a DOM replacement.
+
+**Limits:** Desktop body padding remains 3em; narrow screens now use 1em, with line wrapping that may change visual composition. Chrome's synthetic 200% root text stress is not native Safari Dynamic Type, VoiceOver, actual touch ergonomics or human readability validation. Do not claim WCAG certification or full mobile support.
+
+## Previous completed milestone: saved story heading semantics
+
+
 **Goal:** Make saved Fragment and Ritual Trail record titles navigable as native h2 headings without changing their visible card sizing, inert text, or browser-local history.
 
 **Integration:** [PR #43](https://github.com/levelinglucy/Devoured-Web/pull/43) owns this accessibility change; inspect its live merge state rather than treating branch validation as deployment. Previous Echoquest isolation [PR #42](https://github.com/levelinglucy/Devoured-Web/pull/42) merged at main `109aff43`; this is a separate milestone.

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shard Thrones</title>
   <style>
     body {
@@ -27,6 +28,11 @@
     .date {
       font-size: 0.8em;
       color: #999;
+    }
+    /* Limit inset and allow long sigils/headings to reflow on small screens,
+       including when the user's base text size is enlarged. */
+    @media (max-width: 600px) {
+      body { padding: 1em; overflow-wrap: anywhere; }
     }
   </style>
 </head>

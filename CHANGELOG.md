@@ -1,6 +1,7 @@
 # Change history
 
 ## Unreleased
+- Give Archivegod Pulse, Shard Thrones and Councilfire device-width viewports and narrow-screen wrapping/padding for enlarged text; leave story scripts and saved data unchanged.
 - Expose saved Fragment and Ritual Trail record titles as native h2 headings while matching their previous card typography and height; retain inert text and unchanged browser-local history.
 - Keep Fire, Lost, Split and Undefined Echoquests available when unrelated saved Fragment archives are malformed; retain strict Witness rejection and preserve original stored bytes.
 - Preserve existing valid Fragment archive JSON text exactly when appending; add only the new record without normalizing legacy fields, formatting or unusual numbers.
