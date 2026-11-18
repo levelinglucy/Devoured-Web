@@ -1,0 +1,25 @@
+name: Shard Worldskin reduced motion browser smoke
+on:
+  pull_request:
+    paths:
+      - 'worldskin.css'
+      - 'shard.html'
+      - 'tests/browser/shard-reduced-motion.mjs'
+      - '.github/workflows/shard-reduced-motion.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  shard-motion-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated browser driver
+        run: npm install --no-save --no-package-lock playwright@1.56.1
+      - name: Verify actual served Shard HTML and Worldskin CSS under both motion preferences
+        run: node tests/browser/shard-reduced-motion.mjs
