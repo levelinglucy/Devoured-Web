@@ -12,7 +12,7 @@ const warlock = readFileSync(join(root, 'warlock.js'), 'utf8');
 assert.match(warpath, /import\s+\{\s*getFaction\s*\}\s+from\s+['"]\.\/faction\.js['"]/);
 assert.match(warlock, /import\s+\{\s*getDominantFaction\s*\}\s+from\s+['"]\.\/warpath\.js['"]/);
 
-function makeVisit(raw) {
+function makeVisit(raw, { contribute = true } = {}) {
   const records = new Map([['warpathTally', raw]]);
   let visitor = 'Red';
   const env = {
@@ -27,7 +27,7 @@ function makeVisit(raw) {
     .replace(/\bexport\s+(?=function)/g, '');
   runInNewContext(warpathSource +
     '\nthis.api = { contributeToFaction, getDominantFaction };', env);
-  env.api.contributeToFaction();
+  if (contribute) env.api.contributeToFaction();
   const location = { href: 'open.html' };
   const gate = { getFaction: () => visitor, getDominantFaction: env.api.getDominantFaction,
     window: { location } };
@@ -63,8 +63,8 @@ test('unique majority still wins; an empty tally still reports None', async () =
   assert.equal(run.dominant(), 'Red');
   assert.equal(await run.accessAs('Red'), 'open.html');
   assert.equal(await run.accessAs('Blue'), 'banned.html');
-  const empty = makeVisit('{}');
-  assert.equal(empty.dominant(), 'Red');
+  const empty = makeVisit('{}', { contribute: false });
+  assert.equal(empty.dominant(), 'None');
 });
 
 test('ties between more than two factions use the same deterministic ranking', async () => {
