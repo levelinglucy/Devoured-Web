@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Preserve the exact existing browser-local fragment JSON text when appending a new fragment, without weakening validation or overwriting damaged archives.
+**Goal:** Keep unrelated Fire, Lost, Split and Undefined Echoquests usable even when the separate browser-local Fragment archive is damaged, without rewriting any old record or weakening Witness validation.
 
-**Integration:** Candidate `noe/preserve-fragment-history-20261117` is review-only pending hosted checks. Fold identity PR #33 stays parked draft.
+**Integration:** [PR #42](https://github.com/levelinglucy/Devoured-Web/pull/42) is a draft, unmerged source/test candidate. Main remains unchanged. Worldheart checkpoint PR #10 is a distinct parked milestone until its portability/safety evidence changes.
 
-**Validation:** Source-locked predecessor failed 2 of 3 new preservation assertions. Updated source passed all 9 focused synthetic Node 22 tests locally (six prior and three new). This does not validate a real visitor archive, a live browser, iPhone Safari or multi-tab atomicity. Hosted Node 20/22 not yet claimed.
+**Validation:** Test-first PR head `e005fc40` failed 4/153 tests as expected on both Node 20 and 22 ([run 44275364733](https://github.com/levelinglucy/Devoured-Web/actions/runs/44275364733)). Source-corrected head `9a9a16ac` passed 153/153 per Node 20 and 22 ([run 44275479903](https://github.com/levelinglucy/Devoured-Web/actions/runs/44275479903)); inspected Node 22 logs and job status for both versions. This covers an isolated browser-storage VM, not live navigation, Safari/iPhone, tab concurrency or browser-origin storage.
 
-**Release:** Unreleased; do not infer publication from a PR.
+**Release:** Unreleased. No main merge or published artifact.
 
-**Next:** (1) Review branch diff and run hosted Node 20/22 regression suite. (2) If clean and permitted, integrate after checking current main and required reviews/checks; verify exact main separately. (3) Preserve Fold PR #33 draft until Firestore historical identity evidence.
+**Next:** (1) Recheck final PR head, green jobs and exact source/test blobs after documentation. (2) Review unrelated state dependencies and required checks; integrate only if current main and checks permit, without erasing malformed archives. (3) Leave Worldheart PR #10 draft until safe portability evidence.
+
+## Decision 2026-11-18: path-scoped Fragment archive reads in Echoquest
+
+**Evidence:** A malformed, present `aletheFragments` archive was unconditionally loaded by `getEchoquest()` before path selection, causing Fire/Lost/Split/Undefined quests to show a generic recovery warning despite having no Fragment dependency. Test-first four unrelated path cases failed at exact original code, with three invalid archive shapes each; two Witness integrity/valid-completion controls passed.
+
+**Choice:** Read fragments inside the Witness branch only. Other quest paths no longer touch the unrelated archive. Leave `getFragments()`'s refusal of bad records, existing progress checks, and Lost first-visit write semantics unchanged. The new production difference is only the placement of that existing read; no storage migration or error masking.
+
+**Limitations:** `getSigilPath()` and `getSigilHistory()` remain cross-feature dependencies; one-line isolation does not make all saved data independent. Tests inject the chosen path in a Node VM with simulated localStorage, not full live browser routing. Revisit if real user flow shows stronger dependencies or if a different global-fail-closed policy is explicitly required.
 
 ## Decision 2026-11-17: append-only fragment history representation
 
