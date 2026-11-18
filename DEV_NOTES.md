@@ -2,15 +2,23 @@
 
 ## Development
 
-**Goal:** Prevent cooperating tabs of the current site from silently losing browser-local lore when they append concurrently. Rootcraft must allocate its next numbered title inside the same exclusive critical section as its storage write.
+**Goal:** Prevent cooperating current-version tabs from racing on browser-local Fragment writes and Rootcraft's numbered titles **without rewriting historical archive bytes**.
 
-**Integration:** Draft branch `noe/fragment-web-locks-spike` against Devoured-Web main `7944a9b5`. Unmerged. Existing archive stays in the same `aletheFragments` localStorage key; no migration or overwrite of historical raw bytes. The export contracts for `addFragment`, `clearFragments` and `injectFragment` become asynchronous and therefore require integration review.
+**Integration:** [Draft PR #20](https://github.com/levelinglucy/Devoured-Web/pull/20) remains unmerged. The branch originated from main 7944a9b5 and has not been reconciled with newer main commits, so code/API review and potential conflicts remain. No storage migration. addFragment, clearFragments and Rootcraft's injectFragment still become asynchronous in this candidate.
 
-**Validation:** A detached, source-corresponding Node 22.16.0 test harness passed 17/17 focused regressions: shared mocked lock serialization, duplicate-title allocation, rejected writes, unreadable raw preservation, absent-lock refusal, serial clear, Rootcraft gating and asynchronous UI handling. This is a *mock Web Locks* test, not actual multi-tab proof. Hosted PR integration CI [run 43699744120](https://github.com/levelinglucy/Devoured-Web/actions/runs/43699744120) checked out the merge ref c472042 (branch head 1f36e388 into unchanged main 7944a9b5), and both Node 20 and Node 22 jobs passed **92/92** tests; both logs inspected. This is PR merge-ref validation, not native browser evidence or a release. Chromium 144 launch succeeded in the testing sandbox, but navigation was blocked by policy (`net::ERR_BLOCKED_BY_ADMINISTRATOR`), including a data: page, so real browser results are unavailable.
+**Validation:** Earlier 92/92 Node 20/22 [CI run 43699888235](https://github.com/levelinglucy/Devoured-Web/actions/runs/43699888235) belongs to the *older* lossy candidate and does **not** validate this repair. On 2026-11-18 the exact original source blob 23e3dbb4 failed the new raw-byte invariants by reserializing old records. The repaired source blob 523c85fa passed **30 deterministic synthetic assertions** in an isolated JS harness with injected localStorage and mocked exclusive locks (byte preservation for regular and numbered append, two formatted empty arrays, duplicates, invalid input, rejected writes, absent locks, two cooperating clients). Three new in-repository regression cases were committed test-first at 75d60add and the source repair at c27ab82c. Those assertions are **not** hosted CI or native browser tests. Final-branch hosted validation still needs independent inspection.
 
-**Release:** None; do not merge or deploy based on the mocked interleaving alone.
+**Release:** None. Draft is **not** ready to merge: old noncooperating tabs can still overwrite a newer writer; real HTTPS browser interleavings, unsupported browsers/file contexts, async consumer changes, main reconciliation and deployment strategy remain review gates.
 
-**Selected next steps:** (1) Recheck exact final review branch / PR merge-ref CI after the documentation update. (2) Test real Web Locks and mixed-version concurrent tabs in a permitted HTTPS browser before considering deployment. (3) Revisit lack-of-lock fallback and the asynchronous public API compatibility; preserve the original source via main and branch history.
+**Selected next steps:** (1) Check exact final candidate and hosted Node test jobs without treating older green jobs as current. (2) Reconcile with latest main and review sync-to-async and fail-closed no-lock effects. (3) Obtain real browser multi-tab/mixed-version evidence before any merge or release.
+
+## Decision 2026-11-18: preserve old raw archive inside the write lock
+
+**Blocking regression:** The older draft serializes the getFragments() output when adding a story. A valid historical JSON archive containing 1e999, an unsafe integer literal, duplicate keys or literal Unicode escapes changes silently even though the new write succeeds. The already merged raw-preserving main implementation does not do that.
+
+**Correction:** Read and validate the raw bytes plus parsed entries once *inside* the exclusive lock, choose any numbered title from the parsed entries, then insert only the new serialized title/text record before the original raw closing bracket. Never reserialize the historical entries. Existing whitespace and historical tokens are preserved; malformed bytes and failed writes still fail closed. The reader remains synchronous and historical parsed-number imprecision is not repaired. Web Locks is still only cooperative, and storage is still not transactional across versions.
+
+**Evidence/revisit:** Source-locked synthetic reproduction described above. Current draft needs hosted and browser validation, main integration review, and an intentional unsupported-browser policy before promotion. Roll back the draft's two new commits if they cause a new failure; the pre-repair draft source and modern main are preserved in Git history.
 
 ## Decision 2026-11-15: cooperative exclusive lock as a no-migration prototype
 
