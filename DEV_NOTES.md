@@ -2,15 +2,27 @@
 
 ## Development
 
-**Goal:** Make the actual Shard Worldskin themes respect a visitor's OS reduced-motion preference. Stop looping theme animation and the existing one-second body colour transition only under reduced motion; retain normal animated themes, source scripts, story text and saved state.
+**Goal:** Make tied faction strengths produce the same story-gate winner and Territory heading regardless of saved JSON insertion order. Preserve the existing single-leader gate; do not reinterpret story design as backend authorization.
 
-**Integration:** [Draft PR #45](https://github.com/levelinglucy/Devoured-Web/pull/45) owns this candidate. This status is review-only until actual merge is verified. Earlier passive-reader viewport [PR #44](https://github.com/levelinglucy/Devoured-Web/pull/44) is already integrated at `5f227429`; the Worldskin change is independent.
+**Integration:** [Draft PR #47](https://github.com/levelinglucy/Devoured-Web/pull/47), based on `main` at `4c20fefe`. Unmerged; no production behaviour changed yet. Separate Fragment storage [draft PR #46](https://github.com/levelinglucy/Devoured-Web/pull/46) and private IndexedDB study remain parked because old/noncooperating tabs can lose new localStorage writes and native v2 browser validation is blocked.
 
-**Validation:** On the exact unchanged-CSS test-first head `63553aa1`, hosted [Node run 44346131499](https://github.com/levelinglucy/Devoured-Web/actions/runs/44346131499) produced **156/157** per Node 20 and 22 with the one intended failure: no reduced-motion rule. CSS-only source fix `84d577d5` made the source assertion green. The initial actual-served Shard HTML/CSS [Chrome run 44346522553](https://github.com/levelinglucy/Devoured-Web/actions/runs/44346522553) revealed a *test timing error*: ordinary colour was sampled during the existing 1s transition, while reduced motion snapped to the settled colour. The corrected test at `3cb594e7` waits for ordinary transitions to settle. [Node 44346874919](https://github.com/levelinglucy/Devoured-Web/actions/runs/44346874919) passed **157/157 each** on Node 20 and 22; [served HTML/CSS Chrome 44346874870](https://github.com/levelinglucy/Devoured-Web/actions/runs/44346874870) passed four theme states under both motion preferences plus the live preference toggle `glitch → none → glitch`. These runs validate that tested source/test head, not any later docs-only commit until its checks are read back.
+**Validation:** The independent helper's source-locked, disposable VM tie investigation found divergent Red/Blue gate outcomes from equal tallies in opposite JSON key orders (17 local assertions; not real player evidence). New gate regression tests were committed before source changes at `fba8e6af`. Territory's VM tests now compare both key orders; `warpath.js` exports a shared count-descending/name-ascending ranking. Exact updated candidate Node 20/22 CI still requires inspection before integration; no browser/iPhone or live-history certification.
 
-**Release:** Unreleased. Not native iPhone/Safari, OS-level accessibility device verification or WCAG certification. The browser smoke serves the real HTML and stylesheet, but deliberately denies external Firebase/module requests and manually assigns each Fold class; it does **not** validate the live Firestore Fold-state reader, mobile device settings or every animation elsewhere.
+**Release:** Unreleased, no tag or deployment. This is a local narrative-rule choice, not an authentication security fix.
 
-**Next:** (1) Check current exact PR revision, test jobs and review gates before considering merge. (2) If integrated, independently verify exact-main tests and Pages workflow rather than equating merge with release. (3) Revisit native Safari/reduced-motion feedback when reasonably available; don't make Dylan the routine test operator.
+**Next:** (1) Inspect exact PR #47 test results and correct any source/test failures. (2) Decide whether deterministic name priority is the intended fictional tie rule or whether a separately specified contested state would be preferable. (3) Keep PR draft until narrative choice and relevant checks are satisfactorily reviewed.
+
+## Decision 2026-11-18: faction tie priority
+
+**Observed:** Descending-count-only stable sorting inherits the order of valid saved faction object keys. Equal `Red=2, Blue=2` could therefore present either winner, and `warlock.js` would allow or redirect the same Red visitor based solely on historical serialization order.
+
+**Choice for review:** Retain one leader, sort descending by count, then ascending by exact JavaScript string code units. Share the ranking function with Territory so its snapshot display and later gates cannot disagree because of different comparators. This deliberately selects Blue over Red in an exact tie; it does not claim alphabetic priority is fairer than shared control.
+
+**Alternatives/revisit:** A `Contested` state could give tied leaders equal narrative treatment, but would need explicit gate and UI semantics to avoid accidentally barring every visitor. Revisit if game design calls for contested territories or visitors reasonably expect tied control. Neither policy establishes a server authorization boundary.
+
+## Previous completed milestone: reduced-motion Worldskin CSS
+
+**Integration:** PR #45 merged on main at `4c20fefe`; [merged-main Node checks](https://github.com/levelinglucy/Devoured-Web/actions/runs/44347756102) and [served Chrome checks](https://github.com/levelinglucy/Devoured-Web/actions/runs/44347756397) passed; [Pages deployment](https://github.com/levelinglucy/Devoured-Web/actions/runs/44347755168) succeeded. No tagged release, Safari or iPhone accessibility certification.
 
 ## Decision 2026-11-18: reduced-motion Worldskin CSS
 

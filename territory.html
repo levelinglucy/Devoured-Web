@@ -27,14 +27,14 @@
   <div class="table" id="table">Loading data...</div>
 
 <script type="module">
-  import { contributeToFaction } from './warpath.js';
+  import { contributeToFaction, rankFactionPower } from './warpath.js';
 
   const topElement = document.getElementById("top");
   const tableElement = document.getElementById("table");
   try {
     // Render one committed visit snapshot; a separate tab may change storage later.
     const all = contributeToFaction();
-    const sorted = Object.entries(all).sort((a, b) => b[1] - a[1]);
+    const sorted = rankFactionPower(all);
     topElement.innerText = "Dominant Faction: " + (sorted[0]?.[0] ?? "None");
     const rows = sorted.map(([f, p]) => {
       const row = document.createElement("div");
