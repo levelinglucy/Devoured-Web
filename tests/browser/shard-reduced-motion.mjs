@@ -49,15 +49,68 @@ try {
   assert.equal(await page.locator('h1').textContent(), 'Shard Interface');
   assert.equal(await page.locator('#desc').textContent(), 'Let the Fold reveal its skin...');
 
+
+  // Sample the first theme change on a fresh page for each state/preference.
+  // Nominal sRGB fill contrast on the default light canvas, not glyph/halo
+  // contrast or comprehensive accessibility conformance.
+  const luminance = rgb => rgb.map(x => x / 255)
+    .map(x => x <= .04045 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4)
+    .reduce((sum, x, i) => sum + x * [.2126, .7152, .0722][i], 0);
+  const parseColor = css => {
+    const values = css.match(/[\d.]+/g).map(Number);
+    assert.ok(/^rgba?\(/.test(css) && [3, 4].includes(values.length), css);
+    const alpha = values[3] ?? 1;
+    return values.slice(0, 3).map(x => x * alpha + 255 * (1 - alpha));
+  };
+  const contrast = (fg, bg) => {
+    const [lo, hi] = [luminance(parseColor(fg)), luminance(parseColor(bg))]
+      .sort((a, b) => a - b);
+    return (hi + .05) / (lo + .05);
+  };
+  for (const [state, animation] of Object.entries(expected)) {
+    for (const preference of ['no-preference', 'reduce']) {
+      const first = await context.newPage();
+      try {
+        await first.emulateMedia({ reducedMotion: preference, colorScheme: 'light' });
+        await first.goto(origin + '/shard.html', { waitUntil: 'load' });
+        const observed = await first.evaluate(async state => {
+          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+          const body = document.body, desc = document.querySelector('#desc');
+          const read = () => [getComputedStyle(desc).color, getComputedStyle(body).backgroundColor];
+          const initial = read();
+          body.classList.add(state);
+          getComputedStyle(body).color;
+          await new Promise(resolve => requestAnimationFrame(resolve));
+          const effects = body.getAnimations();
+          const transitions = effects.filter(a => a.constructor.name === 'CSSTransition').length;
+          const animation = getComputedStyle(body).animationName;
+          for (const effect of effects) effect.pause();
+          const samples = [];
+          // Covers the first second and full Ignited/Fractured periods.
+          for (let t = 0; t <= 1500; t += 10) {
+            for (const effect of effects) effect.currentTime = t;
+            samples.push(read());
+          }
+          return { initial, samples, transitions, animation };
+        }, state);
+        assert.ok(contrast(...observed.initial) >= 4.5, 'initial status contrast');
+        const minimum = Math.min(...observed.samples.map(pair => contrast(...pair)));
+        console.log(state + ' ' + preference + ': minimum nominal contrast ' + minimum.toFixed(3));
+        assert.ok(minimum >= 4.5, state + ' ' + preference + ': first-theme status contrast ' + minimum);
+        assert.equal(observed.transitions, 0, 'no independent colour/background transitions');
+        assert.equal(observed.animation, preference === 'reduce' ? 'none' : animation);
+      } finally {
+        await first.close();
+      }
+    }
+  }
+
   const sample = async (state, reducedMotion) => {
     await page.emulateMedia({ reducedMotion });
     await page.evaluate(s => {
       document.body.className = s;
       document.body.dataset.fold = s;
     }, state);
-    // Shard transitions text colour for 1 second in ordinary mode.
-    // Compare settled colours, not a mid-transition sampled frame.
-    if (reducedMotion === 'no-preference') await page.waitForTimeout(1200);
     return page.evaluate(() => {
       const css = getComputedStyle(document.body);
       return {
@@ -73,7 +126,7 @@ try {
   for (const [state, animation] of Object.entries(expected)) {
     const normal = await sample(state, 'no-preference');
     assert.equal(normal.animation, animation, state + ': default animation');
-    assert.equal(normal.transition, 'background, color', state + ': default transition');
+    assert.equal(normal.transition, 'none', state + ': default transition');
     const reduced = await sample(state, 'reduce');
     assert.equal(reduced.animation, 'none', state + ': OS reduced motion animation');
     assert.equal(reduced.transition, 'none', state + ': OS reduced motion transition');
