@@ -1,5 +1,19 @@
 # Developer notes
 
+## Development — Shard first-theme contrast (Unreleased)
+
+**Goal:** Keep the status text legible when the first Fold palette is applied, while retaining normal-motion thematic animations and the existing reduced-motion preference.
+
+**Integration:** [Draft PR #48](https://github.com/levelinglucy/Devoured-Web/pull/48) is based on main `f7602f17`; not merged or deployed.
+
+**Validation:** Test-first `e2a9b6cb` [served Chrome](https://github.com/levelinglucy/Devoured-Web/actions/runs/46048419253) failed the Still first-theme nominal contrast assertion (1.025:1); [Node 20/22](https://github.com/levelinglucy/Devoured-Web/actions/runs/46048419195) each failed the new transition assertion (160/161). In isolated Chromium 144, using hash-matched HTML/CSS with the Firebase module removed, all four normal-motion initial themes crossed below 4.5:1 before the fix. All eight candidate theme/preference cases passed 151 sampled frames per case, minimum 6.0189:1 across all candidate cases. Actual candidate hosted checks pending. Nominal computed fills on the default light canvas, not glyph halos, continuous-time guarantees, live Firebase, Safari/iPhone, or full accessibility conformance.
+
+**Release:** Unreleased. **Next:** Verify exact candidate served-browser/Node jobs and current branch rules, then review for integration. Confirm exact merged-main validation/deployment separately.
+
+**Decision:** Switch foreground/background together via `transition: none` on Shard; keep pulseGlow, glitch and emberPulse under ordinary motion, and the scoped reduced-motion rule. The original gradual theme fade is removed because it briefly made foreground/background nearly equal in luminance. A staged accessible fade could be designed later if needed, with equivalent contrast regression coverage. Reference: [WCAG contrast minimum](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html).
+
+## Earlier development record (historical snapshot)
+
 ## Development
 
 **Goal:** Make tied faction strengths produce the same story-gate winner and Territory heading regardless of saved JSON insertion order. Preserve the existing single-leader gate; do not reinterpret story design as backend authorization.

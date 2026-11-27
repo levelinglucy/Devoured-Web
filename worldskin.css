@@ -36,7 +36,7 @@ body.ignited {
   100% { transform: translateX(0); }
 }
 
-/* Match Shard's later inline body transition without affecting normal motion. */
+/* Respect reduced motion while retaining the authored static theme palettes. */
 @media (prefers-reduced-motion: reduce) {
   body.still, body.awake, body.fractured, body.ignited {
     animation: none;
