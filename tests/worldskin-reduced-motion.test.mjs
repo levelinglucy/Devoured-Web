@@ -16,7 +16,7 @@ test('Worldskin preserves its four authored themes and ordinary animations', () 
     assert.match(css, new RegExp('@keyframes\\s+' + animation + '\\b'), animation);
   }
   assert.match(html, /<link rel="stylesheet" href="worldskin\.css">/);
-  assert.match(html, /transition:\s*background 1s, color 1s;/);
+  assert.match(html, /transition:\s*none\s*;/, 'Shard theme colours must change together');
   assert.match(html, /import\s*\{\s*applyWorldskin\s*\}\s*from\s*'\.\/worldskin\.js'/);
   assert.match(html, /id="desc" role="status" aria-atomic="true"/);
 });
